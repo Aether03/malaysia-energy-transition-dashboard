@@ -69,7 +69,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
   - **Pending:**
     - ~~sqlcmd and SSMS 22 installs~~ done: SSMS 22.10.12217.157; `sqlcmd -S localhost -E` verified.
     - ~~Sending the GSO email~~ sent 2026-09-30 to admin@gso.org.my; awaiting reply (D4 = REQUESTED).
-    - GitHub repo: gh 2.101.0 installed; needs Amirul to run `gh auth login` once.
+    - ~~GitHub repo~~ done: private repo https://github.com/Aether03/malaysia-energy-transition-dashboard, main pushed. **M0 COMPLETE 2026-09-30. Next: `/plan` M1 (Deep), then build.**
 
 ## Fixes & improvements backlog
 | # | Item | Found in | Priority | Scheduled in |
