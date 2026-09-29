@@ -14,7 +14,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 ## 2. Delivery milestones
 | # | Milestone | Scope (FR ids) | Depends on | Status |
 |---|---|---|---|---|
-| **M0** | Environment, repo and consent request | T1, NFR-05; the GSO decision | — | pending |
+| **M0** | Environment, repo and consent request | T1, NFR-05; the GSO decision | — | in-progress: 0.1, 0.3, 0.6 done; 0.2 SQL Server done, SSMS pending; 0.4 drafted, not sent; 0.5 pending |
 | **M1** | **Vertical slice**: Ember → SQL Server → P1 Overview (thin) | FR-01, 02, 03 (3 rules), 04, 05, 06 (partial) | M0 | pending |
 | **M2** | Malaysia and ASEAN analysis | FR-06, 07, 08, 09, 10, 11, 12, 15; D1, T1, T2 | M1 | pending |
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | pending |
@@ -151,7 +151,10 @@ flowchart LR
 | **Standard** | Sonnet 5.5 (`claude-sonnet-5-5`; `"sonnet"`) | Subagents, or the session after `/model` | **18**: 0.1, 0.2, 0.3, 0.4, 1.2, 1.7, 1.10, 2.3, 2.4, 3.3, 3.5, 3.6, 4.2, 4.4, 5.1, 5.3, 6.1, 6.2 |
 | **Fast** | Haiku 4.5 (`claude-haiku-4-5-20251001`; `"haiku"`) | Subagents | **11**: 0.5, 0.6, 1.8, 2.5, 2.7, 5.2, 5.4, 5.6, 5.9, 6.3, 6.5 |
 
-- **Unverified ranking:** Fable 5.1 (`claude-fable-5-1`) is also offered. Task 0.6 checks whether it should take the Deep tier.
+- **Ranking verified (task 0.6, 2026-09-30, via the `claude-api` skill's model table):**
+  - Fable 5.1 (`claude-fable-5-1`, Agent `"fable"`) is Anthropic's most capable widely released model, at $10 / $50 per MTok.
+  - Opus 5.5 is $4 / $20, Sonnet 5.5 $2 / $10, and Haiku 4.5 $1 / $5.
+  - **Decision:** Deep stays on Opus 5.5 (2.5× cheaper than Fable 5.1). Fable 5.1 is the **escalation rung above Deep**: a Deep task that fails verification twice moves to Fable 5.1.
 - **Independent review** is required for the 10 High-risk tasks: 1.1, 1.5, 1.11, 2.2, 2.8, 3.2, 3.4, 4.1, 5.8, 6.4. The reviewer is named in each Verify cell and is always a different agent from the implementer.
 - **Error controls in force:**
   - Each milestone is first detailed with `/plan` on Deep.

@@ -57,6 +57,20 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
 - Data sources D1–D6 (Ember, OWID, DOSM, GSO, Energy Commission handbook, NETR), all credited — source: doc 01 §6
 - GSO data: request TNB written consent NOW (Claude drafts the email, Amirul sends it); build the forecast and grid-load page on open hourly data (Thailand Zenodo CC BY default); GSO adapter off until consent — source: user, 2026-09-30
 
+- **M0 progress (2026-09-30):**
+  - **Done:**
+    - Python 3.13.15 installed (user scope) and `.venv` created, with pinned requirements (pandas 3.0.6, mssql-python 1.15.0, lightgbm 4.7.0, …).
+    - SQL Server **17.0.1000.7 Standard Developer** running as the default instance. winget installed Standard, not Enterprise, Developer; doc 02 allows either.
+    - `EnergyDW` created and reachable from Python via Windows auth.
+    - Git repo initialised; first commit `9a77069`.
+    - Reference documents saved in `docs/references/` (git-ignored).
+    - GSO consent email saved as a Gmail **draft** to admin@gso.org.my.
+    - Task 0.6: Deep = Opus 5.5, with Fable 5.1 as the escalation rung.
+  - **Pending:**
+    - sqlcmd and SSMS 22 installs (waiting on UAC).
+    - Sending the GSO email (awaiting Amirul's yes).
+    - GitHub repo (the `gh` CLI isn't installed and needs Amirul's login).
+
 ## Fixes & improvements backlog
 | # | Item | Found in | Priority | Scheduled in |
 |---|---|---|---|---|
