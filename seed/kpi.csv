@@ -1,0 +1,7 @@
+kpi_code,name,definition,formula,unit,polarity,data_source_code
+TOTAL_GENERATION,Total generation,Total electricity generated in a country in a given year across all sources.,Sum of generation across all sources (Ember 'Total generation'),TWh,1,D1
+RE_SHARE_GEN,Renewable share of generation,The percentage of a country's annual electricity generation that comes from renewable sources.,(Hydro + Bioenergy + Wind + Other renewables + Solar) ÷ Total generation × 100,%,1,D1
+FOSSIL_SHARE_GEN,Fossil share of generation,The percentage of a country's annual electricity generation that comes from fossil fuels.,(Coal + Gas + Other fossil) ÷ Total generation × 100,%,-1,D1
+CARBON_INTENSITY,Carbon intensity of electricity,The greenhouse-gas emissions released per unit of electricity generated in a year.,Power-sector emissions ÷ total generation (Ember 'Emissions intensity'),gCO₂e/kWh,-1,D1
+RE_SHARE_CAPACITY,Renewable share of installed capacity,The percentage of a country's installed generating capacity that is renewable.,Renewable capacity ÷ total generating capacity × 100 (large hydro included; see note),%,1,D1
+DEMAND_PER_CAPITA,Electricity demand per person,The average electricity demand per resident of a country in a given year.,Demand (TWh) × 10^6 ÷ population,MWh/person,1,D2

@@ -1,0 +1,8 @@
+source_code,display_name,group_name,sort_order,color_hex,color_hex_dark
+COAL,Coal,FOSSIL,1,#a0522d,#a0522d
+OTHER_FOSSIL,Other fossil,FOSSIL,2,#4a3aa7,#9085e9
+GAS,Gas,FOSSIL,3,#eb6834,#d95926
+HYDRO,Hydro,RENEWABLE,4,#2a78d6,#3987e5
+BIOENERGY,Bioenergy,RENEWABLE,5,#008300,#008300
+WIND_OTHER_RE,Wind & other renewables,RENEWABLE,6,#1baf7a,#1ca3a6
+SOLAR,Solar,RENEWABLE,7,#eda100,#c98500

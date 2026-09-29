@@ -1,0 +1,12 @@
+iso3,ember_area,name,area_type,is_asean,is_focus,is_default_peer,display_order
+MYS,Malaysia,Malaysia,COUNTRY,1,1,1,1
+IDN,Indonesia,Indonesia,COUNTRY,1,0,1,2
+THA,Thailand,Thailand,COUNTRY,1,0,1,3
+VNM,Viet Nam,Vietnam,COUNTRY,1,0,1,4
+PHL,The Philippines,Philippines,COUNTRY,1,0,1,5
+SGP,Singapore,Singapore,COUNTRY,1,0,1,6
+BRN,Brunei Darussalam,Brunei,COUNTRY,1,0,0,7
+KHM,Cambodia,Cambodia,COUNTRY,1,0,0,8
+LAO,Lao PDR,Laos,COUNTRY,1,0,0,9
+MMR,Myanmar,Myanmar,COUNTRY,1,0,0,10
+,ASEAN,ASEAN,REGION,1,0,0,11

@@ -35,8 +35,15 @@ def connect(database: str | None = None, autocommit: bool = False):
 
 
 def run_script(cursor, script: str) -> int:
-    """Execute every batch of a script on an open cursor; returns the batch count."""
+    """Execute every batch of a script on an open cursor; returns the batch count.
+
+    XACT_ABORT makes any runtime error abort the transaction, and draining every
+    result set surfaces errors raised by later statements in a batch.
+    """
     batches = split_batches(script)
+    cursor.execute("SET XACT_ABORT ON;")
     for batch in batches:
         cursor.execute(batch)
+        while cursor.nextset():
+            pass
     return len(batches)

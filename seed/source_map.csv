@@ -1,0 +1,18 @@
+ember_source,source_code,include_in_mix
+Coal,COAL,1
+Other fossil,OTHER_FOSSIL,1
+Nuclear,OTHER_FOSSIL,1
+Gas,GAS,1
+Hydro,HYDRO,1
+Bioenergy,BIOENERGY,1
+Wind,WIND_OTHER_RE,1
+Other renewables,WIND_OTHER_RE,1
+Solar,SOLAR,1
+Clean,,0
+Demand,,0
+Fossil,,0
+"Hydro, bioenergy and other renewables",,0
+Net imports,,0
+Renewables,,0
+Total generation,,0
+Wind and solar,,0

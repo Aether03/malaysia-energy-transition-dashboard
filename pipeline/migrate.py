@@ -52,7 +52,7 @@ class Script:
 
     @property
     def text(self) -> str:
-        return self.path.read_text(encoding="utf-8")
+        return self.path.read_text(encoding="utf-8-sig")  # tolerate a BOM from Windows editors
 
     @property
     def checksum(self) -> str:
