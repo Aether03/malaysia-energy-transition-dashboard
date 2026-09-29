@@ -1,0 +1,28 @@
+# Secrets / local config
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Data: raw landing files may include sources that can't be redistributed
+# (Energy Commission handbook, GSO). Never commit. See DATA_LICENSES.md.
+data/raw/
+exports/*.parquet
+logs/
+
+# Reference copies of third-party documents (copyrighted; private use only)
+docs/references/
+
+# Power BI local caches
+*.abf
+report/**/.pbi/localSettings.json
+report/**/.pbi/cache.abf
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/
