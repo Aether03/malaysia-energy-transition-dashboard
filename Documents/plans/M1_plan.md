@@ -23,7 +23,7 @@ Build the thinnest end-to-end path that proves the architecture.
 - Ember's area names include "Viet Nam", "The Philippines" and "Lao PDR", so **`dim_country` joins on `ISO 3 code`**, not on names.
 - Malaysia's non-aggregate sources are Bioenergy, Coal, Gas, Hydro, Nuclear (0), Other fossil, Solar, Wind, **and "Net imports", which is flagged non-aggregate**. It must be excluded from the mix explicitly (`ref.source_map.include_in_mix = 0`).
 - Malaysia covers 1985–2025, with capacity 2000–2025. Brunei, Laos and Myanmar end at 2024; Malaysia, Thailand and Vietnam start at 1985, the rest at 2000.
-- Malaysia's share sums are 99.49% (2024) and 99.44% (2025), so the "100 ± 1" rule passes on real data.
+- Malaysia's share sums are 99.49% (2024) and 99.44% (2025) **only if Net imports is wrongly included**: Malaysia is a net exporter, so that share is negative. Excluding it, the mix sums to **100.0%** (checked for Malaysia, Singapore and ASEAN, 2024). "Net imports" and "Demand" carry inconsistent `Is aggregated source` flags, so **map by label, never by that flag**. "Other renewables" (Philippine geothermal) exists → `WIND_OTHER_RE`.
 - Malaysia 2025: total generation 210.37 TWh, emissions intensity 605.547 gCO₂e/kWh. These are reconciliation candidates.
 
 ## Patterns to mirror
