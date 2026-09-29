@@ -56,6 +56,8 @@ class RunLog:
     def __enter__(self) -> Self:
         self._conn = db.connect(autocommit=True)
         cursor = self._conn.cursor()
+        # Fail loudly rather than hang if the data transaction ever holds a lock we need.
+        cursor.execute("SET LOCK_TIMEOUT 30000;")
         cursor.execute(
             "INSERT INTO meta.load_run (status, is_dry_run, git_commit) "
             "OUTPUT inserted.run_id VALUES ('RUNNING', ?, ?)",
@@ -78,6 +80,16 @@ class RunLog:
         finally:
             self._conn.close()
         log.info("Run %d finished: %s", self.run_id, status)
+
+    def record_dq(self, results) -> None:
+        """Write DQ results (pipeline.dq.DqResult) for this run."""
+        cursor = self._conn.cursor()
+        for r in results:
+            cursor.execute(
+                "INSERT INTO meta.dq_result (run_id, rule_code, status, rows_affected, detail) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (self.run_id, r.rule_code, r.status, r.rows_affected, r.detail),
+            )
 
     def mark_failed(self) -> None:
         """Record a handled failure (e.g. a blocking DQ rule) without raising."""

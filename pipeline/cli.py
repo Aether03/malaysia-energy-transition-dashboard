@@ -70,7 +70,25 @@ def _cmd_run(args: argparse.Namespace) -> int:
             log.info("Dry run %d: no data touched", run.run_id)
             return 0
         _extract_and_load(run, refresh=args.refresh)
+        if not _transform(run):
+            return 1
     return 0
+
+
+def _transform(run) -> bool:
+    from pipeline.transform import transform_and_check
+
+    committed = transform_and_check(run)
+    if not committed:
+        run.mark_failed()
+    return committed
+
+
+def _cmd_transform(_: argparse.Namespace) -> int:
+    from pipeline.meta import RunLog
+
+    with RunLog() as run:
+        return 0 if _transform(run) else 1
 
 
 def _cmd_extract_load(args: argparse.Namespace) -> int:
@@ -103,8 +121,9 @@ def build_parser() -> argparse.ArgumentParser:
     extract_parser = sub.add_parser("extract-load", help="download sources and merge them into raw.*")
     extract_parser.add_argument("--refresh", action="store_true", help="re-download even if today's file exists")
     extract_parser.set_defaults(func=_cmd_extract_load)
-    sub.add_parser("transform", help="rebuild dw.* from stg").set_defaults(func=_not_yet("step 6"))
-    sub.add_parser("check", help="run data-quality rules").set_defaults(func=_not_yet("step 7"))
+    sub.add_parser("transform", help="rebuild dw.* from stg, gated by data-quality rules").set_defaults(
+        func=_cmd_transform
+    )
     run_parser = sub.add_parser("run", help="extract, load, transform and check")
     run_parser.add_argument("--dry-run", action="store_true", help="log a run without touching data")
     run_parser.add_argument("--refresh", action="store_true", help="re-download even if today's file exists")
