@@ -14,7 +14,10 @@ SELECT
     d.source_key,
     SUM(s.generation_twh),
     SUM(s.share_of_generation_pct),
-    SUM(s.capacity_gw),       -- NULL when no capacity is reported for any member source
+    -- Unknown if any member source generated power without reporting capacity; otherwise a
+    -- zero-capacity sibling (e.g. Nuclear = 0 beside Other fossil = NULL) would mask the gap.
+    CASE WHEN SUM(CASE WHEN s.generation_twh > 0 AND s.capacity_gw IS NULL THEN 1 ELSE 0 END) > 0
+         THEN NULL ELSE SUM(s.capacity_gw) END,
     SUM(s.emissions_mtco2e)
 FROM stg.ember_yearly AS s
 JOIN dw.dim_source AS d ON d.source_code = s.source_code

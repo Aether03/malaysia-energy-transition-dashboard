@@ -24,6 +24,9 @@ def evaluate(cursor) -> list[DqResult]:
         "SELECT rule_code, severity, check_sql FROM meta.dq_rule WHERE is_active = 1 ORDER BY rule_code"
     )
     rules = cursor.fetchall()
+    # Fail closed: no blocking rules must never read as "all rules passed" (transform review, finding 3).
+    if not any(severity == "BLOCKING" for _, severity, _ in rules):
+        raise RuntimeError("No active BLOCKING data-quality rules found; run `python -m pipeline seed`")
     results = []
     for rule_code, severity, check_sql in rules:
         cursor.execute(check_sql)

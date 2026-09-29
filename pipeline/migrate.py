@@ -81,8 +81,25 @@ def discover(migrations_dir: Path, views_dir: Path) -> list[Script]:
     return versioned + repeatable
 
 
+def _ensure_read_committed_snapshot() -> None:
+    """Readers (Power BI, mart queries) never wait on a rebuild (transform review, finding 4).
+
+    ALTER DATABASE can't run inside a user transaction, so this uses its own autocommit connection.
+    """
+    conn = db.connect(autocommit=True)
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT is_read_committed_snapshot_on FROM sys.databases WHERE name = DB_NAME()")
+        if not cursor.fetchone()[0]:
+            log.info("Enabling READ_COMMITTED_SNAPSHOT")
+            cursor.execute("ALTER DATABASE CURRENT SET READ_COMMITTED_SNAPSHOT ON WITH ROLLBACK IMMEDIATE")
+    finally:
+        conn.close()
+
+
 def migrate() -> list[str]:
     """Apply pending scripts; returns the names applied."""
+    _ensure_read_committed_snapshot()
     applied: list[str] = []
     conn = db.connect()
     try:

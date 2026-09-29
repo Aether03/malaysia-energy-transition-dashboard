@@ -1,6 +1,5 @@
--- 010: upsert dw.dim_year from staged years. Runs and COMMITS before the fact
--- rebuild, so fact inserts never wait on it (database review, finding 2).
--- Years are never deleted: facts reference them.
+-- 010: upsert dw.dim_year from staged years, first in the rebuild transaction, so a DQ
+-- rollback reverts it together with the facts. Years are never deleted: facts reference them.
 -- is_complete: before the current calendar year and present for the focus country.
 
 MERGE dw.dim_year AS t
