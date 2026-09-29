@@ -14,7 +14,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 ## 2. Delivery milestones
 | # | Milestone | Scope (FR ids) | Depends on | Status |
 |---|---|---|---|---|
-| **M0** | Environment, repo and consent request | T1, NFR-05; the GSO decision | — | in-progress: 0.1, 0.2, 0.3, 0.6 done (SQL Server 17.0.1000.7 Std Dev, SSMS 22.10, sqlcmd verified); 0.4 drafted, not sent; 0.5 pending |
+| **M0** | Environment, repo and consent request | T1, NFR-05; the GSO decision | — | in-progress: 0.1, 0.2, 0.3, 0.6 done (SQL Server 17.0.1000.7 Std Dev, SSMS 22.10, sqlcmd verified); 0.4 done (sent 2026-09-30); 0.5 pending (gh 2.101.0 installed, awaiting `gh auth login`) |
 | **M1** | **Vertical slice**: Ember → SQL Server → P1 Overview (thin) | FR-01, 02, 03 (3 rules), 04, 05, 06 (partial) | M0 | pending |
 | **M2** | Malaysia and ASEAN analysis | FR-06, 07, 08, 09, 10, 11, 12, 15; D1, T1, T2 | M1 | pending |
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | pending |

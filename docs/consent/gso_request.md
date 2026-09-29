@@ -2,7 +2,7 @@
 
 **To:** admin@gso.org.my (contact address listed on gso.org.my; confirm before sending)
 **Subject:** Request for written consent: use of GSO System Demand data in a non-commercial portfolio project
-**Status:** Draft, awaiting Amirul's approval to send (2026-09-30)
+**Status:** SENT 2026-09-30 from amirulaqmalazhar@gmail.com (Gmail message 1a0eee52ac5e11ef). D4 consent_status = REQUESTED. Awaiting reply.
 
 ---
 
