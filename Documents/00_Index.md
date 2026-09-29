@@ -79,10 +79,16 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Ember extract/load: 5,070 rows, idempotent.
     - Transforms (2,192 + 328 facts) and the DQ gate. The injection test proved rollback.
     - Database review of the migrations: no critical or high findings; medium fixes are in V007.
-  - **Next:**
-    - Re-run the database review of the transforms (the first attempt died on a usage limit).
-    - Step 10: reconciliation SQL plus an independent recheck.
-    - Steps 8–9: Power BI. Needs Amirul: Desktop → Save as → Power BI project, at `report/EnergyTransition.pbip`.
+  - **Also done, pushed at `4a4bab4`:**
+    - Step 10 reconciliation: 5/5 within 0.005%, plus an independent pandas recheck within 0.001% (`docs/reconciliation.md`).
+    - Transform review: 1 HIGH finding (RE capacity share under partial reporting), fixed. Malaysia unchanged.
+    - RCSI on; DQ fails closed; 7 rules, 4 of them WARN.
+  - **Next:** steps 8–9, Power BI. Needs Amirul: Desktop → Save as → Power BI project, at `report/EnergyTransition.pbip`. Then Claude writes the TMDL, relationships, measures and theme.
+  - **Low findings from the transform review (M5):**
+    - The negative-generation rule has no tolerance.
+    - YEAR() is UTC, not local time.
+    - A source with capacity but NULL generation is dropped.
+    - Concurrent-run guard (`sp_getapplock`).
   - **Backlog from the review (M5):** exercise the roles with `CREATE USER … WITHOUT LOGIN` tests; an `sp_getapplock` guard on migrations; a check for out-of-order versions; DENY on `meta.schema_version` for `role_pipeline`; constraint-naming consistency.
 
 ## Fixes & improvements backlog
