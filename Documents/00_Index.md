@@ -67,7 +67,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - GSO consent email saved as a Gmail **draft** to admin@gso.org.my.
     - Task 0.6: Deep = Opus 5.5, with Fable 5.1 as the escalation rung.
   - **Pending:**
-    - sqlcmd and SSMS 22 installs (waiting on UAC).
+    - ~~sqlcmd and SSMS 22 installs~~ done: SSMS 22.10.12217.157; `sqlcmd -S localhost -E` verified.
     - Sending the GSO email (awaiting Amirul's yes).
     - GitHub repo (the `gh` CLI isn't installed and needs Amirul's login).
 
