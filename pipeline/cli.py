@@ -32,6 +32,36 @@ def _cmd_db_migrate(_: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_seed(_: argparse.Namespace) -> int:
+    from pipeline.seeds import seed_all
+
+    log.info("Seeded: %s", seed_all())
+    return 0
+
+
+def _extract_and_load(run, refresh: bool) -> None:
+    """Ember D1: download (or reuse today's file), then MERGE into raw in one transaction."""
+    from pipeline import db
+    from pipeline.sources import ember
+
+    with run.step("EXTRACT", "D1") as step:
+        path, version = ember.download(refresh=refresh)
+        step.source_version = version[:100]
+    with run.step("LOAD", "D1") as step:
+        records = ember.to_raw_records(ember.filter_asean(ember.read_csv(path)))
+        step.rows_in = len(records)
+        step.source_version = version[:100]
+        conn = db.connect()
+        try:
+            step.rows_merged = ember.load(conn, records, run.run_id, str(path.relative_to(config.ROOT)))
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     from pipeline.meta import RunLog
 
@@ -39,9 +69,16 @@ def _cmd_run(args: argparse.Namespace) -> int:
         if args.dry_run:
             log.info("Dry run %d: no data touched", run.run_id)
             return 0
-        log.error("Full run not implemented yet (M1 steps 5-7)")
-        run.mark_failed()
-        return 2
+        _extract_and_load(run, refresh=args.refresh)
+    return 0
+
+
+def _cmd_extract_load(args: argparse.Namespace) -> int:
+    from pipeline.meta import RunLog
+
+    with RunLog() as run:
+        _extract_and_load(run, refresh=getattr(args, "refresh", False))
+    return 0
 
 
 def _not_yet(step: str):
@@ -62,11 +99,10 @@ def build_parser() -> argparse.ArgumentParser:
         func=_cmd_db_migrate
     )
 
-    sub.add_parser("seed", help="load seed/*.csv into ref and fixed dimensions").set_defaults(
-        func=_not_yet("step 3")
-    )
-    sub.add_parser("extract", help="download sources to data/raw").set_defaults(func=_not_yet("step 5"))
-    sub.add_parser("load", help="merge landing files into raw.*").set_defaults(func=_not_yet("step 5"))
+    sub.add_parser("seed", help="load seed/*.csv into ref and fixed dimensions").set_defaults(func=_cmd_seed)
+    extract_parser = sub.add_parser("extract-load", help="download sources and merge them into raw.*")
+    extract_parser.add_argument("--refresh", action="store_true", help="re-download even if today's file exists")
+    extract_parser.set_defaults(func=_cmd_extract_load)
     sub.add_parser("transform", help="rebuild dw.* from stg").set_defaults(func=_not_yet("step 6"))
     sub.add_parser("check", help="run data-quality rules").set_defaults(func=_not_yet("step 7"))
     run_parser = sub.add_parser("run", help="extract, load, transform and check")

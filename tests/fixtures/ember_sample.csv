@@ -1,0 +1,9 @@
+Area,ISO 3 code,Year,Area type,Electricity source,Is aggregated source,Generation (TWh),Generation YoY change (TWh),Generation YoY change (%),Share of generation (%),Share of generation YoY change (% points),Capacity (GW),Emissions (MtCO2e),Emissions YoY change (MtCO2e),Emissions YoY change (%),Share of emissions (%),Emissions intensity (gCO2e/kWh),Continent,Ember region,EU member,OECD member,G20 member,G7 member,ASEAN member
+Malaysia,MYS,2024,Country,Coal,False,89.505,,,45.0,,13.5,45.0,,,32.0,,Asia,Asia,False,False,False,False,True
+Malaysia,MYS,2024,Country,Net imports,False,-1.1,,,,,,,,,,,Asia,Asia,False,False,False,False,True
+Malaysia,MYS,2024,Country,Total generation,True,211.167,,,100.0,,,140.0,,,100.0,604.327,Asia,Asia,False,False,False,False,True
+Viet Nam,VNM,2024,Country,Solar,False,28.1,,,12.5,,,,,,,,Asia,Asia,False,False,False,False,True
+ASEAN,,2024,Region,Coal,False,726.461,,,40.0,,,500.0,,,,,Asia,Asia,False,False,False,False,False
+Germany,DEU,2024,Country,Coal,False,71.0,,,35.0,,,50.0,,,25.0,,Europe,Europe,True,True,True,True,False
+Japan,JPN,2024,Country,Gas,False,300.0,,,50.0,,,150.0,,,40.0,,Asia,Asia,False,True,True,False,False
+The Philippines,PHL,2024,Country,Other renewables,False,10.9,,,5.0,,,,,,,,Asia,Asia,False,False,False,False,True
