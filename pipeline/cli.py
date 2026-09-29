@@ -32,6 +32,18 @@ def _cmd_db_migrate(_: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_run(args: argparse.Namespace) -> int:
+    from pipeline.meta import RunLog
+
+    with RunLog(dry_run=args.dry_run) as run:
+        if args.dry_run:
+            log.info("Dry run %d: no data touched", run.run_id)
+            return 0
+        log.error("Full run not implemented yet (M1 steps 5-7)")
+        run.mark_failed()
+        return 2
+
+
 def _not_yet(step: str):
     def handler(_: argparse.Namespace) -> int:
         log.error("Not implemented yet (M1 %s)", step)
@@ -60,7 +72,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_parser = sub.add_parser("run", help="extract, load, transform and check")
     run_parser.add_argument("--dry-run", action="store_true", help="log a run without touching data")
     run_parser.add_argument("--refresh", action="store_true", help="re-download even if today's file exists")
-    run_parser.set_defaults(func=_not_yet("step 4"))
+    run_parser.set_defaults(func=_cmd_run)
     return parser
 
 
