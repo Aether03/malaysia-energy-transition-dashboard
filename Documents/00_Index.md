@@ -71,6 +71,20 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - ~~Sending the GSO email~~ sent 2026-09-30 to admin@gso.org.my; awaiting reply (D4 = REQUESTED).
     - ~~GitHub repo~~ done: private repo https://github.com/Aether03/malaysia-energy-transition-dashboard, main pushed. **M0 COMPLETE 2026-09-30. Next: `/plan` M1 (Deep), then build.**
 
+- **M1 progress (2026-09-30; step plan: `Documents/plans/M1_plan.md`):**
+  - **Done, pushed at `1f8f3f5`:** steps 1–7.
+    - Migration runner and V001–V007.
+    - Seeds and views (Sonnet subagent).
+    - Run log.
+    - Ember extract/load: 5,070 rows, idempotent.
+    - Transforms (2,192 + 328 facts) and the DQ gate. The injection test proved rollback.
+    - Database review of the migrations: no critical or high findings; medium fixes are in V007.
+  - **Next:**
+    - Re-run the database review of the transforms (the first attempt died on a usage limit).
+    - Step 10: reconciliation SQL plus an independent recheck.
+    - Steps 8–9: Power BI. Needs Amirul: Desktop → Save as → Power BI project, at `report/EnergyTransition.pbip`.
+  - **Backlog from the review (M5):** exercise the roles with `CREATE USER … WITHOUT LOGIN` tests; an `sp_getapplock` guard on migrations; a check for out-of-order versions; DENY on `meta.schema_version` for `role_pipeline`; constraint-naming consistency.
+
 ## Fixes & improvements backlog
 | # | Item | Found in | Priority | Scheduled in |
 |---|---|---|---|---|
