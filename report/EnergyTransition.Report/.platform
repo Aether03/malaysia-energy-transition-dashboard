@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "EnergyTransition"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d423e603-02ba-4863-9613-36ba3fdb02e3"
+  }
+}

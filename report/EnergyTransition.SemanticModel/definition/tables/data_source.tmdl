@@ -1,0 +1,45 @@
+table data_source
+
+	column data_source_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: data_source_code
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+
+	column licence
+		dataType: string
+		summarizeBy: none
+		sourceColumn: licence
+
+	column url
+		dataType: string
+		summarizeBy: none
+		sourceColumn: url
+
+	column credit_text
+		dataType: string
+		summarizeBy: none
+		sourceColumn: credit_text
+
+	column consent_status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: consent_status
+
+	column is_publishable
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_publishable
+
+	partition data_source = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    data_source = Source{[Schema="mart",Item="data_source"]}[Data]
+				in
+				    data_source

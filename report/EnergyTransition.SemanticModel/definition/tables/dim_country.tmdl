@@ -1,0 +1,53 @@
+table dim_country
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: country_key
+
+	column iso3
+		dataType: string
+		summarizeBy: none
+		sourceColumn: iso3
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+
+	column area_type
+		dataType: string
+		summarizeBy: none
+		sourceColumn: area_type
+
+	column is_asean
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_asean
+
+	column is_focus
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_focus
+
+	column is_default_peer
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_default_peer
+
+	column display_order
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: display_order
+
+	partition dim_country = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    dim_country = Source{[Schema="mart",Item="dim_country"]}[Data]
+				in
+				    dim_country

@@ -26,3 +26,6 @@ report/**/.pbi/cache.abf
 Thumbs.db
 .DS_Store
 .vscode/
+
+# Power BI binary (the PBIP project is the source of truth)
+*.pbix

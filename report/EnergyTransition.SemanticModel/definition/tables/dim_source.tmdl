@@ -1,0 +1,44 @@
+table dim_source
+
+	column source_key
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: source_key
+
+	column source_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_code
+
+	column display_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: display_name
+		sortByColumn: sort_order
+
+	column group_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: group_name
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: sort_order
+
+	column color_hex
+		dataType: string
+		summarizeBy: none
+		sourceColumn: color_hex
+
+	partition dim_source = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    dim_source = Source{[Schema="mart",Item="dim_source"]}[Data]
+				in
+				    dim_source

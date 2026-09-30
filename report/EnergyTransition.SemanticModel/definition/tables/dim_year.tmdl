@@ -1,0 +1,27 @@
+table dim_year
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column is_complete
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_complete
+
+	column decade
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: decade
+
+	partition dim_year = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    dim_year = Source{[Schema="mart",Item="dim_year"]}[Data]
+				in
+				    dim_year

@@ -1,0 +1,27 @@
+table netr_target
+
+	column target_year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: target_year
+
+	column re_capacity_share_pct
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: re_capacity_share_pct
+
+	column source_url
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_url
+
+	partition netr_target = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    netr_target = Source{[Schema="mart",Item="netr_target"]}[Data]
+				in
+				    netr_target

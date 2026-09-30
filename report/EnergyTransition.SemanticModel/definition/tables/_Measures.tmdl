@@ -1,0 +1,212 @@
+/// All report measures (doc 04 §3.5 polarity: RE share up = good; fossil share and carbon intensity down = good).
+/// Overview KPIs always describe the focus country (Malaysia) in the selected year,
+/// defaulting to the latest complete year (doc 03 P1).
+table _Measures
+
+	measure 'Latest Complete Year' = CALCULATE ( MAX ( dim_year[year] ), REMOVEFILTERS ( dim_year ), dim_year[is_complete] = TRUE () )
+		formatString: 0
+		displayFolder: Context
+
+	measure 'Selected Year' =
+			VAR sel = SELECTEDVALUE ( dim_year[year] )
+			RETURN IF ( ISBLANK ( sel ), [Latest Complete Year], sel )
+		formatString: 0
+		displayFolder: Context
+
+	measure 'Data As Of' = "Data as of " & FORMAT ( MAX ( run_latest[finished_at] ), "d mmm yyyy" )
+		displayFolder: Context
+
+	measure 'No Data Message' = IF ( ISBLANK ( [Total Generation (TWh)] ), "No data for " & [Selected Year] )
+		displayFolder: Context
+
+	measure 'Total Generation (TWh)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[total_generation_twh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: #,0.0
+		displayFolder: Overview
+
+	measure 'Total Generation YoY (%)' =
+			VAR y = [Selected Year]
+			VAR prev =
+			    CALCULATE (
+			        SUM ( country_annual[total_generation_twh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
+			    )
+			RETURN DIVIDE ( [Total Generation (TWh)] - prev, prev )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Overview
+
+	measure 'RE Share (%)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[re_share_gen_pct] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: 0.0
+		displayFolder: Overview
+
+	measure 'RE Share YoY (pp)' =
+			VAR y = [Selected Year]
+			VAR prev =
+			    CALCULATE (
+			        SUM ( country_annual[re_share_gen_pct] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
+			    )
+			RETURN IF ( NOT ISBLANK ( prev ), [RE Share (%)] - prev )
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Overview
+
+	measure 'Fossil Share (%)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[fossil_share_gen_pct] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: 0.0
+		displayFolder: Overview
+
+	measure 'Fossil Share YoY (pp)' =
+			VAR y = [Selected Year]
+			VAR prev =
+			    CALCULATE (
+			        SUM ( country_annual[fossil_share_gen_pct] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
+			    )
+			RETURN IF ( NOT ISBLANK ( prev ), [Fossil Share (%)] - prev )
+		formatString: +0.0;-0.0;0.0
+		displayFolder: Overview
+
+	measure 'Carbon Intensity (gCO2e/kWh)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[emissions_intensity_gco2e_kwh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: #,0
+		displayFolder: Overview
+
+	measure 'Carbon Intensity YoY (%)' =
+			VAR y = [Selected Year]
+			VAR prev =
+			    CALCULATE (
+			        SUM ( country_annual[emissions_intensity_gco2e_kwh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
+			    )
+			RETURN DIVIDE ( [Carbon Intensity (gCO2e/kWh)] - prev, prev )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Overview
+
+	/// Delta labels: arrow + value; colour measures apply the KPI polarity (doc 04 §3.5).
+	measure 'Total Generation Delta Label' =
+			VAR d = [Total Generation YoY (%)]
+			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
+		displayFolder: Overview\Deltas
+
+	measure 'RE Share Delta Label' =
+			VAR d = [RE Share YoY (pp)]
+			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0" ) & " pp vs " & ( [Selected Year] - 1 ) )
+		displayFolder: Overview\Deltas
+
+	measure 'Fossil Share Delta Label' =
+			VAR d = [Fossil Share YoY (pp)]
+			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0" ) & " pp vs " & ( [Selected Year] - 1 ) )
+		displayFolder: Overview\Deltas
+
+	measure 'Carbon Intensity Delta Label' =
+			VAR d = [Carbon Intensity YoY (%)]
+			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
+		displayFolder: Overview\Deltas
+
+	measure 'RE Share Delta Color' =
+			VAR d = [RE Share YoY (pp)]
+			RETURN IF ( ISBLANK ( d ), "#52514e", IF ( d >= 0, "#087a08", "#d03b3b" ) )
+		displayFolder: Overview\Deltas
+
+	measure 'Fossil Share Delta Color' =
+			VAR d = [Fossil Share YoY (pp)]
+			RETURN IF ( ISBLANK ( d ), "#52514e", IF ( d <= 0, "#087a08", "#d03b3b" ) )
+		displayFolder: Overview\Deltas
+
+	measure 'Carbon Intensity Delta Color' =
+			VAR d = [Carbon Intensity YoY (%)]
+			RETURN IF ( ISBLANK ( d ), "#52514e", IF ( d <= 0, "#087a08", "#d03b3b" ) )
+		displayFolder: Overview\Deltas
+
+	/// NETR: renewable share of installed capacity vs the next target on or after the selected year.
+	/// Large hydro counted as renewable (assumption; verified against the NETR text in M2).
+	measure 'RE Capacity Share (%)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[re_share_capacity_pct] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: 0.0
+		displayFolder: NETR
+
+	measure 'NETR Target Year' =
+			VAR y = [Selected Year]
+			RETURN CALCULATE ( MIN ( netr_target[target_year] ), netr_target[target_year] >= y )
+		formatString: 0
+		displayFolder: NETR
+
+	measure 'NETR Target (%)' =
+			VAR ty = [NETR Target Year]
+			RETURN CALCULATE ( MAX ( netr_target[re_capacity_share_pct] ), netr_target[target_year] = ty )
+		formatString: 0.0
+		displayFolder: NETR
+
+	measure 'NETR Gap (pp)' = [RE Capacity Share (%)] - [NETR Target (%)]
+		formatString: +0.0;-0.0;0.0
+		displayFolder: NETR
+
+	measure 'NETR Progress Label' =
+			FORMAT ( [RE Capacity Share (%)], "0.0" ) & "% of installed capacity is renewable vs the "
+			    & FORMAT ( [NETR Target (%)], "0" ) & "% NETR target for " & [NETR Target Year]
+		displayFolder: NETR
+
+	/// Trend visuals: focus country across all years on the axis (not limited by the year slicer).
+	measure 'Focus Generation (TWh)' =
+			CALCULATE ( SUM ( generation_annual[generation_twh] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
+		formatString: #,0.0
+		displayFolder: Trends
+
+	measure 'Focus RE Capacity Share (%)' =
+			CALCULATE ( SUM ( country_annual[re_share_capacity_pct] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
+		formatString: 0.0
+		displayFolder: Trends
+
+	/// Takeaway title for P1 (doc 04 principle 2).
+	measure 'Overview Title' =
+			"Renewables supplied " & FORMAT ( [RE Share (%)], "0.0" ) & "% of Malaysia's electricity in "
+			    & [Selected Year] & "; fossil fuels still " & FORMAT ( [Fossil Share (%)], "0.0" ) & "%"
+		displayFolder: Context
+
+	column Value
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Value]
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW ( "Value", 0 )
+

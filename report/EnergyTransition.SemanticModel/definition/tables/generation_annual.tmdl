@@ -1,0 +1,54 @@
+table generation_annual
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: country_key
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column source_key
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: source_key
+
+	column generation_twh
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: generation_twh
+
+	column share_pct
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: share_pct
+
+	column capacity_gw
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: capacity_gw
+
+	column emissions_mtco2e
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: emissions_mtco2e
+
+	partition generation_annual = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    generation_annual = Source{[Schema="mart",Item="generation_annual"]}[Data]
+				in
+				    generation_annual

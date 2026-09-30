@@ -1,0 +1,83 @@
+table country_annual
+
+	column country_key
+		dataType: int64
+		formatString: 0
+		isHidden
+		summarizeBy: none
+		sourceColumn: country_key
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column total_generation_twh
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: total_generation_twh
+
+	column demand_twh
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: demand_twh
+
+	column net_imports_twh
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: net_imports_twh
+
+	column emissions_mtco2e
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: emissions_mtco2e
+
+	column emissions_intensity_gco2e_kwh
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: emissions_intensity_gco2e_kwh
+
+	column population
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: population
+
+	column demand_per_capita_mwh
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: demand_per_capita_mwh
+
+	column re_share_gen_pct
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: re_share_gen_pct
+
+	column fossil_share_gen_pct
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: fossil_share_gen_pct
+
+	column re_share_capacity_pct
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: re_share_capacity_pct
+
+	partition country_annual = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    country_annual = Source{[Schema="mart",Item="country_annual"]}[Data]
+				in
+				    country_annual

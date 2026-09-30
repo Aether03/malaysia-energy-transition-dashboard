@@ -1,0 +1,21 @@
+/// Star schema (doc 05 §3): every dimension filters its facts, single direction, many-to-one.
+relationship 6f1b2c3d-0001-4a1e-9b01-000000000001
+	fromColumn: generation_annual.country_key
+	toColumn: dim_country.country_key
+
+relationship 6f1b2c3d-0002-4a1e-9b01-000000000002
+	fromColumn: generation_annual.year
+	toColumn: dim_year.year
+
+relationship 6f1b2c3d-0003-4a1e-9b01-000000000003
+	fromColumn: generation_annual.source_key
+	toColumn: dim_source.source_key
+
+relationship 6f1b2c3d-0004-4a1e-9b01-000000000004
+	fromColumn: country_annual.country_key
+	toColumn: dim_country.country_key
+
+relationship 6f1b2c3d-0005-4a1e-9b01-000000000005
+	fromColumn: country_annual.year
+	toColumn: dim_year.year
+

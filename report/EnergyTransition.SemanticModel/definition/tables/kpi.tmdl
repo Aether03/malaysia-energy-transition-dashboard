@@ -1,0 +1,46 @@
+table kpi
+
+	column kpi_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: kpi_code
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+
+	column definition
+		dataType: string
+		summarizeBy: none
+		sourceColumn: definition
+
+	column formula
+		dataType: string
+		summarizeBy: none
+		sourceColumn: formula
+
+	column unit
+		dataType: string
+		summarizeBy: none
+		sourceColumn: unit
+
+	column polarity
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: polarity
+
+	column data_source_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: data_source_code
+
+	partition kpi = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    kpi = Source{[Schema="mart",Item="kpi"]}[Data]
+				in
+				    kpi
