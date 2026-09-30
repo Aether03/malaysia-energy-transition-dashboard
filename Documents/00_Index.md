@@ -2,6 +2,8 @@
 
 **Updated:** 2026-09-30 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** planning complete (all 6 approved 2026-09-30). **Build NOT started**; it waits for Amirul's explicit go. Next: M0 (doc 06 Phase 0), after `/plan` on the Deep model
 
+> **Skill test in progress.** This project is the live test of the `plan-project` skill. Every session must append its observations on the skill (friction, cost, routing, what worked) to the memory file `~/.claude/projects/C--Users-user-Desktop-PetProject/memory/project_plan_project_first_test.md`. Evaluate and improve the skill **only after the project is complete** (Amirul, 2026-09-30).
+
 ## Project summary
 A portfolio project: an end-to-end energy analytics pipeline that ingests public electricity data, models it in SQL Server, and presents it in a Power BI report on **Malaysia's energy transition, benchmarked against ASEAN peers**. It is built to support Amirul's job search. The primary audience is energy data/ML engineer roles, then power utility/grid engineer roles, then data/BI analyst roles. Hard constraints: free tools only, runs on his Windows 11 PC, public and openly licensed data, and a showcase that works without a Power BI Service account.
 
