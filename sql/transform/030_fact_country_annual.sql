@@ -36,7 +36,7 @@ mix AS (
         SUM(CASE WHEN f.generation_twh > 0
                   AND (f.capacity_gw IS NULL
                        OR (d.group_name = 'RENEWABLE' AND 1000 * f.generation_twh > f.capacity_gw * y.hours_in_year))
-                 THEN 1 ELSE 0 END)                                                              AS re_cap_missing
+                 THEN 1 ELSE 0 END)                                                              AS re_cap_unreliable
     FROM dw.fact_generation_annual AS f
     JOIN dw.dim_source AS d ON d.source_key = f.source_key
     JOIN dw.dim_year AS y ON y.year = f.year
@@ -60,7 +60,7 @@ SELECT
     CAST(100 * COALESCE(m.gen_fossil, 0) / NULLIF(m.gen_all, 0) AS DECIMAL(7, 3)),
     -- Denominator is Ember's own total capacity, not the sum of whatever sources report
     -- capacity (review finding 1: Viet Nam 2025 came out at 100%). Unknown stays NULL.
-    CASE WHEN m.re_cap_missing = 0
+    CASE WHEN m.re_cap_unreliable = 0
          THEN CAST(100 * m.cap_re / NULLIF(t.total_capacity_gw, 0) AS DECIMAL(7, 3)) END
 FROM totals AS t
 LEFT JOIN mix AS m ON m.country_key = t.country_key AND m.year = t.year

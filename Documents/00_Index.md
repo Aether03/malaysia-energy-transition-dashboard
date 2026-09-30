@@ -95,7 +95,10 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Step 2 (V008, the `_common` refactor, OWID, population and per capita; MY 2025 = 5.8144 MWh) is **done** and idempotent.
     - New WARN rules: OWID ±5% (MY 2023–24, as predicted); CF_AT_MOST_1, which found Ember's zero geothermal capacity, so `030` now nulls implausible RE capacity (MY unaffected).
     - **Known issue:** the PC runs out of RAM (270 MB free with Power BI Desktop open), so SQL Server stalls and the transform takes about 1–2 min instead of about 1 s. Close Desktop and Discord before a pipeline run; `min server memory` is proposed to Amirul.
-    - **Resume:** step 3 (DOSM, Haiku), then a database review of the V008/030/stg/DQ changes.
+    - Step 3 (DOSM D3) **done** (`6156d81`). The DOSM WARN fires for 2022–23 only; the gap grows from 4% to 14%. Known WARNs are registered in `docs/reconciliation.md`.
+    - The database review of the M2 changes found **0 CRITICAL, 0 HIGH**. Its 3 MEDIUM findings (NULLIF-safe rule division, NULL cases that passed silently, the OWID staging row check) and 3 LOW ones are fixed in V009 and the seeds.
+    - SQL `min server memory` is set to 1024 MB (Amirul approved it, 2026-09-30). Transform plus checks is back to about 1 s.
+    - **Resume:** step 4 (the SQL showcase, Deep).
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.
