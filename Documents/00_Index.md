@@ -57,6 +57,11 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
 - Post-v1 public web showcase (Streamlit recommended) for the portfolio website — source: doc 01 review
 - In scope: hourly GSO demand, regional (Peninsular/Sabah/Sarawak) and state grid reliability (SAIFI/SAIDI) — source: doc 01 review
 - Data sources D1–D6 (Ember, OWID, DOSM, GSO, Energy Commission handbook, NETR), all credited — source: doc 01 §6
+- **RE capacity targets (M2 step 1, 2026-09-30).**
+  - Large hydro **is** included (ASEAN definition; off-grid too).
+  - 31% (2025) and 40% (2035) are cited to the 12MP/SEDA MyRER (2021); only 70% (2050) is cited to NETR. Visual name: "National RE capacity targets".
+  - P1/P2 show **both** "RE share of capacity (Ember basis)", which is 24.4% for 2025, and the official Energy Commission point, 32% for 2025, as a separate cited marker, with a footnote on the definition gap.
+  - Source: user, 2026-09-30.
 - GSO data: request TNB written consent NOW (Claude drafts the email, Amirul sends it); build the forecast and grid-load page on open hourly data (Thailand Zenodo CC BY default); GSO adapter off until consent — source: user, 2026-09-30
 
 - **M0 progress (2026-09-30):**
@@ -86,7 +91,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Transform review: 1 HIGH finding (RE capacity share under partial reporting), fixed. Malaysia unchanged.
     - RCSI on; DQ fails closed; 7 rules, 4 of them WARN.
   - **M1 COMPLETE 2026-09-30.** PBIP model (10 generated tables, 27 measures, theme) and P1 Overview (15 visuals from `tools/build_overview_page.py`) verified in Desktop. Empty-DB rebuild passed.
-  - **M2 (2026-09-30):** step plan `Documents/plans/M2_plan.md` **approved 2026-09-30** (Q1–Q6 accepted: P5 metric toggle for FR-09; Ember demand ÷ UN/OWID population, with the DOSM value in a footnote; nav-rail frame; country-in-context measures; ADOMD twin check; a CAPACITY_WITHOUT_GENERATION WARN rule + V008 naming). **Resume:** step 1 (the NETR hydro research).
+  - **M2 (2026-09-30):** step plan `Documents/plans/M2_plan.md` **approved 2026-09-30** (Q1–Q6 accepted: P5 metric toggle for FR-09; Ember demand ÷ UN/OWID population, with the DOSM value in a footnote; nav-rail frame; country-in-context measures; ADOMD twin check; a CAPACITY_WITHOUT_GENERATION WARN rule + V008 naming). Step 1 (NETR research) **done**, with its outcome and decision in the plan. **Resume:** step 2 (V008 + the `_common` refactor + OWID; the fixture test first, as a Haiku brief).
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.

@@ -87,7 +87,7 @@ M2 turns the one-page slice into the headline story:
 ## Files to change
 | File | Action | Why |
 |---|---|---|
-| `sql/migrations/V008__owid_dosm_raw.sql` | CREATE | `raw.owid_energy`, `raw.dosm_electricity` (doc 05 §2.1); `dw.dim_year.hours_in_year` (8,760 or 8,784) |
+| `sql/migrations/V008__owid_dosm_raw.sql` | CREATE | `raw.owid_energy`, `raw.dosm_electricity` (doc 05 §2.1); `dw.dim_year.hours_in_year` (8,760 or 8,784); `ref.netr_target.source_name`; `ref.re_capacity_official` (step 1 decision) |
 | `pipeline/sources/_common.py` | CREATE | Shared `download()` and `merge_into()`, lifted out of `ember.py` so that OWID and DOSM don't copy them a third time |
 | `pipeline/sources/ember.py` | UPDATE | Use `_common` (behaviour unchanged; `test_ember.py` must stay green) |
 | `pipeline/sources/owid.py`, `pipeline/sources/dosm.py` | CREATE | Tasks 2.1 and 2.7 |
@@ -130,6 +130,30 @@ Model tiers per doc 06 §4: **D** = Opus 5.5 (this session) · **S** = Sonnet 5.
 **Batching:** steps 2's fixture test and 3 are Haiku briefs. Steps 9–10 run in **one** Sonnet agent (continued with SendMessage, so it keeps the frame context), and step 8 goes in the same brief. Step 11's builders are one Haiku brief. Everything else runs here on Opus.
 
 **GUI rounds for you (each one is a single reopen-and-screenshot):** step 5 (templates), step 6 (P1 frame), steps 8–9 (P1 + P2), step 10 (P5), step 11 (D1, tooltips, bookmarks), step 13 (J2). That makes about 6 rounds, each with exact click steps.
+
+## Step 1 outcome: NETR and hydro (researched 2026-09-30)
+| Claim | Verdict | Evidence |
+|---|---|---|
+| The RE capacity targets count **large hydro** | **True** | The 31% (2025) target in the Peninsular GDP (Mar 2021), the 12th Malaysia Plan (Jul 2021) and MyRER (Dec 2021) uses the ASEAN harmonised RE definition, which counts **large hydro and off-grid** (Demmel, *Malaysia's RE Target Jungle*, ASB Working Paper 01/2025, pp. 19–21). The NETR briefing's "Renewables" footnote "includes bioenergy, solar, hydropower and hydrogen" (Ministry of Economy NETR briefing, 26 Jun 2024, p. 22). **The M1 assumption stands.** |
+| 31% / 40% / 70% are all **NETR** targets | **False (misattributed)** | 31% (2025) and 40% (2035) come from the **12MP / MyRER (2021)** ([SEDA MyRER](https://www.seda.gov.my/reportal/myrer/)). **NETR (2023) sets 70% by 2050** (MOE briefing p. 22: "RE share of installed capacity 70%"). NETR itself projected 27% for 2025 (ASB p. 22, citing NETR p. 33). Demmel notes that MIDA "wrongly linked" NETR to 31%. The MOE's 2024 briefing (p. 24) also pairs "31% RE" with 2030, which is inconsistent with the 2021 plans |
+| Scope | **National, including Sarawak** (MyRER lists Sarawak's resources); **includes off-grid** (ASEAN definition) | ASB pp. 18, 21; MyRER page |
+| Is Malaysia on track? | **Officially yes: 32% reported for 2025** | The Energy Commission, via [Asian Power, 26 Feb 2026](https://www.renewableenergyasia.org/2026/02/malaysia-exceeds-2025-renewable-target.html); [IEA-PVPS](https://iea-pvps.org/about-iea-pvps/members/malaysia/): "achieved interim capacity target of 31%… dominated by hydro and PV" |
+| **Our Ember basis** | **24.4% for 2025** (10.27 of 42.03 GW) | Ember counts grid capacity: solar 3.07 GW vs roughly 5.1 GW in official estimates, and no off-grid bioenergy. **The gap between the two definitions is 7.6 pp, so P1's "24.4 vs 31" wrongly implies Malaysia missed its target** |
+
+**Decided (Amirul, 2026-09-30):**
+- **Both, clearly labelled.**
+  - Our series is renamed "RE share of capacity (Ember basis)".
+  - A new seed `ref.re_capacity_official` (year, pct, source, URL; first row 2025 = 32%, Energy Commission) is shown as a separate cited marker.
+  - The footnote explains the definition gap (grid-only vs. including off-grid and rooftop).
+- **Each target cites its own source.**
+  - `ref.netr_target` gains a `source_name` column (31 and 40 → 12MP/SEDA MyRER; 70 → NETR, Ministry of Economy).
+  - The visual is called "National RE capacity targets". Doc 01 D6 is updated.
+- **Where it lands:**
+  - V008 and the seeds: step 2.
+  - The measures: step 7.
+  - The P1 labels and marker: steps 6 and 8.
+  - The P2 line: step 9.
+  - A finding candidate for step 12: the definition gap itself.
 
 ## Definitions pinned for this milestone
 | Measure | Definition | Note |
