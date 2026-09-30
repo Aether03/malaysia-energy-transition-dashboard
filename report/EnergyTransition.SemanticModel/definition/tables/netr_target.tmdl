@@ -1,19 +1,23 @@
 table netr_target
+	lineageTag: f126753d-74fd-498c-a616-4842d282b1c6
 
 	column target_year
 		dataType: int64
 		formatString: 0
+		lineageTag: 5f132cb2-c3e1-4161-84d0-183e9dd88031
 		summarizeBy: none
 		sourceColumn: target_year
 
 	column re_capacity_share_pct
 		dataType: double
 		formatString: 0.00
+		lineageTag: e5006b43-7636-4768-b071-cbdb3ce5818f
 		summarizeBy: none
 		sourceColumn: re_capacity_share_pct
 
 	column source_url
 		dataType: string
+		lineageTag: 4f792446-2161-4b56-941d-d78bc29d298c
 		summarizeBy: none
 		sourceColumn: source_url
 
@@ -25,3 +29,4 @@ table netr_target
 				    netr_target = Source{[Schema="mart",Item="netr_target"]}[Data]
 				in
 				    netr_target
+

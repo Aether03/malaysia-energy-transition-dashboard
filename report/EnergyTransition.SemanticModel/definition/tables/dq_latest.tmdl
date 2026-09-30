@@ -1,50 +1,60 @@
 table dq_latest
+	lineageTag: 3600037f-59ce-4c4f-954a-a1606e5e9a30
 
 	column run_id
 		dataType: int64
 		formatString: 0
+		lineageTag: ff0b81b2-1996-4d86-8889-e8f6088eff14
 		summarizeBy: none
 		sourceColumn: run_id
 
 	column rule_code
 		dataType: string
+		lineageTag: 9af850a1-3956-4a84-9e76-a1b603be1b35
 		summarizeBy: none
 		sourceColumn: rule_code
 
 	column description
 		dataType: string
+		lineageTag: 185cd34c-7b3e-496c-92df-2c71d64a17ed
 		summarizeBy: none
 		sourceColumn: description
 
 	column severity
 		dataType: string
+		lineageTag: 0fb47cad-186d-470a-98d5-7d2f2ce0ff2e
 		summarizeBy: none
 		sourceColumn: severity
 
 	column data_source_code
 		dataType: string
+		lineageTag: 1df8fc5c-eb86-4b4f-b656-acadfa74206c
 		summarizeBy: none
 		sourceColumn: data_source_code
 
 	column status
 		dataType: string
+		lineageTag: 52cf83b9-c526-4d23-9ca9-f1a3d6e137dc
 		summarizeBy: none
 		sourceColumn: status
 
 	column rows_affected
 		dataType: int64
 		formatString: 0
+		lineageTag: 6211e7fe-bf80-4270-ae41-553927ac2b88
 		summarizeBy: none
 		sourceColumn: rows_affected
 
 	column detail
 		dataType: string
+		lineageTag: f0ba3496-3b80-4830-bed6-f4b8fb266cb7
 		summarizeBy: none
 		sourceColumn: detail
 
 	column checked_at
 		dataType: dateTime
 		formatString: General Date
+		lineageTag: eb3e8bcf-976e-411e-8a66-0609c1540119
 		summarizeBy: none
 		sourceColumn: checked_at
 
@@ -56,3 +66,4 @@ table dq_latest
 				    dq_latest = Source{[Schema="mart",Item="dq_latest"]}[Data]
 				in
 				    dq_latest
+

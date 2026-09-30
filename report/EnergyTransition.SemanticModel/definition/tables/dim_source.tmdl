@@ -1,36 +1,43 @@
 table dim_source
+	lineageTag: 3dadceec-9d8f-45ed-aff2-6e3f483be6a7
 
 	column source_key
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: cddb08e4-d912-4635-85b3-46ba5701871f
 		summarizeBy: none
 		sourceColumn: source_key
 
 	column source_code
 		dataType: string
+		lineageTag: 114311fb-8569-4065-8c74-e77dd4aabd00
 		summarizeBy: none
 		sourceColumn: source_code
 
 	column display_name
 		dataType: string
+		lineageTag: a4d97069-a207-48f1-8c0e-dd04450e3116
 		summarizeBy: none
 		sourceColumn: display_name
 		sortByColumn: sort_order
 
 	column group_name
 		dataType: string
+		lineageTag: 66b342fd-b846-45dd-a58f-1dde5ef47a98
 		summarizeBy: none
 		sourceColumn: group_name
 
 	column sort_order
 		dataType: int64
 		formatString: 0
+		lineageTag: 20ce4bc1-c3fb-4877-8d99-f30befd212df
 		summarizeBy: none
 		sourceColumn: sort_order
 
 	column color_hex
 		dataType: string
+		lineageTag: fe1509f2-b5be-4b8e-a7db-37b7721b8dc7
 		summarizeBy: none
 		sourceColumn: color_hex
 
@@ -42,3 +49,4 @@ table dim_source
 				    dim_source = Source{[Schema="mart",Item="dim_source"]}[Data]
 				in
 				    dim_source
+

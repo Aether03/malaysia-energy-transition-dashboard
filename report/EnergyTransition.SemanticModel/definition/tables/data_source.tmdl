@@ -1,37 +1,45 @@
 table data_source
+	lineageTag: 4aa42a15-ce71-4f85-b2e3-3a172a185841
 
 	column data_source_code
 		dataType: string
+		lineageTag: 140460be-2312-444f-818b-3ae107235c11
 		summarizeBy: none
 		sourceColumn: data_source_code
 
 	column name
 		dataType: string
+		lineageTag: 81925a07-bda8-4b01-b8ee-4570a37b7b59
 		summarizeBy: none
 		sourceColumn: name
 
 	column licence
 		dataType: string
+		lineageTag: 4673ef10-6c72-4067-ac21-18ad5e2680ae
 		summarizeBy: none
 		sourceColumn: licence
 
 	column url
 		dataType: string
+		lineageTag: 56a30985-2b73-44e5-ba44-66e0d81670f2
 		summarizeBy: none
 		sourceColumn: url
 
 	column credit_text
 		dataType: string
+		lineageTag: 0bc1ed24-8a4a-4415-8d46-9de6acee9ece
 		summarizeBy: none
 		sourceColumn: credit_text
 
 	column consent_status
 		dataType: string
+		lineageTag: fe085f27-3c66-425d-b870-4d3b8bc55556
 		summarizeBy: none
 		sourceColumn: consent_status
 
 	column is_publishable
 		dataType: boolean
+		lineageTag: 7296597c-db76-4680-b18e-94088ccc643a
 		summarizeBy: none
 		sourceColumn: is_publishable
 
@@ -43,3 +51,4 @@ table data_source
 				    data_source = Source{[Schema="mart",Item="data_source"]}[Data]
 				in
 				    data_source
+

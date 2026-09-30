@@ -2,22 +2,27 @@
 /// Overview KPIs always describe the focus country (Malaysia) in the selected year,
 /// defaulting to the latest complete year (doc 03 P1).
 table _Measures
+	lineageTag: 00afea1a-df91-4cdd-a640-9b7e1a519b1d
 
 	measure 'Latest Complete Year' = CALCULATE ( MAX ( dim_year[year] ), REMOVEFILTERS ( dim_year ), dim_year[is_complete] = TRUE () )
 		formatString: 0
 		displayFolder: Context
+		lineageTag: 539485d5-5402-487f-9d41-b5b679b323df
 
 	measure 'Selected Year' =
 			VAR sel = SELECTEDVALUE ( dim_year[year] )
 			RETURN IF ( ISBLANK ( sel ), [Latest Complete Year], sel )
 		formatString: 0
 		displayFolder: Context
+		lineageTag: 3d6622a8-6fd2-450e-ac5d-d8bed3b01bb6
 
 	measure 'Data As Of' = "Data as of " & FORMAT ( MAX ( run_latest[finished_at] ), "d mmm yyyy" )
 		displayFolder: Context
+		lineageTag: 54229137-d1cb-46ea-b25a-f80fa4048e09
 
 	measure 'No Data Message' = IF ( ISBLANK ( [Total Generation (TWh)] ), "No data for " & [Selected Year] )
 		displayFolder: Context
+		lineageTag: 553f786c-e4f3-4d64-beee-02a40f6f114d
 
 	measure 'Total Generation (TWh)' =
 			VAR y = [Selected Year]
@@ -29,6 +34,7 @@ table _Measures
 			    )
 		formatString: #,0.0
 		displayFolder: Overview
+		lineageTag: 2e965663-e13d-40f7-a3ad-b53aff502a97
 
 	measure 'Total Generation YoY (%)' =
 			VAR y = [Selected Year]
@@ -41,6 +47,7 @@ table _Measures
 			RETURN DIVIDE ( [Total Generation (TWh)] - prev, prev )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Overview
+		lineageTag: 08b335d9-b3e1-4439-9eaf-44948da8de3d
 
 	measure 'RE Share (%)' =
 			VAR y = [Selected Year]
@@ -52,6 +59,7 @@ table _Measures
 			    )
 		formatString: 0.0
 		displayFolder: Overview
+		lineageTag: bb3b2553-6158-4b1a-9350-2dca5670d876
 
 	measure 'RE Share YoY (pp)' =
 			VAR y = [Selected Year]
@@ -64,6 +72,7 @@ table _Measures
 			RETURN IF ( NOT ISBLANK ( prev ), [RE Share (%)] - prev )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Overview
+		lineageTag: b8b602e7-dfc4-4e9c-9de4-3965349b0631
 
 	measure 'Fossil Share (%)' =
 			VAR y = [Selected Year]
@@ -75,6 +84,7 @@ table _Measures
 			    )
 		formatString: 0.0
 		displayFolder: Overview
+		lineageTag: ef3378a2-9298-4b02-8e01-30c142c6f4c6
 
 	measure 'Fossil Share YoY (pp)' =
 			VAR y = [Selected Year]
@@ -87,6 +97,7 @@ table _Measures
 			RETURN IF ( NOT ISBLANK ( prev ), [Fossil Share (%)] - prev )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Overview
+		lineageTag: a9a347ec-25ab-4df8-bfdd-82df3119c88d
 
 	measure 'Carbon Intensity (gCO2e/kWh)' =
 			VAR y = [Selected Year]
@@ -98,6 +109,7 @@ table _Measures
 			    )
 		formatString: #,0
 		displayFolder: Overview
+		lineageTag: d7f5f2ec-9b03-4b69-b042-d84bf14340a0
 
 	measure 'Carbon Intensity YoY (%)' =
 			VAR y = [Selected Year]
@@ -110,42 +122,50 @@ table _Measures
 			RETURN DIVIDE ( [Carbon Intensity (gCO2e/kWh)] - prev, prev )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Overview
+		lineageTag: 9611248a-481d-48ec-857d-319e3c3a0989
 
 	/// Delta labels: arrow + value; colour measures apply the KPI polarity (doc 04 §3.5).
 	measure 'Total Generation Delta Label' =
 			VAR d = [Total Generation YoY (%)]
 			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 0ea3eaa0-629f-41a8-98fc-0706a33ff383
 
 	measure 'RE Share Delta Label' =
 			VAR d = [RE Share YoY (pp)]
 			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0" ) & " pp vs " & ( [Selected Year] - 1 ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 14e0fc9c-1382-4f31-8faa-048833c13c50
 
 	measure 'Fossil Share Delta Label' =
 			VAR d = [Fossil Share YoY (pp)]
 			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0" ) & " pp vs " & ( [Selected Year] - 1 ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 3592d7d7-20dc-43ba-a3ef-3fb9be32fc2f
 
 	measure 'Carbon Intensity Delta Label' =
 			VAR d = [Carbon Intensity YoY (%)]
 			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 1c80d144-04b8-4780-beb9-71d29657553f
 
 	measure 'RE Share Delta Color' =
 			VAR d = [RE Share YoY (pp)]
 			RETURN IF ( ISBLANK ( d ), "#52514e", IF ( d >= 0, "#087a08", "#d03b3b" ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 3c82f2e1-1d22-4038-9c9f-e352fe8f6ab9
 
 	measure 'Fossil Share Delta Color' =
 			VAR d = [Fossil Share YoY (pp)]
 			RETURN IF ( ISBLANK ( d ), "#52514e", IF ( d <= 0, "#087a08", "#d03b3b" ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 678758ba-a723-4d53-8e3b-d57b4d9a4bcb
 
 	measure 'Carbon Intensity Delta Color' =
 			VAR d = [Carbon Intensity YoY (%)]
 			RETURN IF ( ISBLANK ( d ), "#52514e", IF ( d <= 0, "#087a08", "#d03b3b" ) )
 		displayFolder: Overview\Deltas
+		lineageTag: 20d0449e-ff17-4df0-a3af-b0a41283e148
 
 	/// NETR: renewable share of installed capacity vs the next target on or after the selected year.
 	/// Large hydro counted as renewable (assumption; verified against the NETR text in M2).
@@ -159,49 +179,56 @@ table _Measures
 			    )
 		formatString: 0.0
 		displayFolder: NETR
+		lineageTag: d8c751cb-0cd7-4f2e-8c5e-c00afb0a0136
 
 	measure 'NETR Target Year' =
 			VAR y = [Selected Year]
 			RETURN CALCULATE ( MIN ( netr_target[target_year] ), netr_target[target_year] >= y )
 		formatString: 0
 		displayFolder: NETR
+		lineageTag: 40da183c-aebe-4bb1-93af-60bcd973d9cb
 
 	measure 'NETR Target (%)' =
 			VAR ty = [NETR Target Year]
 			RETURN CALCULATE ( MAX ( netr_target[re_capacity_share_pct] ), netr_target[target_year] = ty )
 		formatString: 0.0
 		displayFolder: NETR
+		lineageTag: 73803917-86f1-4e31-a94b-deb002d94c74
 
 	measure 'NETR Gap (pp)' = [RE Capacity Share (%)] - [NETR Target (%)]
 		formatString: +0.0;-0.0;0.0
 		displayFolder: NETR
+		lineageTag: a401e13a-48a6-434c-8cdb-44c136c4a856
 
 	measure 'NETR Progress Label' =
 			FORMAT ( [RE Capacity Share (%)], "0.0" ) & "% of installed capacity is renewable vs the "
 			    & FORMAT ( [NETR Target (%)], "0" ) & "% NETR target for " & [NETR Target Year]
 		displayFolder: NETR
+		lineageTag: 1d6b8c14-a32e-45d9-af32-5f4be7741e3f
 
 	/// Trend visuals: focus country across all years on the axis (not limited by the year slicer).
-	measure 'Focus Generation (TWh)' =
-			CALCULATE ( SUM ( generation_annual[generation_twh] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
+	measure 'Focus Generation (TWh)' = CALCULATE ( SUM ( generation_annual[generation_twh] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
 		formatString: #,0.0
 		displayFolder: Trends
+		lineageTag: e447c2c8-4c56-42ac-9f7e-76235f4c9987
 
-	measure 'Focus RE Capacity Share (%)' =
-			CALCULATE ( SUM ( country_annual[re_share_capacity_pct] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
+	measure 'Focus RE Capacity Share (%)' = CALCULATE ( SUM ( country_annual[re_share_capacity_pct] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
 		formatString: 0.0
 		displayFolder: Trends
+		lineageTag: 8b3ac494-dc11-4dca-9635-45698468ecd3
 
 	/// Takeaway title for P1 (doc 04 principle 2).
 	measure 'Overview Title' =
 			"Renewables supplied " & FORMAT ( [RE Share (%)], "0.0" ) & "% of Malaysia's electricity in "
 			    & [Selected Year] & "; fossil fuels still " & FORMAT ( [Fossil Share (%)], "0.0" ) & "%"
 		displayFolder: Context
+		lineageTag: d86e3cf4-cb59-44b5-a404-2d52d0c2b321
 
 	column Value
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 2fd54d69-6099-47ac-905f-3d9640885ee6
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Value]

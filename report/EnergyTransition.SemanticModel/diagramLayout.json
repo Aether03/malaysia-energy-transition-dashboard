@@ -7,7 +7,140 @@
         "x": 0,
         "y": 0
       },
-      "nodes": [],
+      "nodes": [
+        {
+          "location": {
+            "x": 891.10344973912765,
+            "y": 216.89333091179662
+          },
+          "nodeIndex": "_Measures",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 657.10344973912777,
+            "y": 3.3012863494150224
+          },
+          "nodeIndex": "country_annual",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1175.1034497391277,
+            "y": 242.89333091179662
+          },
+          "nodeIndex": "data_source",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 405.74449325811543,
+            "y": 367.09985638572567
+          },
+          "nodeIndex": "dim_country",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 159.05149201825316
+          },
+          "nodeIndex": "dim_source",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 331.49527575457137,
+            "y": -50
+          },
+          "nodeIndex": "dim_year",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1459.1034497391277,
+            "y": 218.89333091179662
+          },
+          "nodeIndex": "dq_latest",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 118.28373595751179,
+            "y": 435.78666182359325
+          },
+          "nodeIndex": "generation_annual",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1743.1034497391277,
+            "y": 242.89333091179662
+          },
+          "nodeIndex": "kpi",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2027.1034497391277,
+            "y": 290.89333091179662
+          },
+          "nodeIndex": "netr_target",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2311.1034497391274,
+            "y": 278.89333091179662
+          },
+          "nodeIndex": "run_latest",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
       "name": "All tables",
       "zoomValue": 100,
       "pinKeyFieldsToTop": false,

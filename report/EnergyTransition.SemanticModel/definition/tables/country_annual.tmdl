@@ -1,75 +1,88 @@
 table country_annual
+	lineageTag: 4998943e-9cbc-4d4c-9083-23ecbcd43b79
 
 	column country_key
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: c537f545-c084-4eed-8555-1a1167d18570
 		summarizeBy: none
 		sourceColumn: country_key
 
 	column year
 		dataType: int64
 		formatString: 0
+		lineageTag: faf0eec7-4445-4438-83e8-1977d8d3109f
 		summarizeBy: none
 		sourceColumn: year
 
 	column total_generation_twh
 		dataType: double
 		formatString: 0.000
+		lineageTag: bc7088a3-754f-4ed1-99ab-987e6a53fb9e
 		summarizeBy: none
 		sourceColumn: total_generation_twh
 
 	column demand_twh
 		dataType: double
 		formatString: 0.000
+		lineageTag: 6e439733-4724-4053-945c-574ff59bdd4b
 		summarizeBy: none
 		sourceColumn: demand_twh
 
 	column net_imports_twh
 		dataType: double
 		formatString: 0.000
+		lineageTag: 9ad70ee8-d78a-45d1-b648-7ac1810737d7
 		summarizeBy: none
 		sourceColumn: net_imports_twh
 
 	column emissions_mtco2e
 		dataType: double
 		formatString: 0.000
+		lineageTag: a2197039-cc8d-4fb4-8b11-d416a51c2d5e
 		summarizeBy: none
 		sourceColumn: emissions_mtco2e
 
 	column emissions_intensity_gco2e_kwh
 		dataType: double
 		formatString: 0.000
+		lineageTag: 7dd3d066-03c5-4026-89d3-62843f94ee72
 		summarizeBy: none
 		sourceColumn: emissions_intensity_gco2e_kwh
 
 	column population
 		dataType: int64
 		formatString: 0
+		lineageTag: e2126832-b493-48a2-992e-6f581bcffc04
 		summarizeBy: none
 		sourceColumn: population
 
 	column demand_per_capita_mwh
 		dataType: double
 		formatString: 0.000
+		lineageTag: fcb87bef-ab84-48dd-8ba2-633729eeae1c
 		summarizeBy: none
 		sourceColumn: demand_per_capita_mwh
 
 	column re_share_gen_pct
 		dataType: double
 		formatString: 0.000
+		lineageTag: 40d3bf88-b740-47d1-b4c4-1aac969349f9
 		summarizeBy: none
 		sourceColumn: re_share_gen_pct
 
 	column fossil_share_gen_pct
 		dataType: double
 		formatString: 0.000
+		lineageTag: 88914a66-54ea-404f-b9d8-85fb0ccd3412
 		summarizeBy: none
 		sourceColumn: fossil_share_gen_pct
 
 	column re_share_capacity_pct
 		dataType: double
 		formatString: 0.000
+		lineageTag: 0e977d59-7858-4f07-b8eb-cb779268119a
 		summarizeBy: none
 		sourceColumn: re_share_capacity_pct
 
@@ -81,3 +94,6 @@ table country_annual
 				    country_annual = Source{[Schema="mart",Item="country_annual"]}[Data]
 				in
 				    country_annual
+
+	annotation PBI_ResultType = Table
+

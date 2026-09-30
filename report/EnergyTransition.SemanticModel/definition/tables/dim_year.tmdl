@@ -1,19 +1,23 @@
 table dim_year
+	lineageTag: a68f5d97-6d14-456c-bbc9-1568324b14ff
 
 	column year
 		dataType: int64
 		formatString: 0
+		lineageTag: f811b7e1-3aaa-4f8a-bb31-82b6f3060650
 		summarizeBy: none
 		sourceColumn: year
 
 	column is_complete
 		dataType: boolean
+		lineageTag: 2ced8517-7d7a-4625-b4f7-5946596a12ba
 		summarizeBy: none
 		sourceColumn: is_complete
 
 	column decade
 		dataType: int64
 		formatString: 0
+		lineageTag: 0ba44965-8903-43c8-b1e3-27f42777e8f8
 		summarizeBy: none
 		sourceColumn: decade
 
@@ -25,3 +29,4 @@ table dim_year
 				    dim_year = Source{[Schema="mart",Item="dim_year"]}[Data]
 				in
 				    dim_year
+

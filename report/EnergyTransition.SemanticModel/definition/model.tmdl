@@ -11,5 +11,19 @@ annotation __PBI_TimeIntelligenceEnabled = 1
 
 annotation PBI_ProTooling = ["DevMode"]
 
+annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase"]
+
+ref table country_annual
+ref table data_source
+ref table dim_country
+ref table dim_source
+ref table dim_year
+ref table dq_latest
+ref table generation_annual
+ref table kpi
+ref table netr_target
+ref table run_latest
+ref table _Measures
+
 ref cultureInfo en-US
 

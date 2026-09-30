@@ -1,10 +1,12 @@
 /// SQL Server instance holding EnergyDW (Windows authentication; no credentials stored).
 expression SqlServer = "localhost" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 61895e28-f1f0-45f6-bc9e-03c9909072a3
 
 	annotation PBI_ResultType = Text
 
 /// Database name (see .env.example).
 expression SqlDatabase = "EnergyDW" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: e4036169-935c-43e7-b339-9a78d0e5b6fc
 
 	annotation PBI_ResultType = Text
 

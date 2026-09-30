@@ -1,25 +1,30 @@
 table run_latest
+	lineageTag: a3e0de9f-5ad8-4f64-9cd8-ba570cead3e2
 
 	column run_id
 		dataType: int64
 		formatString: 0
+		lineageTag: 3cb0ed56-b73f-48be-93a2-29666d13e27f
 		summarizeBy: none
 		sourceColumn: run_id
 
 	column started_at
 		dataType: dateTime
 		formatString: General Date
+		lineageTag: a54f5a4e-4e28-4b17-a122-67844e1f0d58
 		summarizeBy: none
 		sourceColumn: started_at
 
 	column finished_at
 		dataType: dateTime
 		formatString: General Date
+		lineageTag: 6405d452-32e7-495b-8899-ed2e6558a36d
 		summarizeBy: none
 		sourceColumn: finished_at
 
 	column status
 		dataType: string
+		lineageTag: d22a83f6-a6f4-46c8-84c1-b3a3e81081fa
 		summarizeBy: none
 		sourceColumn: status
 
@@ -31,3 +36,4 @@ table run_latest
 				    run_latest = Source{[Schema="mart",Item="run_latest"]}[Data]
 				in
 				    run_latest
+

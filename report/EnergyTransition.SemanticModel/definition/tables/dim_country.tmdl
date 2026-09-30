@@ -1,45 +1,54 @@
 table dim_country
+	lineageTag: 7ae8a9ac-7f28-48ac-bcaf-48cf74fb1fcd
 
 	column country_key
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: 73047b90-8f70-4c3f-ae91-813920c79c22
 		summarizeBy: none
 		sourceColumn: country_key
 
 	column iso3
 		dataType: string
+		lineageTag: 233abdd5-bd2c-406e-88ea-cb8dca8700f6
 		summarizeBy: none
 		sourceColumn: iso3
 
 	column name
 		dataType: string
+		lineageTag: b486d4f5-0a23-4bec-8cdd-c6677b6d939e
 		summarizeBy: none
 		sourceColumn: name
 
 	column area_type
 		dataType: string
+		lineageTag: 83902491-db5b-411f-ab36-f7a2e832186a
 		summarizeBy: none
 		sourceColumn: area_type
 
 	column is_asean
 		dataType: boolean
+		lineageTag: 94be06d1-5986-4342-a07a-80de5316c84a
 		summarizeBy: none
 		sourceColumn: is_asean
 
 	column is_focus
 		dataType: boolean
+		lineageTag: b2f9d963-d910-4fb3-b529-e7c45b20b04e
 		summarizeBy: none
 		sourceColumn: is_focus
 
 	column is_default_peer
 		dataType: boolean
+		lineageTag: c36e90df-e859-42a8-aead-cc86ae53a305
 		summarizeBy: none
 		sourceColumn: is_default_peer
 
 	column display_order
 		dataType: int64
 		formatString: 0
+		lineageTag: 40b0fe4e-88b3-4b12-ba4c-80e8e8349465
 		summarizeBy: none
 		sourceColumn: display_order
 
@@ -51,3 +60,4 @@ table dim_country
 				    dim_country = Source{[Schema="mart",Item="dim_country"]}[Data]
 				in
 				    dim_country
+

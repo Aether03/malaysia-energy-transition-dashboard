@@ -1,46 +1,54 @@
 table generation_annual
+	lineageTag: aebb8543-6431-4967-ab81-3da7026eefe7
 
 	column country_key
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: b1284c30-5137-47c3-b538-3a4bab3fb042
 		summarizeBy: none
 		sourceColumn: country_key
 
 	column year
 		dataType: int64
 		formatString: 0
+		lineageTag: c0da9740-e6b5-4477-8a98-8e7d6af445df
 		summarizeBy: none
 		sourceColumn: year
 
 	column source_key
 		dataType: int64
-		formatString: 0
 		isHidden
+		formatString: 0
+		lineageTag: d0143551-38a4-4636-9781-0baa3962cf61
 		summarizeBy: none
 		sourceColumn: source_key
 
 	column generation_twh
 		dataType: double
 		formatString: 0.000
+		lineageTag: dedcda13-3238-4420-87b5-3b48d0dff37b
 		summarizeBy: none
 		sourceColumn: generation_twh
 
 	column share_pct
 		dataType: double
 		formatString: 0.000
+		lineageTag: d048e034-de68-41c9-b20f-65e0664d983d
 		summarizeBy: none
 		sourceColumn: share_pct
 
 	column capacity_gw
 		dataType: double
 		formatString: 0.000
+		lineageTag: 418301d3-3cd0-4e25-b100-dfa488137d24
 		summarizeBy: none
 		sourceColumn: capacity_gw
 
 	column emissions_mtco2e
 		dataType: double
 		formatString: 0.000
+		lineageTag: b6d19f04-d2d0-49c7-bd81-e189364f17d5
 		summarizeBy: none
 		sourceColumn: emissions_mtco2e
 
@@ -52,3 +60,4 @@ table generation_annual
 				    generation_annual = Source{[Schema="mart",Item="generation_annual"]}[Data]
 				in
 				    generation_annual
+

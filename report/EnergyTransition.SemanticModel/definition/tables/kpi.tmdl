@@ -1,38 +1,46 @@
 table kpi
+	lineageTag: 2d7fd499-352b-44dc-b2d8-ad851d99d43e
 
 	column kpi_code
 		dataType: string
+		lineageTag: 37e4414d-af3e-43c4-b4b2-001dbddcc201
 		summarizeBy: none
 		sourceColumn: kpi_code
 
 	column name
 		dataType: string
+		lineageTag: f1c81fb8-b434-46a4-a6b7-9f6f88f016f0
 		summarizeBy: none
 		sourceColumn: name
 
 	column definition
 		dataType: string
+		lineageTag: a718061c-0a9e-4c1c-a4e0-cb116e68a17a
 		summarizeBy: none
 		sourceColumn: definition
 
 	column formula
 		dataType: string
+		lineageTag: c124ac43-a000-4425-918b-66b3cea9af1a
 		summarizeBy: none
 		sourceColumn: formula
 
 	column unit
 		dataType: string
+		lineageTag: 9d70bc8a-1434-4b29-87d8-614e3edaab9e
 		summarizeBy: none
 		sourceColumn: unit
 
 	column polarity
 		dataType: int64
 		formatString: 0
+		lineageTag: 294e69bf-dbbe-45fd-a687-9939c4eed9d6
 		summarizeBy: none
 		sourceColumn: polarity
 
 	column data_source_code
 		dataType: string
+		lineageTag: b2235569-1288-4a4a-b6b0-3875ef2c424e
 		summarizeBy: none
 		sourceColumn: data_source_code
 
@@ -44,3 +52,4 @@ table kpi
 				    kpi = Source{[Schema="mart",Item="kpi"]}[Data]
 				in
 				    kpi
+
