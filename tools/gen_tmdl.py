@@ -2,7 +2,8 @@
 
 Column names and types are read from SQL Server, so the semantic model can't drift from
 the database contract (doc 05 §2.6). Measures, relationships and the theme are
-hand-written and are not touched by this script.
+hand-written and are not touched by this script. Lineage tags that Power BI Desktop added
+are kept, so a regeneration only shows real column changes in the diff.
 
     .venv/Scripts/python tools/gen_tmdl.py
 """
@@ -20,7 +21,7 @@ TABLES_DIR = config.ROOT / "report" / "EnergyTransition.SemanticModel" / "defini
 
 MART_VIEWS = (
     "dim_country", "dim_source", "dim_year", "data_source", "kpi", "netr_target",
-    "generation_annual", "country_annual", "run_latest", "dq_latest",
+    "generation_annual", "country_annual", "run_latest", "dq_latest", "re_capacity_official",
 )  # fmt: skip
 
 TYPE_MAP = {
@@ -44,17 +45,41 @@ def _columns(cursor, view: str) -> list[tuple[str, str, int]]:
     return [(name, type_name, scale) for name, type_name, scale in cursor.fetchall()]
 
 
-def _column_tmdl(view: str, name: str, sql_type: str, scale: int) -> str:
+def _existing_tags(path: Path) -> dict[str | None, str]:
+    """Lineage tags from the previous file: {None: table tag, column name: column tag}."""
+    tags: dict[str | None, str] = {}
+    if not path.exists():
+        return tags
+    column: str | None = None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("\tcolumn "):
+            column = line.split(" ", 1)[1].strip()
+        elif line.startswith("\tpartition "):
+            column = None
+        elif line.startswith("\tlineageTag: ") and column is None:
+            tags[None] = line.split(": ", 1)[1].strip()
+        elif line.startswith("\t\tlineageTag: ") and column is not None:
+            tags[column] = line.split(": ", 1)[1].strip()
+        elif line.startswith("\tannotation "):
+            tags.setdefault("__annotations__", "")
+            tags["__annotations__"] += line + "\n\n"
+    return tags
+
+
+def _column_tmdl(view: str, name: str, sql_type: str, scale: int, tag: str | None = None) -> str:
+    # Attribute order follows what Power BI Desktop writes, to keep diffs quiet.
     data_type = TYPE_MAP[sql_type]
     lines = [f"\tcolumn {name}", f"\t\tdataType: {data_type}"]
+    if name.endswith("_key"):
+        lines.append("\t\tisHidden")
     if data_type == "double":
         lines.append(f"\t\tformatString: {'0.' + '0' * min(scale, 3) if scale else '0'}")
     elif data_type == "int64":
         lines.append("\t\tformatString: 0")
     elif data_type == "dateTime":
         lines.append("\t\tformatString: General Date")
-    if name.endswith("_key"):
-        lines.append("\t\tisHidden")
+    if tag:
+        lines.append(f"\t\tlineageTag: {tag}")
     lines.append("\t\tsummarizeBy: none")  # all aggregation goes through explicit measures
     lines.append(f"\t\tsourceColumn: {name}")
     if (view, name) in SORT_BY:
@@ -62,8 +87,8 @@ def _column_tmdl(view: str, name: str, sql_type: str, scale: int) -> str:
     return "\n".join(lines)
 
 
-def _table_tmdl(view: str, columns: list[tuple[str, str, int]]) -> str:
-    column_blocks = "\n\n".join(_column_tmdl(view, *col) for col in columns)
+def _table_tmdl(view: str, columns: list[tuple[str, str, int]], tags: dict[str | None, str]) -> str:
+    column_blocks = "\n\n".join(_column_tmdl(view, *col, tag=tags.get(col[0])) for col in columns)
     partition = (
         f"\tpartition {view} = m\n"
         "\t\tmode: import\n"
@@ -74,7 +99,9 @@ def _table_tmdl(view: str, columns: list[tuple[str, str, int]]) -> str:
         "\t\t\t\tin\n"
         f"\t\t\t\t    {view}\n"
     )
-    return f"table {view}\n\n{column_blocks}\n\n{partition}"
+    header = f"table {view}\n" + (f"\tlineageTag: {tags[None]}\n" if None in tags else "")
+    annotations = tags.get("__annotations__", "")  # Desktop-added table annotations, kept verbatim
+    return f"{header}\n{column_blocks}\n\n{partition}\n{annotations}"
 
 
 def main() -> None:
@@ -84,7 +111,8 @@ def main() -> None:
         columns = _columns(cursor, view)
         if not columns:
             raise SystemExit(f"mart.{view} not found; run `python -m pipeline db migrate` first")
-        (TABLES_DIR / f"{view}.tmdl").write_text(_table_tmdl(view, columns), encoding="utf-8")
+        path = TABLES_DIR / f"{view}.tmdl"
+        path.write_text(_table_tmdl(view, columns, _existing_tags(path)), encoding="utf-8")
         print(f"{view}: {len(columns)} columns")
 
 

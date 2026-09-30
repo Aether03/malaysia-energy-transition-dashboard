@@ -1,0 +1,44 @@
+table re_capacity_official
+
+	column year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column re_capacity_share_pct
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: re_capacity_share_pct
+
+	column basis
+		dataType: string
+		summarizeBy: none
+		sourceColumn: basis
+
+	column source_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_name
+
+	column source_url
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_url
+
+	column as_of
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: as_of
+
+	partition re_capacity_official = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    re_capacity_official = Source{[Schema="mart",Item="re_capacity_official"]}[Data]
+				in
+				    re_capacity_official
+

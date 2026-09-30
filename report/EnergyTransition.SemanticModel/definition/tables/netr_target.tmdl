@@ -15,6 +15,11 @@ table netr_target
 		summarizeBy: none
 		sourceColumn: re_capacity_share_pct
 
+	column source_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_name
+
 	column source_url
 		dataType: string
 		lineageTag: 4f792446-2161-4b56-941d-d78bc29d298c

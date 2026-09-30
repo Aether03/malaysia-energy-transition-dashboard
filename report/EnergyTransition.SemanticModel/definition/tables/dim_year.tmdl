@@ -21,6 +21,12 @@ table dim_year
 		summarizeBy: none
 		sourceColumn: decade
 
+	column hours_in_year
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: hours_in_year
+
 	partition dim_year = m
 		mode: import
 		source =
