@@ -91,6 +91,10 @@ def to_raw_records(df: pd.DataFrame) -> list[tuple]:
     ]
 
 
+def records_from(path: Path) -> list[tuple]:
+    return to_raw_records(filter_asean(read_csv(path)))
+
+
 def download(refresh: bool = False, retries: int = 3) -> tuple[Path, str]:
     """Download today's file (or reuse it); returns (path, source_version)."""
     return _common.download(config.EMBER_YEARLY_URL, "ember", FILE_NAME, refresh=refresh, retries=retries)
