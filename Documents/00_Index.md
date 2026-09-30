@@ -98,7 +98,9 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Step 3 (DOSM D3) **done** (`6156d81`). The DOSM WARN fires for 2022–23 only; the gap grows from 4% to 14%. Known WARNs are registered in `docs/reconciliation.md`.
     - The database review of the M2 changes found **0 CRITICAL, 0 HIGH**. Its 3 MEDIUM findings (NULLIF-safe rule division, NULL cases that passed silently, the OWID staging row check) and 3 LOW ones are fixed in V009 and the seeds.
     - SQL `min server memory` is set to 1024 MB (Amirul approved it, 2026-09-30). Transform plus checks is back to about 1 s.
-    - **Resume:** step 4 (the SQL showcase, Deep).
+    - Step 4 (SQL showcase `01`–`05` + mart: `hours_in_year`, target `source_name`, `mart.re_capacity_official`) **done**. The spot values equal P1.
+      - MY 2025 ranks: 3/6 on RE share, 5/6 on intensity; per capita 2/6 (2024).
+    - **Resume:** step 5 (GUI template capture: Amirul adds template visuals in Desktop; click-level steps in chat).
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.

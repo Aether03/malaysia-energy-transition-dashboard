@@ -12,7 +12,7 @@ FROM dw.dim_source;
 GO
 
 CREATE OR ALTER VIEW mart.dim_year AS
-SELECT year, is_complete, decade
+SELECT year, is_complete, decade, hours_in_year
 FROM dw.dim_year;
 GO
 
@@ -27,8 +27,15 @@ FROM ref.kpi;
 GO
 
 CREATE OR ALTER VIEW mart.netr_target AS
-SELECT target_year, re_capacity_share_pct, source_url
+SELECT target_year, re_capacity_share_pct, source_name, source_url
 FROM ref.netr_target;
+GO
+
+-- Official reported RE capacity share (ASEAN definition, incl. off-grid), shown beside the
+-- Ember-basis series (M2 step 1 decision).
+CREATE OR ALTER VIEW mart.re_capacity_official AS
+SELECT year, re_capacity_share_pct, basis, source_name, source_url, as_of
+FROM ref.re_capacity_official;
 GO
 
 CREATE OR ALTER VIEW mart.generation_annual AS
