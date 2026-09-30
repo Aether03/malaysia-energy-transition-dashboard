@@ -5,22 +5,19 @@
 - `filter_asean` keeps ASEAN members plus Ember's "ASEAN" aggregate.
 - `load` MERGEs into raw.ember_yearly on (area, year, electricity_source); unchanged rows
   are left alone, so a repeat load reports zero changes (FR-02).
+Download and MERGE mechanics live in `_common`.
 """
 
 from __future__ import annotations
 
-import logging
 import math
-import time
-from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
-import requests
 
 from pipeline import config
-
-log = logging.getLogger(__name__)
+from pipeline.sources import _common
+from pipeline.sources._common import SchemaMismatchError, assert_unique_keys
 
 EXPECTED_COLUMNS: tuple[str, ...] = (
     "Area", "ISO 3 code", "Year", "Area type", "Electricity source", "Is aggregated source",
@@ -48,9 +45,7 @@ _INT = {"Year"}
 
 FILE_NAME = "release_generation_yearly_global.csv"
 
-
-class SchemaMismatchError(ValueError):
-    """The downloaded file's columns differ from the verified header."""
+__all__ = ["SchemaMismatchError", "download", "filter_asean", "load", "read_csv", "to_raw_records", "validate_header"]
 
 
 def validate_header(columns: list[str]) -> None:
@@ -98,40 +93,7 @@ def to_raw_records(df: pd.DataFrame) -> list[tuple]:
 
 def download(refresh: bool = False, retries: int = 3) -> tuple[Path, str]:
     """Download today's file (or reuse it); returns (path, source_version)."""
-    folder = config.RAW_DIR / "ember" / datetime.now(UTC).date().isoformat()
-    path = folder / FILE_NAME
-    version_file = path.with_suffix(".version")
-    if path.exists() and not refresh:
-        version = version_file.read_text(encoding="utf-8") if version_file.exists() else "cached"
-        log.info("Reusing %s", path)
-        return path, version
-
-    folder.mkdir(parents=True, exist_ok=True)
-    partial = path.with_suffix(".part")
-    for attempt in range(1, retries + 1):
-        try:
-            with requests.get(
-                config.EMBER_YEARLY_URL,
-                stream=True,
-                timeout=60,
-                headers={"User-Agent": "malaysia-energy-transition-dashboard (portfolio project)"},
-            ) as response:
-                response.raise_for_status()
-                with partial.open("wb") as fh:
-                    for chunk in response.iter_content(chunk_size=1 << 20):
-                        fh.write(chunk)
-                version = response.headers.get("Last-Modified") or response.headers.get("ETag") or "unknown"
-            partial.replace(path)
-            version_file.write_text(version, encoding="utf-8")
-            log.info("Downloaded %s (%d bytes, version %s)", path, path.stat().st_size, version)
-            return path, version
-        except requests.RequestException as exc:
-            if attempt == retries:
-                raise
-            wait = 2**attempt
-            log.warning("Download attempt %d failed (%s); retrying in %ds", attempt, exc, wait)
-            time.sleep(wait)
-    raise AssertionError("unreachable")
+    return _common.download(config.EMBER_YEARLY_URL, "ember", FILE_NAME, refresh=refresh, retries=retries)
 
 
 def load(conn, records: list[tuple], run_id: int, source_file: str) -> int:
@@ -140,38 +102,5 @@ def load(conn, records: list[tuple], run_id: int, source_file: str) -> int:
     Returns the number of rows inserted or changed (0 on an identical re-load).
     Rows that disappear from Ember are kept, not deleted.
     """
-    keys = [(r[0], r[2], r[4]) for r in records]
-    if len(keys) != len(set(keys)):
-        raise ValueError("Duplicate (area, year, electricity_source) keys in Ember extract")
-
-    cols = ", ".join(RAW_COLUMNS)
-    cursor = conn.cursor()
-    cursor.execute(f"SELECT TOP (0) {cols} INTO #stage FROM raw.ember_yearly")
-    placeholders = ", ".join("?" for _ in RAW_COLUMNS)
-    cursor.executemany(f"INSERT INTO #stage ({cols}) VALUES ({placeholders})", records)
-
-    non_keys = [c for c in RAW_COLUMNS if c not in KEY_COLUMNS]
-    on = " AND ".join(f"t.{c} = s.{c}" for c in KEY_COLUMNS)
-    changed = (
-        f"EXISTS (SELECT {', '.join('s.' + c for c in non_keys)} "
-        f"EXCEPT SELECT {', '.join('t.' + c for c in non_keys)})"
-    )
-    updates = ", ".join(f"{c} = s.{c}" for c in non_keys)
-    cursor.execute(
-        f"""
-        SET NOCOUNT ON;  -- otherwise the MERGE row count is returned before the SELECT
-        DECLARE @changes TABLE (action NVARCHAR(10));
-        MERGE raw.ember_yearly AS t
-        USING #stage AS s ON {on}
-        WHEN MATCHED AND {changed} THEN
-            UPDATE SET {updates}, _run_id = ?, _source_file = ?, _loaded_at = SYSUTCDATETIME()
-        WHEN NOT MATCHED BY TARGET THEN
-            INSERT ({cols}, _run_id, _source_file) VALUES ({', '.join('s.' + c for c in RAW_COLUMNS)}, ?, ?)
-        OUTPUT $action INTO @changes;
-        SELECT COUNT(*) FROM @changes;
-        """,
-        (run_id, source_file, run_id, source_file),
-    )
-    changes = int(cursor.fetchone()[0])
-    cursor.execute("DROP TABLE #stage")
-    return changes
+    assert_unique_keys(records, (0, 2, 4))  # area, year, electricity_source
+    return _common.merge_into(conn, "raw.ember_yearly", RAW_COLUMNS, KEY_COLUMNS, records, run_id, source_file)

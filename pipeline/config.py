@@ -23,10 +23,15 @@ SEED_DIR = ROOT / "seed"
 RAW_DIR = ROOT / "data" / "raw"
 LOG_DIR = ROOT / "logs"
 
+ASEAN_ISO3: tuple[str, ...] = ("BRN", "KHM", "IDN", "LAO", "MYS", "MMR", "PHL", "SGP", "THA", "VNM")
+
 EMBER_YEARLY_URL = (
     "https://files.ember-energy.org/public-downloads/generation/outputs/"
     "release_generation_yearly_global.csv"
 )
+OWID_ENERGY_URL = "https://owid-public.owid.io/data/energy/owid-energy-data.csv"
+DOSM_SUPPLY_URL = "https://storage.data.gov.my/energy/electricity_supply.csv"
+DOSM_CONSUMPTION_URL = "https://storage.data.gov.my/energy/electricity_consumption.csv"
 
 
 @dataclass(frozen=True)
