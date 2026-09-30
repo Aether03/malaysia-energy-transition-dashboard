@@ -50,7 +50,13 @@ SEEDS: tuple[SeedSpec, ...] = (
         "netr_target.csv",
         "ref.netr_target",
         "target_year",
-        ("target_year", "re_capacity_share_pct", "source_url"),
+        ("target_year", "re_capacity_share_pct", "source_name", "source_url"),
+    ),
+    SeedSpec(
+        "re_capacity_official.csv",
+        "ref.re_capacity_official",
+        "year",
+        ("year", "re_capacity_share_pct", "basis", "source_name", "source_url", "as_of"),
     ),
     SeedSpec(
         "kpi.csv",

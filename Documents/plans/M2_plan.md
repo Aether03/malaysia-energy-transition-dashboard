@@ -63,6 +63,11 @@ M2 turns the one-page slice into the headline story:
   | Laos | 2000–03 | Blank for those years |
 
   - The mix, RE share, carbon intensity and demand are complete for every country.
+  - **Found in step 2 (`CF_AT_MOST_1`, 117 source-years):** Ember records geothermal capacity ("Other renewables") as 0–0.01 GW for the Philippines and Indonesia, beside 10–15 TWh of generation. Singapore's waste-to-energy (bioenergy) capacity is similarly too small for its output.
+    - `030` now treats renewable capacity with an implied capacity factor above 1 as **not reported**. The RE capacity share becomes NULL for PHL (all years), IDN (25), SGP (all 14 that had one) and VNM (4) instead of being understated.
+    - **Malaysia is unchanged.**
+    - The capacity-factor measures will also blank values above 1 ("capacity data inconsistent"). Malaysia's only case is Other fossil 2024, at 1.10.
+    - The rule stays WARN, as a documented, known source limitation.
   - **Proposed:** D1 shows capacity-based visuals with an explicit "capacity not reported for <country>, <years>" message, never zeros. It has no NETR panel, as doc 03 already says. P5 uses only generation-based metrics, which are complete, so it isn't affected.
 
 **Q6 note: what proceeding changes.**
@@ -137,13 +142,15 @@ Model tiers per doc 06 §4: **D** = Opus 5.5 (this session) · **S** = Sonnet 5.
 | The RE capacity targets count **large hydro** | **True** | The 31% (2025) target in the Peninsular GDP (Mar 2021), the 12th Malaysia Plan (Jul 2021) and MyRER (Dec 2021) uses the ASEAN harmonised RE definition, which counts **large hydro and off-grid** (Demmel, *Malaysia's RE Target Jungle*, ASB Working Paper 01/2025, pp. 19–21). The NETR briefing's "Renewables" footnote "includes bioenergy, solar, hydropower and hydrogen" (Ministry of Economy NETR briefing, 26 Jun 2024, p. 22). **The M1 assumption stands.** |
 | 31% / 40% / 70% are all **NETR** targets | **False (misattributed)** | 31% (2025) and 40% (2035) come from the **12MP / MyRER (2021)** ([SEDA MyRER](https://www.seda.gov.my/reportal/myrer/)). **NETR (2023) sets 70% by 2050** (MOE briefing p. 22: "RE share of installed capacity 70%"). NETR itself projected 27% for 2025 (ASB p. 22, citing NETR p. 33). Demmel notes that MIDA "wrongly linked" NETR to 31%. The MOE's 2024 briefing (p. 24) also pairs "31% RE" with 2030, which is inconsistent with the 2021 plans |
 | Scope | **National, including Sarawak** (MyRER lists Sarawak's resources); **includes off-grid** (ASEAN definition) | ASB pp. 18, 21; MyRER page |
-| Is Malaysia on track? | **Officially yes: 32% reported for 2025** | The Energy Commission, via [Asian Power, 26 Feb 2026](https://www.renewableenergyasia.org/2026/02/malaysia-exceeds-2025-renewable-target.html); [IEA-PVPS](https://iea-pvps.org/about-iea-pvps/members/malaysia/): "achieved interim capacity target of 31%… dominated by hydro and PV" |
-| **Our Ember basis** | **24.4% for 2025** (10.27 of 42.03 GW) | Ember counts grid capacity: solar 3.07 GW vs roughly 5.1 GW in official estimates, and no off-grid bioenergy. **The gap between the two definitions is 7.6 pp, so P1's "24.4 vs 31" wrongly implies Malaysia missed its target** |
+| Is Malaysia on track? | **Officially yes: 31% as of Dec 2025** (target met); "nearly 32%" by Jun 2026 | Deputy PM Fadillah Yusof, 23 Jul 2026 ([The Edge, 30 Sep 2026](https://theedgemalaysia.com/node/811771)); [Legal500 guide, 2026](https://www.legal500.com/guides/chapter/malaysia-renewable-energy/): "As of December 2025, RE accounted for 31% of total installed electricity generation capacity"; [IEA-PVPS](https://iea-pvps.org/about-iea-pvps/members/malaysia/) agrees. *Correction:* Asian Power's "32% … exceeds 2025 target" (26 Feb 2026) conflicts with the ministerial figure, so it is not used |
+| Newer targets | **32% by end-2026 and 35% by 2030** (NETR pathway), 70% by 2050 | Legal500 2026; The Edge 30 Sep 2026 |
+| **Our Ember basis** | **24.4% for 2025** (10.27 of 42.03 GW) | Ember counts grid capacity: solar 3.07 GW vs roughly 5.1 GW in official estimates, and no off-grid bioenergy. **The gap between the two definitions is 6.6 pp, so P1's "24.4 vs 31" wrongly implies Malaysia missed its target** |
 
 **Decided (Amirul, 2026-09-30):**
 - **Both, clearly labelled.**
   - Our series is renamed "RE share of capacity (Ember basis)".
-  - A new seed `ref.re_capacity_official` (year, pct, source, URL; first row 2025 = 32%, Energy Commission) is shown as a separate cited marker.
+  - A new seed `ref.re_capacity_official` (year, pct, source, URL; first row 2025 = 31%, the government figure as of Dec 2025) is shown as a separate cited marker.
+  - The target seed also gets **2030 = 35%** (the current NETR-pathway target), so the target line matches today's policy.
   - The footnote explains the definition gap (grid-only vs. including off-grid and rooftop).
 - **Each target cites its own source.**
   - `ref.netr_target` gains a `source_name` column (31 and 40 → 12MP/SEDA MyRER; 70 → NETR, Ministry of Economy).

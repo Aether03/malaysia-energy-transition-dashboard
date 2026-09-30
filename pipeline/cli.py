@@ -40,26 +40,27 @@ def _cmd_seed(_: argparse.Namespace) -> int:
 
 
 def _extract_and_load(run, refresh: bool) -> None:
-    """Ember D1: download (or reuse today's file), then MERGE into raw in one transaction."""
+    """Each source: download (or reuse today's file), then MERGE into raw in its own transaction."""
     from pipeline import db
-    from pipeline.sources import ember
+    from pipeline.sources import ember, owid
 
-    with run.step("EXTRACT", "D1") as step:
-        path, version = ember.download(refresh=refresh)
-        step.source_version = version[:100]
-    with run.step("LOAD", "D1") as step:
-        records = ember.to_raw_records(ember.filter_asean(ember.read_csv(path)))
-        step.rows_in = len(records)
-        step.source_version = version[:100]
-        conn = db.connect()
-        try:
-            step.rows_merged = ember.load(conn, records, run.run_id, str(path.relative_to(config.ROOT)))
-            conn.commit()
-        except Exception:
-            conn.rollback()
-            raise
-        finally:
-            conn.close()
+    for code, source in (("D1", ember), ("D2", owid)):
+        with run.step("EXTRACT", code) as step:
+            path, version = source.download(refresh=refresh)
+            step.source_version = version[:100]
+        with run.step("LOAD", code) as step:
+            records = source.to_raw_records(source.filter_asean(source.read_csv(path)))
+            step.rows_in = len(records)
+            step.source_version = version[:100]
+            conn = db.connect()
+            try:
+                step.rows_merged = source.load(conn, records, run.run_id, str(path.relative_to(config.ROOT)))
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+            finally:
+                conn.close()
 
 
 def _cmd_run(args: argparse.Namespace) -> int:

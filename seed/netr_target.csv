@@ -1,4 +1,5 @@
-target_year,re_capacity_share_pct,source_url
-2025,31.00,https://www.mida.gov.my/national-energy-transition-roadmap-netr-charting-a-path-to-a-sustainable-energy-landscape/
-2035,40.00,https://www.mida.gov.my/national-energy-transition-roadmap-netr-charting-a-path-to-a-sustainable-energy-landscape/
-2050,70.00,https://www.mida.gov.my/national-energy-transition-roadmap-netr-charting-a-path-to-a-sustainable-energy-landscape/
+target_year,re_capacity_share_pct,source_name,source_url
+2025,31.00,"12th Malaysia Plan / SEDA Malaysia Renewable Energy Roadmap (MyRER), 2021",https://www.seda.gov.my/reportal/myrer/
+2030,35.00,"Government NETR pathway target (Deputy Prime Minister, Jul 2026)",https://theedgemalaysia.com/node/811771
+2035,40.00,"SEDA Malaysia Renewable Energy Roadmap (MyRER), 2021",https://www.seda.gov.my/reportal/myrer/
+2050,70.00,"National Energy Transition Roadmap (Ministry of Economy, 2023)",https://www.ekonomi.gov.my/sites/default/files/2023-09/National%20Energy%20Transition%20Roadmap_0.pdf
