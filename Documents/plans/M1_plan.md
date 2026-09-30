@@ -1,6 +1,6 @@
 # Plan: M1 — Vertical slice (Ember → SQL Server → thin P1 Overview)
 
-**Source:** [06 Implementation Plan](../06_Implementation_Plan.md) Phase 1 (tasks 1.1–1.11) · **Complexity:** Medium–Large (about 2 sessions) · **Status:** awaiting approval
+**Source:** [06 Implementation Plan](../06_Implementation_Plan.md) Phase 1 (tasks 1.1–1.11) · **Complexity:** Medium–Large (about 2 sessions) · **Status:** DONE 2026-09-30 (approved 2026-09-30; all acceptance checks passed)
 
 ## Summary
 Build the thinnest end-to-end path that proves the architecture.
@@ -116,8 +116,15 @@ sqlcmd -S localhost -E -d EnergyDW -i sql/showcase/00_reconciliation.sql
 | Re-downloading 16 MB every run | Low | Skip the download if today's file already exists; `--refresh` forces it |
 
 ## Acceptance (the doc 06 M1 check)
-- [ ] On an empty `EnergyDW`: `db migrate && seed && run` exits 0; a second `run` is idempotent
-- [ ] `mart.dq_latest` is all PASS; an injected failure rolls back and exits 1
-- [ ] Task 1.11: 5 figures within ±0.5%, independently re-checked
-- [ ] P1 thin page matches the wireframe; the Refresh works
-- [ ] Commits pushed; doc 06 and the index updated
+- [x] On an empty `EnergyDW`: `db migrate && seed && run` exits 0; a second `run` is idempotent
+- [x] `mart.dq_latest` is all PASS; an injected failure rolls back and exits 1
+- [x] Task 1.11: 5 figures within ±0.5%, independently re-checked
+- [x] P1 thin page matches the wireframe; the Refresh works
+- [x] Commits pushed; doc 06 and the index updated
+
+## Outcome (2026-09-30)
+- Empty-DB rebuild (throwaway `EnergyDW_M1Test`): migrate 9 scripts, seed, run 1 merged 5,070, run 2 merged 0, reconciliation 5/5 PASS.
+- DQ: 3 BLOCKING PASS; 4 WARN rules added after review, only STALE_COUNTRY_YEARS fires (Brunei/Laos/Myanmar end 2024), which is intended.
+- Reviews: migrations (no CRITICAL/HIGH; V007 fixes) and transforms (1 HIGH, capacity share, fixed).
+- P1 verified in Power BI Desktop 2.158: KPIs 210.4 / 20.4 / 79.6 / 606; deltas and polarity colours correct; NETR gauge 24.4 vs 31.
+- Friction: Desktop's first save made a .pbix; TMDL `///` on a relationship broke loading; cards under ~40 px render blank.

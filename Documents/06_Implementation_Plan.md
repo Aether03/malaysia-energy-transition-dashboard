@@ -15,7 +15,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 | # | Milestone | Scope (FR ids) | Depends on | Status |
 |---|---|---|---|---|
 | **M0** | Environment, repo and consent request | T1, NFR-05; the GSO decision | — | **done 2026-09-30**: all tasks 0.1–0.6 verified; private repo github.com/Aether03/malaysia-energy-transition-dashboard |
-| **M1** | **Vertical slice**: Ember → SQL Server → P1 Overview (thin) | FR-01, 02, 03 (3 rules), 04, 05, 06 (partial) | M0 | in-progress: step plan [plans/M1_plan.md](plans/M1_plan.md) approved 2026-09-30 |
+| **M1** | **Vertical slice**: Ember → SQL Server → P1 Overview (thin) | FR-01, 02, 03 (3 rules), 04, 05, 06 (partial) | M0 | **done 2026-09-30**: [plans/M1_plan.md](plans/M1_plan.md); all acceptance checks passed |
 | **M2** | Malaysia and ASEAN analysis | FR-06, 07, 08, 09, 10, 11, 12, 15; D1, T1, T2 | M1 | pending |
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | pending |
 | **M4** | Regions and state reliability | FR-23, 24 | M1 | pending |

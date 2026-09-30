@@ -83,7 +83,8 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Step 10 reconciliation: 5/5 within 0.005%, plus an independent pandas recheck within 0.001% (`docs/reconciliation.md`).
     - Transform review: 1 HIGH finding (RE capacity share under partial reporting), fixed. Malaysia unchanged.
     - RCSI on; DQ fails closed; 7 rules, 4 of them WARN.
-  - **Next:** steps 8–9, Power BI. Needs Amirul: Desktop → Save as → Power BI project, at `report/EnergyTransition.pbip`. Then Claude writes the TMDL, relationships, measures and theme.
+  - **M1 COMPLETE 2026-09-30.** PBIP model (10 generated tables, 27 measures, theme) and P1 Overview (15 visuals from `tools/build_overview_page.py`) verified in Desktop. Empty-DB rebuild passed.
+  - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.
     - YEAR() is UTC, not local time.
