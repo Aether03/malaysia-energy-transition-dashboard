@@ -86,6 +86,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Transform review: 1 HIGH finding (RE capacity share under partial reporting), fixed. Malaysia unchanged.
     - RCSI on; DQ fails closed; 7 rules, 4 of them WARN.
   - **M1 COMPLETE 2026-09-30.** PBIP model (10 generated tables, 27 measures, theme) and P1 Overview (15 visuals from `tools/build_overview_page.py`) verified in Desktop. Empty-DB rebuild passed.
+  - **M2 (2026-09-30):** step plan `Documents/plans/M2_plan.md` **approved 2026-09-30** (Q1–Q6 accepted: P5 metric toggle for FR-09; Ember demand ÷ UN/OWID population, with the DOSM value in a footnote; nav-rail frame; country-in-context measures; ADOMD twin check; a CAPACITY_WITHOUT_GENERATION WARN rule + V008 naming). **Resume:** step 1 (the NETR hydro research).
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.
@@ -105,4 +106,4 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
 - [ ] **GSO data: technically verified 2026-09-30.** 10-minute Peninsular demand (MW) from about Jan 2017 to present (none before mid-2016), via the `SystemDemand.aspx/GetChartDataSource` POST endpoint (dd/mm/yyyy, JSON `{DT, MW}`); the Solar endpoint returns 401. **But GSO's T&C (gso.org.my/TermsConditions.aspx) prohibit downloading, storing or distributing without TNB's prior written consent.** Decision pending with Amirul: request consent / use an open alternative (Singapore EMA, Thailand Zenodo) / annual-only fallback — blocks FR-13 and FR-22 design in doc 02
 - [x] Energy Commission consent: Amirul sends the email **after completion**; Claude drafts it (task in doc 06). Until then: script plus derived, credited charts only
 - [ ] Does the UiTM tenant allow "Publish to web"? Only matters for FR-19 (Could) — doc 02
-- [ ] Is the DOSM monthly supply series still updated after Sep 2024? — doc 02
+- [x] Is the DOSM monthly supply series still updated after Sep 2024? **No**: last modified 12 Sep 2024, data ends Jun 2024 (checked 2026-09-30, M2 plan)
