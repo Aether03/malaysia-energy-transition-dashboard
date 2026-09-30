@@ -3,10 +3,10 @@
   "name": "p1_kpi_delta_1",
   "position": {
     "x": 336,
-    "y": 176,
+    "y": 204,
     "z": 21,
     "width": 296,
-    "height": 32,
+    "height": 44,
     "tabOrder": 21
   },
   "visual": {
@@ -97,6 +97,19 @@
     },
     "visualContainerObjects": {
       "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
         {
           "properties": {
             "show": {

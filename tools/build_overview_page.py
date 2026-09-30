@@ -52,8 +52,10 @@ def projection(field: dict, active: bool = False) -> dict:
 
 
 def container(title: str | None) -> dict:
+    # Subtitles are auto-generated from field names ("X by year and display_name"): always hidden.
+    hidden_subtitle = [{"properties": {"show": lit("false")}}]
     if title is None:
-        return {"title": [{"properties": {"show": lit("false")}}]}
+        return {"title": [{"properties": {"show": lit("false")}}], "subTitle": hidden_subtitle}
     return {
         "title": [
             {
@@ -64,7 +66,8 @@ def container(title: str | None) -> dict:
                     "fontColor": solid(TEXT_PRIMARY),
                 }
             }
-        ]
+        ],
+        "subTitle": hidden_subtitle,
     }
 
 
@@ -100,8 +103,9 @@ def card(measure: str, size: int, colour: dict, show_label: bool, title: str | N
 
 def build() -> list[dict]:
     visuals = [
-        visual("p1_title", 24, 8, 1010, 48, 1, card("Overview Title", 18, solid(TEXT_PRIMARY), False)),
-        visual("p1_as_of", 24, 56, 400, 28, 2, card("Data As Of", 10, solid(TEXT_SECONDARY), False)),
+        # Cards need about 40 px or more to render text; smaller boxes show blank (first Desktop test).
+        visual("p1_title", 24, 6, 1010, 56, 1, card("Overview Title", 16, solid(TEXT_PRIMARY), False)),
+        visual("p1_as_of", 24, 58, 400, 40, 2, card("Data As Of", 10, solid(TEXT_SECONDARY), False)),
     ]
 
     slicer = {
@@ -110,7 +114,7 @@ def build() -> list[dict]:
         "objects": {
             "data": [{"properties": {"mode": text("Dropdown")}}],
             "selection": [{"properties": {"singleSelect": lit("true")}}],
-            "header": [{"properties": {"text": text("Year (default: latest complete)"), "fontSize": lit("9D")}}],
+            "header": [{"properties": {"text": text("Year"), "fontSize": lit("9D")}}],
         },
         "drillFilterOtherVisuals": True,
     }
@@ -125,9 +129,9 @@ def build() -> list[dict]:
     width, gap, x = 296, 16, 24
     for i, (measure, delta, colour_measure) in enumerate(kpis):
         kx = x + i * (width + gap)
-        visuals.append(visual(f"p1_kpi_{i}", kx, 92, width, 84, 10 + i, card(measure, 28, solid(TEXT_PRIMARY), True)))
+        visuals.append(visual(f"p1_kpi_{i}", kx, 100, width, 104, 10 + i, card(measure, 28, solid(TEXT_PRIMARY), True)))
         delta_colour = {"solid": {"color": {"expr": measure_ref(colour_measure)}}} if colour_measure else solid(TEXT_SECONDARY)
-        visuals.append(visual(f"p1_kpi_delta_{i}", kx, 176, width, 32, 20 + i, card(delta, 10, delta_colour, False)))
+        visuals.append(visual(f"p1_kpi_delta_{i}", kx, 204, width, 44, 20 + i, card(delta, 10, delta_colour, False)))
 
     area = {
         "visualType": "stackedAreaChart",
@@ -142,7 +146,7 @@ def build() -> list[dict]:
         "visualContainerObjects": container("Malaysia's generation mix by source (TWh), all years"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_mix_area", 24, 220, 800, 420, 30, area))
+    visuals.append(visual("p1_mix_area", 24, 260, 800, 380, 30, area))
 
     gauge = {
         "visualType": "gauge",
@@ -156,12 +160,12 @@ def build() -> list[dict]:
             "axis": [{"properties": {"min": lit("0D"), "max": lit("100D")}}],
             "dataPoint": [{"properties": {"fill": solid(NAVY), "target": solid(TARGET_RED)}}],
         },
-        "visualContainerObjects": container("Renewable share of installed capacity vs NETR target (%)"),
+        "visualContainerObjects": container("Renewable capacity share vs NETR target (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_netr_gauge", 840, 220, 416, 300, 31, gauge))
+    visuals.append(visual("p1_netr_gauge", 840, 260, 416, 280, 31, gauge))
     visuals.append(
-        visual("p1_netr_label", 840, 520, 416, 120, 32, card("NETR Progress Label", 11, solid(TEXT_SECONDARY), False))
+        visual("p1_netr_label", 840, 540, 416, 100, 32, card("NETR Progress Label", 11, solid(TEXT_SECONDARY), False))
     )
 
     footnote = {
@@ -190,7 +194,7 @@ def build() -> list[dict]:
         },
         "visualContainerObjects": container(None),
     }
-    visuals.append(visual("p1_footnote", 24, 652, 1232, 56, 40, footnote))
+    visuals.append(visual("p1_footnote", 24, 652, 1232, 48, 40, footnote))
     return visuals
 
 

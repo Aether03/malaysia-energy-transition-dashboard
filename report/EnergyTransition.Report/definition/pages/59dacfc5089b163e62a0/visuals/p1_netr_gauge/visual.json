@@ -3,10 +3,10 @@
   "name": "p1_netr_gauge",
   "position": {
     "x": 840,
-    "y": 220,
+    "y": 260,
     "z": 31,
     "width": 416,
-    "height": 300,
+    "height": 280,
     "tabOrder": 31
   },
   "visual": {
@@ -115,7 +115,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Renewable share of installed capacity vs NETR target (%)'"
+                  "Value": "'Renewable capacity share vs NETR target (%)'"
                 }
               }
             },
@@ -134,6 +134,19 @@
                       "Value": "'#0b0b0b'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

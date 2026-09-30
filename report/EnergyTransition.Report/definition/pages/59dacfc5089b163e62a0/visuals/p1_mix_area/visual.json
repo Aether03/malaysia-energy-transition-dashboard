@@ -3,10 +3,10 @@
   "name": "p1_mix_area",
   "position": {
     "x": 24,
-    "y": 220,
+    "y": 260,
     "z": 30,
     "width": 800,
-    "height": 420,
+    "height": 380,
     "tabOrder": 30
   },
   "visual": {
@@ -125,6 +125,19 @@
                       "Value": "'#0b0b0b'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

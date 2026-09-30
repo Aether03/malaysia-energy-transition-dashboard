@@ -67,7 +67,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Year (default: latest complete)'"
+                  "Value": "'Year'"
                 }
               }
             },

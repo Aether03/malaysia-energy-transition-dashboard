@@ -3,10 +3,10 @@
   "name": "p1_netr_label",
   "position": {
     "x": 840,
-    "y": 520,
+    "y": 540,
     "z": 32,
     "width": 416,
-    "height": 120,
+    "height": 100,
     "tabOrder": 32
   },
   "visual": {
@@ -92,6 +92,19 @@
     },
     "visualContainerObjects": {
       "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
         {
           "properties": {
             "show": {

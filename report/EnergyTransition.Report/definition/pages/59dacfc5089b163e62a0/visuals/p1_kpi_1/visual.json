@@ -3,10 +3,10 @@
   "name": "p1_kpi_1",
   "position": {
     "x": 336,
-    "y": 92,
+    "y": 100,
     "z": 11,
     "width": 296,
-    "height": 84,
+    "height": 104,
     "tabOrder": 11
   },
   "visual": {
@@ -92,6 +92,19 @@
     },
     "visualContainerObjects": {
       "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
         {
           "properties": {
             "show": {

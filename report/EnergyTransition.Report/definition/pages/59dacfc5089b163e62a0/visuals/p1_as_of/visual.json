@@ -3,10 +3,10 @@
   "name": "p1_as_of",
   "position": {
     "x": 24,
-    "y": 56,
+    "y": 58,
     "z": 2,
     "width": 400,
-    "height": 28,
+    "height": 40,
     "tabOrder": 2
   },
   "visual": {
@@ -92,6 +92,19 @@
     },
     "visualContainerObjects": {
       "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
         {
           "properties": {
             "show": {

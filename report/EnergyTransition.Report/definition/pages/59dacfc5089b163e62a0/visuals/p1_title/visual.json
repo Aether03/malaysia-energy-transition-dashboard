@@ -3,10 +3,10 @@
   "name": "p1_title",
   "position": {
     "x": 24,
-    "y": 8,
+    "y": 6,
     "z": 1,
     "width": 1010,
-    "height": 48,
+    "height": 56,
     "tabOrder": 1
   },
   "visual": {
@@ -40,7 +40,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "18D"
+                  "Value": "16D"
                 }
               }
             },
@@ -92,6 +92,19 @@
     },
     "visualContainerObjects": {
       "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
         {
           "properties": {
             "show": {
