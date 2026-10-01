@@ -270,8 +270,7 @@ table _Measures
 
 	/// Takeaway title for P1 (doc 04 principle 2).
 	measure 'Overview Title' =
-			"Renewables supplied " & FORMAT ( [RE Share (%)], "0.0" ) & "% of Malaysia's electricity in "
-			    & [Selected Year] & "; fossil fuels still " & FORMAT ( [Fossil Share (%)], "0.0" ) & "%"
+			"Renewables supplied " & FORMAT ( [RE Share (%)], "0.0" ) & "% of Malaysia's electricity in " & [Selected Year]
 		displayFolder: Context
 		lineageTag: d86e3cf4-cb59-44b5-a404-2d52d0c2b321
 

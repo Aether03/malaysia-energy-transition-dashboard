@@ -3,10 +3,10 @@
   "name": "p1_netr_bars",
   "position": {
     "x": 856,
-    "y": 248,
+    "y": 264,
     "z": 71,
     "width": 400,
-    "height": 280,
+    "height": 272,
     "tabOrder": 71
   },
   "visual": {
@@ -119,6 +119,33 @@
               "expr": {
                 "Literal": {
                   "Value": "100D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "preferredCategoryWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "150D"
+                }
+              }
+            },
+            "innerPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "10L"
                 }
               }
             }

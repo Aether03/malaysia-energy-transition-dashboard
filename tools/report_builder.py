@@ -137,16 +137,16 @@ def shape(
     objects: dict = {
         "shape": [{"properties": {"tileShape": text("rectangle")}}],
         "rotation": [{"properties": {"shapeAngle": lit("0L")}}],
+        # `show` goes in a selector-free entry and colours in the {"id": "default"} state entry,
+        # as Desktop writes them; a `show` inside the state entry is ignored (P1 test, M2 step 6).
         "fill": [
+            {"properties": {"show": lit("true")}},
             {
-                "properties": {
-                    "show": lit("true" if fill else "false"),
-                    **({"fillColor": solid(fill), "transparency": lit("0D")} if fill else {}),
-                },
+                "properties": {"fillColor": solid(fill or SURFACE_CARD), "transparency": lit("0D" if fill else "100D")},
                 "selector": {"id": "default"},
-            }
+            },
         ],
-        "outline": [{"properties": {"show": lit("false")}, "selector": {"id": "default"}}],
+        "outline": [{"properties": {"show": lit("false")}}],
     }
     if text_value is not None:
         objects["text"] = [
@@ -159,6 +159,7 @@ def shape(
                     "fontFamily": text(font_family),
                     "horizontalAlignment": text(align),
                     "verticalAlignment": text(v_align),
+                    "leftMargin": lit("0D"),
                 },
                 "selector": {"id": "default"},
             },
@@ -178,9 +179,9 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
         "objects": {
             "icon": [{"properties": {"shapeType": text("blank")}, "selector": {"id": "default"}}],
             "text": [
+                {"properties": {"show": lit("true")}},
                 {
                     "properties": {
-                        "show": lit("true"),
                         "text": text(label),
                         "fontColor": solid(NAV_TEXT if selected else NAV_TEXT_INACTIVE),
                         "fontSize": lit("10D"),
@@ -190,8 +191,11 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
                     "selector": {"id": "default"},
                 }
             ],
-            "fill": [{"properties": {"show": lit("false")}, "selector": {"id": "default"}}],
-            "outline": [{"properties": {"show": lit("false")}, "selector": {"id": "default"}}],
+            "fill": [
+                {"properties": {"show": lit("true")}},
+                {"properties": {"fillColor": solid(NAVY), "transparency": lit("100D")}, "selector": {"id": "default"}},
+            ],
+            "outline": [{"properties": {"show": lit("false")}}],
         },
         "visualContainerObjects": {
             "visualLink": [

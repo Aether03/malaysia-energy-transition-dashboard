@@ -46,11 +46,11 @@ def build() -> list[dict]:
     ]
     for i, (measure, delta, colour_measure) in enumerate(kpis):
         kx = rb.CONTENT_X + i * (KPI_W + rb.GAP)
-        visuals.append(visual(f"p1_kpi_{i}", kx, rb.BODY_Y, KPI_W, 88, 50 + i, rb.card(measure, 28, solid(rb.TEXT_PRIMARY), True)))
+        visuals.append(visual(f"p1_kpi_{i}", kx, rb.BODY_Y, KPI_W, 100, 50 + i, rb.card(measure, 28, solid(rb.TEXT_PRIMARY), True)))
         delta_colour = (
             {"solid": {"color": {"expr": measure_ref(colour_measure)}}} if colour_measure else solid(rb.TEXT_SECONDARY)
         )
-        visuals.append(visual(f"p1_kpi_delta_{i}", kx, rb.BODY_Y + 88, KPI_W, 40, 60 + i, rb.card(delta, 10, delta_colour, False)))
+        visuals.append(visual(f"p1_kpi_delta_{i}", kx, rb.BODY_Y + 100, KPI_W, 44, 60 + i, rb.card(delta, 10, delta_colour, False)))
 
     area = {
         "visualType": "stackedAreaChart",
@@ -69,7 +69,7 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("Malaysia's generation mix by source (TWh), all years"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_mix_area", rb.CONTENT_X, 248, 640, 400, 70, area))
+    visuals.append(visual("p1_mix_area", rb.CONTENT_X, 264, 640, 392, 70, area))
 
     targets = [  # (measure, legend label, colour): both bases beside the target (M2 step 1 decision)
         ("RE Capacity Share (%)", "Ember grid basis", rb.NAVY),
@@ -91,14 +91,16 @@ def build() -> list[dict]:
             "legend": [{"properties": {"show": lit("true"), "position": text("Top")}}],
             "labels": [{"properties": {"show": lit("true"), "fontSize": lit("10D")}}],
             "valueAxis": [{"properties": {"start": lit("0D"), "end": lit("100D")}}],
+            # One unnamed category holding three series: hide its axis and widen the bars.
+            "categoryAxis": [{"properties": {"show": lit("false"), "preferredCategoryWidth": lit("150D"), "innerPadding": lit("10L")}}],
             "dataPoint": rb.measure_colours({m: colour for m, _, colour in targets}),
         },
         "visualContainerObjects": rb.container("Renewable share of installed capacity (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_netr_bars", 856, 248, 400, 280, 71, bars))
+    visuals.append(visual("p1_netr_bars", 856, 264, 400, 272, 71, bars))
     visuals.append(
-        visual("p1_netr_label", 856, 528, 400, 120, 72, rb.card("NETR Progress Label", 10, solid(rb.TEXT_SECONDARY), False))
+        visual("p1_netr_label", 856, 536, 400, 120, 72, rb.card("NETR Progress Label", 10, solid(rb.TEXT_SECONDARY), False))
     )
     return visuals
 
