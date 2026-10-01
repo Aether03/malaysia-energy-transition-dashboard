@@ -1,0 +1,42 @@
+table 'Mix Unit'
+
+	column 'Mix Unit'
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Mix Unit Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Mix Unit Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mix Unit Fields'
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Mix Unit Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mix Unit Order'
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Mix Unit' = calculated
+		mode: import
+		source =
+				{
+				    ("TWh", NAMEOF('_Measures'[Ctx Generation (TWh)]), 0),
+				    ("%", NAMEOF('_Measures'[Ctx Generation Share (%)]), 1)
+				}
+

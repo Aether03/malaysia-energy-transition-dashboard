@@ -1,0 +1,43 @@
+table 'ASEAN Metric'
+
+	column 'ASEAN Metric'
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'ASEAN Metric Order'
+
+		relatedColumnDetails
+			groupByColumn: 'ASEAN Metric Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ASEAN Metric Fields'
+		isHidden
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'ASEAN Metric Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ASEAN Metric Order'
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'ASEAN Metric' = calculated
+		mode: import
+		source =
+				{
+				    ("RE share (%)", NAMEOF('_Measures'[Country RE Share (%)]), 0),
+				    ("Carbon intensity (gCO2e/kWh)", NAMEOF('_Measures'[Country Carbon Intensity (gCO2e/kWh)]), 1),
+				    ("Emissions (MtCO2e)", NAMEOF('_Measures'[Country Emissions (MtCO2e)]), 2)
+				}
+
