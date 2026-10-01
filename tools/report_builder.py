@@ -102,6 +102,14 @@ def visual(name: str, x: float, y: float, w: float, h: float, z: int, body: dict
 
 
 # ---------- components ----------
+# The theme gives every visual a card background and border (theme "*"); frame shapes and
+# nav buttons opt out so they sit directly on the page or the rail.
+BARE = {
+    "background": [{"properties": {"show": lit("false")}}],
+    "border": [{"properties": {"show": lit("false")}}],
+}
+
+
 def card(measure: str, size: int, colour: dict, show_label: bool, title: str | None = None) -> dict:
     """Classic card (M1). Needs about 40 px of height or more to render text."""
     return {
@@ -119,7 +127,8 @@ def card(measure: str, size: int, colour: dict, show_label: bool, title: str | N
                 }
             ],
         },
-        "visualContainerObjects": container(title),
+        # Narrow side padding so long labels such as "Carbon Intensity (gCO2e/kWh)" fit a 198 px card.
+        "visualContainerObjects": {**container(title), "padding": [{"properties": {"left": lit("4D"), "right": lit("4D")}}]},
         "drillFilterOtherVisuals": True,
     }
 
@@ -167,7 +176,7 @@ def shape(
     return {
         "visualType": "shape",
         "objects": objects,
-        "visualContainerObjects": {"background": [{"properties": {"show": lit("false")}}]},
+        "visualContainerObjects": BARE,
         "drillFilterOtherVisuals": True,
     }
 
@@ -198,6 +207,7 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
             "outline": [{"properties": {"show": lit("false")}}],
         },
         "visualContainerObjects": {
+            **BARE,
             "visualLink": [
                 {
                     "properties": {
