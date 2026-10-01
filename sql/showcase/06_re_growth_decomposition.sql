@@ -6,16 +6,20 @@
 -- Method:   pivot the two years from mart.generation_annual with conditional aggregation,
 --           then divide each source's increase by the summed increase (window SUM). Ember
 --           does not split large from small hydro, so "Hydro" is all hydro.
--- Expected: 2015 -> 2025, renewables rise by about 28 TWh, and hydro supplies about three
---           quarters of the increase.
+--           Two base years are shown, because 2015 sits just before large hydro ramped up
+--           (audit HIGH-1): from 2015 the gain is mostly hydro; from 2017 hydro and solar
+--           share it.
+-- Expected: 2015 -> 2025, renewables +28 TWh with hydro ~74%; 2017 -> 2025, hydro ~52%
+--           and solar ~42%.
 
 WITH years AS (
-    SELECT 2015 AS base_year, MAX(year) AS latest_year
-    FROM mart.dim_year
-    WHERE is_complete = 1
+    SELECT b.base_year, (SELECT MAX(year) FROM mart.dim_year WHERE is_complete = 1) AS latest_year
+    FROM (VALUES (2015), (2017)) AS b (base_year)
 ),
 by_source AS (
     SELECT
+        y.base_year,
+        y.latest_year,
         s.display_name                                                         AS source,
         SUM(CASE WHEN g.year = y.base_year THEN g.generation_twh END)          AS base_twh,
         SUM(CASE WHEN g.year = y.latest_year THEN g.generation_twh END)        AS latest_twh
@@ -26,16 +30,16 @@ by_source AS (
     WHERE c.is_focus = 1
       AND s.group_name = 'RENEWABLE'
       AND g.year IN (y.base_year, y.latest_year)
-    GROUP BY s.display_name, s.sort_order
+    GROUP BY y.base_year, y.latest_year, s.display_name, s.sort_order
 )
 SELECT
-    (SELECT base_year FROM years)                                              AS base_year,
-    (SELECT latest_year FROM years)                                            AS latest_year,
+    base_year,
+    latest_year,
     source,
     base_twh,
     latest_twh,
     latest_twh - base_twh                                                      AS increase_twh,
     CAST(100.0 * (latest_twh - base_twh)
-         / NULLIF(SUM(latest_twh - base_twh) OVER (), 0) AS DECIMAL(7, 1))     AS share_of_increase_pct
+         / NULLIF(SUM(latest_twh - base_twh) OVER (PARTITION BY base_year), 0) AS DECIMAL(7, 1)) AS share_of_increase_pct
 FROM by_source
-ORDER BY increase_twh DESC;
+ORDER BY base_year, increase_twh DESC;
