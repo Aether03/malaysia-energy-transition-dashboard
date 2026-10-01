@@ -17,6 +17,7 @@ table netr_target
 
 	column source_name
 		dataType: string
+		lineageTag: 1ee98320-8597-469a-aa58-9081eae12f14
 		summarizeBy: none
 		sourceColumn: source_name
 

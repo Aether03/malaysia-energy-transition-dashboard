@@ -5,8 +5,8 @@
     "x": 1046,
     "y": 12,
     "z": 3,
-    "width": 210,
     "height": 64,
+    "width": 210,
     "tabOrder": 3
   },
   "visual": {
@@ -68,13 +68,6 @@
               "expr": {
                 "Literal": {
                   "Value": "'Year'"
-                }
-              }
-            },
-            "fontSize": {
-              "expr": {
-                "Literal": {
-                  "Value": "9D"
                 }
               }
             }

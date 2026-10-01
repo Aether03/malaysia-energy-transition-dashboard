@@ -1,0 +1,154 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "9bd23d0eeb64e0a31805",
+  "position": {
+    "x": 10,
+    "y": 580,
+    "z": 2,
+    "height": 280,
+    "width": 280,
+    "tabOrder": 2
+  },
+  "visual": {
+    "visualType": "scatterChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_country"
+                    }
+                  },
+                  "Property": "name"
+                }
+              },
+              "queryRef": "dim_country.name",
+              "nativeQueryRef": "name",
+              "active": true
+            }
+          ]
+        },
+        "Size": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "RE Share (%)"
+                }
+              },
+              "queryRef": "_Measures.RE Share (%)",
+              "nativeQueryRef": "RE Share (%)"
+            }
+          ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Total Generation (TWh)"
+                }
+              },
+              "queryRef": "_Measures.Total Generation (TWh)",
+              "nativeQueryRef": "Total Generation (TWh)",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Carbon Intensity (gCO2e/kWh)"
+                }
+              },
+              "queryRef": "_Measures.Carbon Intensity (gCO2e/kWh)",
+              "nativeQueryRef": "Carbon Intensity (gCO2e/kWh)"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "489a85e45b92d48a671c",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_country"
+              }
+            },
+            "Property": "name"
+          }
+        },
+        "type": "Categorical"
+      },
+      {
+        "name": "aa0329f70027170ab066",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Total Generation (TWh)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "370e40016ad806b48e04",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "Carbon Intensity (gCO2e/kWh)"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "4369520778b98057e713",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "_Measures"
+              }
+            },
+            "Property": "RE Share (%)"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}

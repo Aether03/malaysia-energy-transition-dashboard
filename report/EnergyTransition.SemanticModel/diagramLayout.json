@@ -139,6 +139,31 @@
             "width": 234
           },
           "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2545.1034497391274,
+            "y": 254.89333091179662
+          },
+          "nodeIndex": "re_capacity_official",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2779.1034497391274,
+            "y": 290.89333091179662
+          },
+          "nodeIndex": "Template Param",
+          "nodeLineageTag": "e622df09-727b-441b-b612-2aa68620d9f7",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
         }
       ],
       "name": "All tables",

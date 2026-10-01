@@ -7,11 +7,11 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-annotation __PBI_TimeIntelligenceEnabled = 1
+annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase"]
+annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase","re_capacity_official"]
 
 ref table country_annual
 ref table data_source
@@ -23,8 +23,8 @@ ref table generation_annual
 ref table kpi
 ref table netr_target
 ref table run_latest
-ref table re_capacity_official
 ref table _Measures
+ref table re_capacity_official
 
 ref cultureInfo en-US
 

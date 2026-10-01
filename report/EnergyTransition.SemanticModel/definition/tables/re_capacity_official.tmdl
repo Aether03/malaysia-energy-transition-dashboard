@@ -1,35 +1,42 @@
 table re_capacity_official
+	lineageTag: 63ac576e-7fe7-4fdc-973d-b4a670db0b29
 
 	column year
 		dataType: int64
 		formatString: 0
+		lineageTag: 9169822b-e578-4beb-b7bd-ca6cf1482b0e
 		summarizeBy: none
 		sourceColumn: year
 
 	column re_capacity_share_pct
 		dataType: double
 		formatString: 0.00
+		lineageTag: e8d42782-0215-4b9f-9f8a-7742af2eb369
 		summarizeBy: none
 		sourceColumn: re_capacity_share_pct
 
 	column basis
 		dataType: string
+		lineageTag: 63e717d5-1e4d-40bb-8ef5-5a5679180e8b
 		summarizeBy: none
 		sourceColumn: basis
 
 	column source_name
 		dataType: string
+		lineageTag: fc260dca-f67f-4f74-b32d-76dec9a3fe0b
 		summarizeBy: none
 		sourceColumn: source_name
 
 	column source_url
 		dataType: string
+		lineageTag: 3209a75c-ebd7-49aa-9eb7-b5317b212c8d
 		summarizeBy: none
 		sourceColumn: source_url
 
 	column as_of
 		dataType: dateTime
 		formatString: General Date
+		lineageTag: 13fa7a5c-5d83-475c-9808-c23137aa1f0e
 		summarizeBy: none
 		sourceColumn: as_of
 

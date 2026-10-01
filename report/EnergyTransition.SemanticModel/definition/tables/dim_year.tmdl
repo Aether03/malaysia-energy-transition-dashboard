@@ -24,6 +24,7 @@ table dim_year
 	column hours_in_year
 		dataType: int64
 		formatString: 0
+		lineageTag: 13b250e9-a01e-41ae-886a-39f61eecb307
 		summarizeBy: none
 		sourceColumn: hours_in_year
 

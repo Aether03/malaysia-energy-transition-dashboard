@@ -1,0 +1,48 @@
+table 'Template Param'
+	lineageTag: e622df09-727b-441b-b612-2aa68620d9f7
+
+	column 'Template Param'
+		lineageTag: 9903bffa-bf15-4fbf-9e3e-9cf60c5ed0ab
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Template Param Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Template Param Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Template Param Fields'
+		isHidden
+		lineageTag: 7295855a-ee18-4303-9f9f-15b5adacf909
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Template Param Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Template Param Order'
+		isHidden
+		formatString: 0
+		lineageTag: 5b0b3a69-fe71-48f5-8633-a61e0c8d4bf1
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Template Param' = calculated
+		mode: import
+		source =
+				{
+				    ("Focus Generation (TWh)", NAMEOF('_Measures'[Focus Generation (TWh)]), 0),
+				    ("Focus RE Capacity Share (%)", NAMEOF('_Measures'[Focus RE Capacity Share (%)]), 1)
+				}
+
+	annotation PBI_Id = 2d3e5c9b4e3e461cbeb27a27bc52395e
+
