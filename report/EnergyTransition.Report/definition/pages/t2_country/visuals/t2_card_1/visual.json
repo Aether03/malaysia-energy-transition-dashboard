@@ -3,10 +3,10 @@
   "name": "t2_card_1",
   "position": {
     "x": 164.0,
-    "y": 164,
+    "y": 172,
     "z": 4,
     "width": 148.0,
-    "height": 68,
+    "height": 64,
     "tabOrder": 4
   },
   "visual": {
