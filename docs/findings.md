@@ -30,7 +30,7 @@ From 2015 to 2025:
 So power-sector emissions still **rose 27%**, from 100.5 to 127.4 MtCO₂e. Coal generation grew **49%** (63.5 → 94.4 TWh) over the same period. Coal is still the largest single source, at 44.9% of generation in 2025.
 
 **Caveats:**
-- The emissions are Ember's estimates. They are lifecycle-based and include upstream methane, which is why the unit is CO₂e.
+- The emissions are Ember's estimates. They use lifecycle factors that include upstream methane, supply chain and manufacturing, expressed as CO₂e over 100 years ([Ember methodology](https://ember-energy.org/app/uploads/2024/05/Ember-Electricity-Data-Methodology.pdf)).
 - They cover electricity generation only, not Malaysia's total emissions.
 - 2025 is Ember's latest release year and may be revised.
 
@@ -38,7 +38,7 @@ So power-sector emissions still **rose 27%**, from 100.5 to 127.4 MtCO₂e. Coal
 
 ## 3. Among its ASEAN peers, Malaysia ranks 3rd of 6 on renewable share but 5th of 6 on carbon intensity
 
-**Renewable share.** In 2025, Malaysia's 20.4% renewable share puts it **3rd of the six largest ASEAN power systems** (Indonesia, Malaysia, Philippines, Singapore, Thailand, Vietnam). It is behind Vietnam (45.3%) and the Philippines (23.3%).
+**Renewable share.** In 2025, Malaysia's 20.4% renewable share puts it **3rd of the six largest ASEAN power systems**. By 2025 generation these are Indonesia, Vietnam, Malaysia, Thailand, the Philippines and Singapore; Laos is 7th, at 52 TWh in 2024. It is behind Vietnam (45.3%) and the Philippines (23.3%).
 
 **Carbon intensity.** On carbon intensity Malaysia is **5th of 6** at 606 gCO₂e/kWh; only Indonesia (705) is higher. Thailand has a lower renewable share (16.6%) but cleaner electricity (546 g/kWh), because it relies on gas (65.5% of generation) rather than coal (17.8%). Malaysia's mix is 44.9% coal and 33.4% gas.
 
