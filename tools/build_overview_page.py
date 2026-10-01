@@ -105,11 +105,12 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("Renewable share of installed capacity (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_netr_bars", 856, MID_Y, 400, 188, 71, bars))
+    visuals.append(visual("p1_netr_bars", 856, MID_Y, 400, 200, 71, bars))
+    # A text shape wraps the long label; a classic card truncated it (M2 GUI round 3).
     visuals.append(
         visual(
-            "p1_netr_label", 856, MID_Y + 188 + 8, 400, MID_END - (MID_Y + 188 + 8), 72,
-            rb.card("NETR Progress Label", 10, solid(rb.TEXT_SECONDARY), False),
+            "p1_netr_label", 856, MID_Y + 208, 400, MID_END - (MID_Y + 208), 72,
+            rb.shape(None, {"expr": measure_ref("NETR Progress Label")}, 9, rb.TEXT_SECONDARY, boxed=True, left_margin=12),
         )
     )
 

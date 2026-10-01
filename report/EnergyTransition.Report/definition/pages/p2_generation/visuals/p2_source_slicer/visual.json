@@ -3,10 +3,10 @@
   "name": "p2_source_slicer",
   "position": {
     "x": 1000,
-    "y": 176,
+    "y": 168,
     "z": 42,
     "width": 256,
-    "height": 64,
+    "height": 56,
     "tabOrder": 42
   },
   "visual": {

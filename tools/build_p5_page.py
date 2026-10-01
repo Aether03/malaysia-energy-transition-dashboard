@@ -75,8 +75,7 @@ def build() -> list[dict]:
     visuals.append(
         visual(
             "p5_metric_slicer", SIDE_X, ROW1_Y + 356, SIDE_W, 120, 42,
-            rb.slicer("ASEAN Metric", "ASEAN Metric", "Trend metric", mode="Basic", single=True),
-            filter_config=rb.in_filter("ASEAN Metric", "ASEAN Metric", ["RE share (%)"], "p5_metric_slicer"),
+            rb.slicer("ASEAN Metric", "ASEAN Metric", "Trend metric", mode="Basic", single=True, default=["RE share (%)"]),
         )
     )
 

@@ -525,6 +525,31 @@ table _Measures
 		formatString: 0
 		displayFolder: ASEAN
 
+	/// Malaysia's rank on carbon intensity among the compared countries (1 = lowest, i.e. cleanest;
+	/// like SQL RANK()). Twin: 03_ranking.
+	measure 'Focus Intensity Rank' =
+			VAR y = [Comparison Year]
+			VAR f = [Focus Country Key]
+			VAR picked = VALUES ( 'Compare Country'[country_key] )
+			VAR filtered = ISFILTERED ( 'Compare Country' )
+			-- IF cannot return a table, so the choice sits inside FILTER: the slicer's countries, else the default peers
+			VAR sel =
+			    FILTER (
+			        ALL ( 'Compare Country'[country_key] ),
+			        IF ( filtered, 'Compare Country'[country_key] IN picked, CALCULATE ( COUNTROWS ( 'Compare Country' ), 'Compare Country'[is_default_peer] = TRUE () ) > 0 )
+			    )
+			VAR scores =
+			    ADDCOLUMNS (
+			        sel,
+			        "@re",
+			            VAR k = 'Compare Country'[country_key]
+			            RETURN CALCULATE ( SUM ( country_annual[emissions_intensity_gco2e_kwh] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
+			    )
+			VAR focus = MAXX ( FILTER ( scores, 'Compare Country'[country_key] = f ), [@re] )
+			RETURN IF ( NOT ISBLANK ( focus ), COUNTROWS ( FILTER ( scores, [@re] < focus ) ) + 1 )
+		formatString: 0
+		displayFolder: ASEAN
+
 	measure 'Countries Compared' =
 			VAR y = [Comparison Year]
 			VAR picked = VALUES ( 'Compare Country'[country_key] )
@@ -563,7 +588,17 @@ table _Measures
 			    & [Common Per Capita Year] & " (OWID population). With no country selected, the six default peers are compared. Sources: Ember (CC BY 4.0), OWID (CC BY 4.0)."
 		displayFolder: ASEAN
 
-	measure 'ASEAN Title' = [Rank Label]
+	/// Takeaway title: both ranks, since the share alone hides the coal-heavy mix (findings 3).
+	measure 'ASEAN Title' =
+			VAR n = [Countries Compared]
+			VAR r = [Focus RE Share Rank]
+			VAR ir = [Focus Intensity Rank]
+			RETURN
+			    IF (
+			        n < 2 || ISBLANK ( r ),
+			        [Rank Label],
+			        "Malaysia: " & r & " of " & n & " on renewable share, " & ir & " of " & n & " on carbon intensity (" & [Comparison Year] & ")"
+			    )
 		displayFolder: ASEAN
 
 	measure 'ASEAN Subtitle' = "ASEAN peers · " & MIN ( dim_year[year] ) & "–" & MAX ( dim_year[year] ) & " · " & [Data As Of]

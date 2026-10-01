@@ -6,7 +6,7 @@
     "y": 104,
     "z": 50,
     "width": 784,
-    "height": 208,
+    "height": 184,
     "tabOrder": 50
   },
   "visual": {
@@ -60,11 +60,11 @@
                       "Entity": "Mix Unit"
                     }
                   },
-                  "Property": "Mix Unit Fields"
+                  "Property": "Mix Unit"
                 }
               },
-              "queryRef": "Mix Unit.Mix Unit Fields",
-              "nativeQueryRef": "Mix Unit Fields",
+              "queryRef": "Mix Unit.Mix Unit",
+              "nativeQueryRef": "Mix Unit",
               "displayName": "Mix Unit"
             }
           ]

@@ -3,10 +3,10 @@
   "name": "p2_demand_cols",
   "position": {
     "x": 200,
-    "y": 528,
+    "y": 540,
     "z": 55,
     "width": 520.0,
-    "height": 128,
+    "height": 116,
     "tabOrder": 55
   },
   "visual": {

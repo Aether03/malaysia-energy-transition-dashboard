@@ -77,6 +77,7 @@ def rank_card(rows: list[dict]) -> list[dict]:
     my = next((r for r in rows if r["name"] == "Malaysia"), None)
     return [{
         "rank": my["re_share_rank"] if my else None,
+        "intensity_rank": my["intensity_rank"] if my else None,
         "n": len(rows),
         "year": rows[0]["comparison_year"] if rows else None,
         "per_capita_year": rows[0]["per_capita_year"] if rows else None,
@@ -111,7 +112,7 @@ KPI_DAX = """EVALUATE SUMMARIZECOLUMNS ( TREATAS ( {{ {y} }}, dim_year[year] ),
     "DEMAND_PER_CAPITA_chg", [Demand per Capita YoY (%)] * 100 )"""
 KPI_COLS = ("TOTAL_GENERATION", "RE_SHARE_GEN", "FOSSIL_SHARE_GEN", "CARBON_INTENSITY", "DEMAND_PER_CAPITA",
             "TOTAL_GENERATION_chg", "RE_SHARE_GEN_chg", "FOSSIL_SHARE_GEN_chg", "CARBON_INTENSITY_chg", "DEMAND_PER_CAPITA_chg")
-RANK_DAX = 'EVALUATE SUMMARIZECOLUMNS ( {filters}"rank", [Focus RE Share Rank], "n", [Countries Compared], "year", [Common Latest Year], "per_capita_year", [Common Per Capita Year] )'
+RANK_DAX = 'EVALUATE SUMMARIZECOLUMNS ( {filters}"rank", [Focus RE Share Rank], "intensity_rank", [Focus Intensity Rank], "n", [Countries Compared], "year", [Common Latest Year], "per_capita_year", [Common Per Capita Year] )'
 
 TWINS = (
     Twin("P1 KPIs and YoY, Malaysia 2025", KPI_DAX.format(y=2025), yoy_sql(2025), (), KPI_COLS, reshape=kpis_flat),
@@ -159,15 +160,15 @@ TWINS = (
         ranking_sql(), ("name",), ("re", "intensity", "per_capita"), reshape=peer_values,
     ),
     Twin("P5 rank card, 6 default peers (no selection)", RANK_DAX.format(filters=""), ranking_sql(), (), (),
-         exact=("rank", "n", "year", "per_capita_year"), reshape=rank_card),
+         exact=("rank", "intensity_rank", "n", "year", "per_capita_year"), reshape=rank_card),
     Twin("P5 rank card, Singapore deselected (5 countries)", RANK_DAX.format(filters=_names(PEERS6[:5]) + ", "),
-         ranking_sql(PEERS6[:5]), (), (), exact=("rank", "n", "year"), reshape=rank_card),
+         ranking_sql(PEERS6[:5]), (), (), exact=("rank", "intensity_rank", "n", "year"), reshape=rank_card),
     Twin("P5 rank card, Brunei added (common year falls to 2024)", RANK_DAX.format(filters=_names(PEERS6 + ("Brunei",)) + ", "),
-         ranking_sql(PEERS6 + ("Brunei",)), (), (), exact=("rank", "n", "year", "per_capita_year"), reshape=rank_card),
+         ranking_sql(PEERS6 + ("Brunei",)), (), (), exact=("rank", "intensity_rank", "n", "year", "per_capita_year"), reshape=rank_card),
     Twin("P5 rank card, year range 2015-2020", RANK_DAX.format(filters="TREATAS ( GENERATESERIES ( 2015, 2020, 1 ), dim_year[year] ), "),
-         ranking_sql(last_year=2020), (), (), exact=("rank", "n", "year", "per_capita_year"), reshape=rank_card),
+         ranking_sql(last_year=2020), (), (), exact=("rank", "intensity_rank", "n", "year", "per_capita_year"), reshape=rank_card),
     Twin("P1 rank card, 2024 selected", RANK_DAX.format(filters="TREATAS ( { 2024 }, dim_year[year] ), "),
-         ranking_sql(last_year=2024), (), (), exact=("rank", "n", "year"), reshape=rank_card),
+         ranking_sql(last_year=2024), (), (), exact=("rank", "intensity_rank", "n", "year"), reshape=rank_card),
     Twin(
         "P2 target chart: Ember basis, official and targets, 2000-2050",
         'EVALUATE SUMMARIZECOLUMNS ( \'Target Axis\'[year], "ember", [Axis RE Capacity Share (%)], "official", [Axis Official (%)], "target", [Axis Target (%)] )',

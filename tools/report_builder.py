@@ -382,7 +382,7 @@ def measure_colours(colours: dict[str, str]) -> list[dict]:
 # ---------- slicers and field parameters ----------
 # A field-parameter column in a value well: Desktop binds the hidden "<name> Fields" column and keeps
 # the parameter name as the display name. Flip to False to bind the visible "<name>" column instead.
-PARAM_WELL_USES_FIELDS_COLUMN = True
+PARAM_WELL_USES_FIELDS_COLUMN = False  # True failed in Desktop: "Can't determine relationships" (M2 GUI round 3)
 
 
 def param_projection(table: str) -> dict:
@@ -428,16 +428,26 @@ def slicer(
     single: bool = False,
     sync_group: str | None = None,
     horizontal: bool = False,
+    default: list[str] | None = None,
 ) -> dict:
-    """Slicer body. mode: 'Dropdown', 'Basic' (list/tiles) or 'Between' (numeric range)."""
+    """Slicer body. mode: 'Dropdown', 'Basic' (list/tiles) or 'Between' (numeric range).
+
+    `default` is the saved selection, stored in objects.general.filter like Desktop does. A filter in
+    the slicer's own filterConfig would hide the other options instead (M2 GUI round 3).
+    """
     objects: dict = {
         "data": [{"properties": {"mode": text(mode)}}],
         "header": [{"properties": {"show": lit("true"), "text": text(header), "fontSize": lit("9D")}}],
     }
     if mode != "Between":
         objects["selection"] = [{"properties": {"singleSelect": lit("true" if single else "false")}}]
+    general: dict = {}
     if horizontal:
-        objects["general"] = [{"properties": {"orientation": lit("1L")}}]  # 0 = vertical, 1 = horizontal
+        general["orientation"] = lit("1L")  # 0 = vertical, 1 = horizontal
+    if default:
+        general["filter"] = {"filter": in_filter(table, column, default, f"{table}.{column}")["filters"][0]["filter"]}
+    if general:
+        objects["general"] = [{"properties": general}]
     body: dict = {
         "visualType": "slicer",
         "query": {"queryState": {"Values": {"projections": [projection(column_ref(table, column), True)]}}},

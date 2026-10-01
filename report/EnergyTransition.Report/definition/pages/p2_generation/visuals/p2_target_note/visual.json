@@ -3,10 +3,10 @@
   "name": "p2_target_note",
   "position": {
     "x": 200,
-    "y": 476,
+    "y": 500,
     "z": 52,
     "width": 520.0,
-    "height": 36,
+    "height": 32,
     "tabOrder": 52
   },
   "visual": {

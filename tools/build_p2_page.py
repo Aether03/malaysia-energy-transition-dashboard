@@ -18,9 +18,10 @@ SIDE_X, SIDE_W = 1000, 256  # right-hand control column
 AREA_W = SIDE_X - rb.GAP - rb.CONTENT_X  # 784
 HALF_W = (rb.CONTENT_W - rb.GAP) / 2  # 520
 RIGHT_X = rb.CONTENT_X + HALF_W + rb.GAP
-ROW1_Y, ROW1_H = 104, 208
-ROW2_Y, ROW2_H, NOTE_H = 328, 148, 36
-ROW3_Y, ROW3_H = 528, 128
+# Row 2 is the tallest so the capacity-factor bar shows all 7 sources (M2 GUI round 3).
+ROW1_Y, ROW1_H = 104, 184
+ROW2_Y, ROW2_H, NOTE_H = 300, 200, 32
+ROW3_Y, ROW3_H = 540, 116
 
 FOOTNOTE = (
     "Sources: Ember Yearly Electricity Data (CC BY 4.0). Capacity factor = generation ÷ (capacity × hours in the "
@@ -44,20 +45,19 @@ def build() -> list[dict]:
     visuals.append(visual("p2_year_slicer", 1056, rb.HEADER_Y, 200, 64, 40, rb.year_range_slicer()))
     visuals.append(
         visual(
-            "p2_unit_slicer", SIDE_X, ROW1_Y, SIDE_W, 64, 41,
-            rb.slicer("Mix Unit", "Mix Unit", "Unit", mode="Basic", single=True, horizontal=True),
-            filter_config=rb.in_filter("Mix Unit", "Mix Unit", ["TWh"], "p2_unit_slicer"),
+            "p2_unit_slicer", SIDE_X, ROW1_Y, SIDE_W, 56, 41,
+            rb.slicer("Mix Unit", "Mix Unit", "Unit", mode="Basic", single=True, horizontal=True, default=["TWh"]),
         )
     )
     visuals.append(
         visual(
-            "p2_source_slicer", SIDE_X, ROW1_Y + 72, SIDE_W, 64, 42,
+            "p2_source_slicer", SIDE_X, ROW1_Y + 64, SIDE_W, 56, 42,
             rb.slicer("dim_source", "display_name", "Source", mode="Dropdown"),
         )
     )
     visuals.append(
         visual(
-            "p2_empty_state", SIDE_X, ROW1_Y + 144, SIDE_W, 64, 43,
+            "p2_empty_state", SIDE_X, ROW1_Y + 128, SIDE_W, 56, 43,
             rb.shape(None, {"expr": measure_ref("No Source Generation Message")}, 11, rb.TEXT_SECONDARY, v_align="top"),
         )
     )

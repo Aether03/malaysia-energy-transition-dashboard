@@ -60,11 +60,11 @@
                       "Entity": "ASEAN Metric"
                     }
                   },
-                  "Property": "ASEAN Metric Fields"
+                  "Property": "ASEAN Metric"
                 }
               },
-              "queryRef": "ASEAN Metric.ASEAN Metric Fields",
-              "nativeQueryRef": "ASEAN Metric Fields",
+              "queryRef": "ASEAN Metric.ASEAN Metric",
+              "nativeQueryRef": "ASEAN Metric",
               "displayName": "ASEAN Metric"
             }
           ]
