@@ -54,6 +54,23 @@
           "projections": [
             {
               "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Country RE Share (%)"
+                }
+              },
+              "queryRef": "_Measures.Country RE Share (%)",
+              "nativeQueryRef": "RE share (%)",
+              "displayName": "RE share (%)"
+            }
+          ],
+          "fieldParameters": [
+            {
+              "parameterExpr": {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
@@ -63,9 +80,8 @@
                   "Property": "ASEAN Metric"
                 }
               },
-              "queryRef": "ASEAN Metric.ASEAN Metric",
-              "nativeQueryRef": "ASEAN Metric",
-              "displayName": "ASEAN Metric"
+              "index": 0,
+              "length": 1
             }
           ]
         }

@@ -41,7 +41,7 @@ def build_t2() -> list[dict]:
         "visualContainerObjects": rb.container("Generation mix by source (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("t2_mix_bar", PAD, 40, W - 2 * PAD, 116, 2, mix))
+    visuals.append(visual("t2_mix_bar", PAD, 40, W - 2 * PAD, 128, 2, mix)  # 116 px rendered as an icon (GUI round 4))
     card_w = (W - 3 * PAD) / 2
     for i, (measure, label) in enumerate(
         [
@@ -51,7 +51,7 @@ def build_t2() -> list[dict]:
     ):
         visuals.append(
             visual(
-                f"t2_card_{i}", PAD + i * (card_w + PAD), 164, card_w, 68, 3 + i,
+                f"t2_card_{i}", PAD + i * (card_w + PAD), 172, card_w, 64, 3 + i,
                 rb.card(measure, 20, solid(rb.TEXT_PRIMARY), False, title=label),
             )
         )

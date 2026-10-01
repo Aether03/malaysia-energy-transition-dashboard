@@ -19,9 +19,9 @@ AREA_W = SIDE_X - rb.GAP - rb.CONTENT_X  # 784
 HALF_W = (rb.CONTENT_W - rb.GAP) / 2  # 520
 RIGHT_X = rb.CONTENT_X + HALF_W + rb.GAP
 # Row 2 is the tallest so the capacity-factor bar shows all 7 sources (M2 GUI round 3).
-ROW1_Y, ROW1_H = 104, 184
-ROW2_Y, ROW2_H, NOTE_H = 300, 200, 32
-ROW3_Y, ROW3_H = 540, 116
+ROW1_Y, ROW1_H = 104, 152
+ROW2_Y, ROW2_H, NOTE_H = 272, 208, 32
+ROW3_Y, ROW3_H = 528, 128  # charts under ~120 px render as a placeholder icon (GUI round 4)
 
 FOOTNOTE = (
     "Sources: Ember Yearly Electricity Data (CC BY 4.0). Capacity factor = generation ÷ (capacity × hours in the "
@@ -51,13 +51,13 @@ def build() -> list[dict]:
     )
     visuals.append(
         visual(
-            "p2_source_slicer", SIDE_X, ROW1_Y + 64, SIDE_W, 56, 42,
+            "p2_source_slicer", SIDE_X, ROW1_Y + 60, SIDE_W, 56, 42,
             rb.slicer("dim_source", "display_name", "Source", mode="Dropdown"),
         )
     )
     visuals.append(
         visual(
-            "p2_empty_state", SIDE_X, ROW1_Y + 128, SIDE_W, 56, 43,
+            "p2_empty_state", SIDE_X, ROW1_Y + 120, SIDE_W, 32, 43,
             rb.shape(None, {"expr": measure_ref("No Source Generation Message")}, 11, rb.TEXT_SECONDARY, v_align="top"),
         )
     )
@@ -69,7 +69,7 @@ def build() -> list[dict]:
             "queryState": {
                 "Category": {"projections": [projection(column_ref("dim_year", "year"), True)]},
                 "Series": {"projections": [projection(column_ref("dim_source", "display_name"))]},
-                "Y": {"projections": [rb.param_projection("Mix Unit")]},
+                "Y": rb.param_role("Mix Unit", "Ctx Generation (TWh)", "TWh"),
             }
         },
         "objects": {
@@ -116,8 +116,8 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("National RE capacity targets: share of installed capacity (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p2_target_line", rb.CONTENT_X, ROW2_Y, HALF_W, ROW2_H, 51, target))
-    visuals.append(visual("p2_target_note", rb.CONTENT_X, ROW2_Y + ROW2_H, HALF_W, NOTE_H, 52, note("Target Source Note")))
+    # The target sources are in the footnote, so the chart takes the note row too (GUI round 4).
+    visuals.append(visual("p2_target_line", rb.CONTENT_X, ROW2_Y, HALF_W, ROW2_H + NOTE_H, 51, target))
 
     # --- row 2 right: capacity factor per source at the last year of the range
     cf = {

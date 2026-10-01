@@ -3,10 +3,10 @@
   "name": "p2_cf_bar",
   "position": {
     "x": 736.0,
-    "y": 300,
+    "y": 272,
     "z": 53,
     "width": 520.0,
-    "height": 200,
+    "height": 208,
     "tabOrder": 53
   },
   "visual": {

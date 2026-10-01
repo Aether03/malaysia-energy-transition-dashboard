@@ -20,10 +20,6 @@ table _Measures
 		displayFolder: Context
 		lineageTag: 54229137-d1cb-46ea-b25a-f80fa4048e09
 
-	/// Header scope line under each takeaway title (doc 04 type.page-subtitle).
-	measure 'Overview Subtitle' = "Malaysia · " & [Selected Year] & " · " & [Data As Of]
-		displayFolder: Context
-
 	measure 'No Data Message' = IF ( ISBLANK ( [Total Generation (TWh)] ), "No data for " & [Selected Year] )
 		displayFolder: Context
 		lineageTag: 553f786c-e4f3-4d64-beee-02a40f6f114d
@@ -132,37 +128,6 @@ table _Measures
 		displayFolder: Overview
 		lineageTag: 9611248a-481d-48ec-857d-319e3c3a0989
 
-	/// Ember demand ÷ OWID (UN) population; blank where OWID has no population (M2 plan Q2).
-	measure 'Demand per Capita (MWh)' =
-			VAR y = [Selected Year]
-			RETURN
-			    CALCULATE (
-			        SUM ( country_annual[demand_per_capita_mwh] ),
-			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
-			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
-			    )
-		formatString: 0.00
-		displayFolder: Overview
-
-	measure 'Demand per Capita YoY (%)' =
-			VAR y = [Selected Year]
-			VAR prev =
-			    CALCULATE (
-			        SUM ( country_annual[demand_per_capita_mwh] ),
-			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
-			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
-			    )
-			VAR cur = [Demand per Capita (MWh)]
-			RETURN IF ( NOT ISBLANK ( cur ), DIVIDE ( cur - prev, prev ) )
-		formatString: 0.0%;-0.0%;0.0%
-		displayFolder: Overview
-
-	/// Delta labels: arrow + value; colour measures apply the KPI polarity (doc 04 §3.5).
-	measure 'Demand per Capita Delta Label' =
-			VAR d = [Demand per Capita YoY (%)]
-			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
-		displayFolder: Overview\Deltas
-
 	measure 'Total Generation Delta Label' =
 			VAR d = [Total Generation YoY (%)]
 			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
@@ -238,20 +203,6 @@ table _Measures
 		displayFolder: NETR
 		lineageTag: a401e13a-48a6-434c-8cdb-44c136c4a856
 
-	/// Official reported share (ASEAN definition, incl. off-grid and rooftop) for the latest
-	/// official year up to the selected year; blank before the first official point (M2 step 1).
-	measure 'Official RE Capacity Year' =
-			VAR y = [Selected Year]
-			RETURN CALCULATE ( MAX ( re_capacity_official[year] ), re_capacity_official[year] <= y )
-		formatString: 0
-		displayFolder: NETR
-
-	measure 'Official RE Capacity Share (%)' =
-			VAR oy = [Official RE Capacity Year]
-			RETURN IF ( NOT ISBLANK ( oy ), CALCULATE ( MAX ( re_capacity_official[re_capacity_share_pct] ), re_capacity_official[year] = oy ) )
-		formatString: 0.0
-		displayFolder: NETR
-
 	/// Both bases side by side, so the Ember grid-only share is never read as missing the target.
 	measure 'NETR Progress Label' =
 			VAR official = [Official RE Capacity Share (%)]
@@ -274,25 +225,82 @@ table _Measures
 		lineageTag: 8b3ac494-dc11-4dca-9635-45698468ecd3
 
 	/// Takeaway title for P1 (doc 04 principle 2).
-	measure 'Overview Title' =
-			"Renewables supplied " & FORMAT ( [RE Share (%)], "0.0" ) & "% of Malaysia's electricity in " & [Selected Year]
+	measure 'Overview Title' = "Renewables supplied " & FORMAT ( [RE Share (%)], "0.0" ) & "% of Malaysia's electricity in " & [Selected Year]
 		displayFolder: Context
 		lineageTag: d86e3cf4-cb59-44b5-a404-2d52d0c2b321
+
+	/// Header scope line under each takeaway title (doc 04 type.page-subtitle).
+	measure 'Overview Subtitle' = "Malaysia · " & [Selected Year] & " · " & [Data As Of]
+		displayFolder: Context
+		lineageTag: 1e556ac9-c38e-4916-9964-560ff7b3b848
+
+	/// Ember demand ÷ OWID (UN) population; blank where OWID has no population (M2 plan Q2).
+	measure 'Demand per Capita (MWh)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[demand_per_capita_mwh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: 0.00
+		displayFolder: Overview
+		lineageTag: b71408c5-14e6-435f-a9db-26ad013b6021
+
+	measure 'Demand per Capita YoY (%)' =
+			VAR y = [Selected Year]
+			VAR prev =
+			    CALCULATE (
+			        SUM ( country_annual[demand_per_capita_mwh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
+			    )
+			VAR cur = [Demand per Capita (MWh)]
+			RETURN IF ( NOT ISBLANK ( cur ), DIVIDE ( cur - prev, prev ) )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Overview
+		lineageTag: ea1f5bd2-c1ff-46c3-91e3-e6a0f441166c
+
+	/// Delta labels: arrow + value; colour measures apply the KPI polarity (doc 04 §3.5).
+	measure 'Demand per Capita Delta Label' =
+			VAR d = [Demand per Capita YoY (%)]
+			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
+		displayFolder: Overview\Deltas
+		lineageTag: a138ac09-5b10-486b-8826-dd6576a59f55
+
+	/// Official reported share (ASEAN definition, incl. off-grid and rooftop) for the latest
+	/// official year up to the selected year; blank before the first official point (M2 step 1).
+	measure 'Official RE Capacity Year' =
+			VAR y = [Selected Year]
+			RETURN CALCULATE ( MAX ( re_capacity_official[year] ), re_capacity_official[year] <= y )
+		formatString: 0
+		displayFolder: NETR
+		lineageTag: 402c7c0d-99de-4ad8-a15e-97e05a9ffdaf
+
+	measure 'Official RE Capacity Share (%)' =
+			VAR oy = [Official RE Capacity Year]
+			RETURN IF ( NOT ISBLANK ( oy ), CALCULATE ( MAX ( re_capacity_official[re_capacity_share_pct] ), re_capacity_official[year] = oy ) )
+		formatString: 0.0
+		displayFolder: NETR
+		lineageTag: 47b26335-9690-4b86-9062-9613803214ff
 
 	/// Country in context (M2 plan Q4): the one country filtered (D1 drill-through, a chart row),
 	/// otherwise the focus country, Malaysia. P2 and D1 measures use it; P1 stays Malaysia-only.
 	measure 'Focus Country Key' = CALCULATE ( MAX ( dim_country[country_key] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE () )
 		formatString: 0
 		displayFolder: Context
+		lineageTag: d2a3e51b-b678-486e-b80b-7de2e20ed4cb
 
 	measure 'Context Country Key' = IF ( HASONEVALUE ( dim_country[country_key] ), VALUES ( dim_country[country_key] ), [Focus Country Key] )
 		formatString: 0
 		displayFolder: Context
+		lineageTag: 439c3a6a-3122-4202-a153-720c3b797235
 
 	measure 'Context Country' =
 			VAR k = [Context Country Key]
 			RETURN CALCULATE ( MAX ( dim_country[name] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k )
 		displayFolder: Context
+		lineageTag: a5fdf703-7520-4653-b7cf-b7f9cb34a7de
 
 	/// Generation for the country in context, per source and year on the axis (twin: 01_trends).
 	measure 'Ctx Generation (TWh)' =
@@ -300,17 +308,20 @@ table _Measures
 			RETURN CALCULATE ( SUM ( generation_annual[generation_twh] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k )
 		formatString: #,0.0
 		displayFolder: Generation
+		lineageTag: 4935ccea-25e4-4fd7-b7de-ffaf2cf3a9a2
 
 	/// Share of the year's whole mix, so a source slicer never inflates the shares.
 	measure 'Ctx Generation Share (%)' = DIVIDE ( [Ctx Generation (TWh)], CALCULATE ( [Ctx Generation (TWh)], REMOVEFILTERS ( dim_source ) ) ) * 100
 		formatString: 0.0
 		displayFolder: Generation
+		lineageTag: e64eb367-2f55-4eb4-9dbd-f835e1a25b35
 
 	measure 'Ctx Demand (TWh)' =
 			VAR k = [Context Country Key]
 			RETURN CALCULATE ( SUM ( country_annual[demand_twh] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k )
 		formatString: #,0.0
 		displayFolder: Generation
+		lineageTag: 4b651810-dd9a-4b2b-acc4-6c434e7519f9
 
 	/// YoY demand growth for the year on the axis; blank (shown as a gap) for the first year (twin: 02_yoy_lag).
 	measure 'Ctx Demand Growth (%)' =
@@ -321,6 +332,7 @@ table _Measures
 			RETURN IF ( NOT ISBLANK ( cur ) && NOT ISBLANK ( prev ), DIVIDE ( cur - prev, prev ) * 100 )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Generation
+		lineageTag: 11d1e70f-632f-4e62-9a44-f9a7dc2f6bce
 
 	/// Capacity factor at the last year of the selected range, per source (twin: 05_capacity_factor).
 	/// GWh ÷ (GW × hours in year; 8,784 in leap years). Blank, never 0, when capacity is not
@@ -334,9 +346,11 @@ table _Measures
 			RETURN IF ( HASONEVALUE ( dim_source[source_key] ) && cap > 0 && 1000 * gen <= cap * hrs, 100 * 1000 * gen / ( cap * hrs ) )
 		formatString: 0.0
 		displayFolder: Generation
+		lineageTag: bbb0a973-594b-4115-aa18-889f3d30e72c
 
 	measure 'Capacity Factor Title' = "Capacity factor by source, " & MAX ( dim_year[year] ) & " (%)"
 		displayFolder: Generation
+		lineageTag: 48b5606d-cf6a-45f9-a971-f41ada9e2898
 
 	/// Footnote naming every source whose capacity factor is blank, and why (doc 03 P2 edge case).
 	measure 'Capacity Factor Note' =
@@ -357,6 +371,7 @@ table _Measures
 			            & " in " & y & ", so shown blank, not 0. CF = generation ÷ (capacity × hours in year)."
 			    )
 		displayFolder: Generation
+		lineageTag: a39ddd9d-1f56-4fcb-964c-e15098813110
 
 	measure 'Generation Title' =
 			VAR k = [Context Country Key]
@@ -364,10 +379,11 @@ table _Measures
 			VAR fossil = CALCULATE ( SUM ( country_annual[fossil_share_gen_pct] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			RETURN [Context Country] & ": fossil fuels supplied " & FORMAT ( fossil, "0.0" ) & "% of electricity in " & y
 		displayFolder: Generation
+		lineageTag: e216285a-ce24-4cd0-8768-e08656a72941
 
-	measure 'Generation Subtitle' =
-			[Context Country] & " · " & MIN ( dim_year[year] ) & "–" & MAX ( dim_year[year] ) & " · " & [Data As Of]
+	measure 'Generation Subtitle' = [Context Country] & " · " & MIN ( dim_year[year] ) & "–" & MAX ( dim_year[year] ) & " · " & [Data As Of]
 		displayFolder: Generation
+		lineageTag: 55b37690-5037-4b4b-8f2c-77c69c06574d
 
 	/// Empty state for a source filter with nothing generated in the range (doc 03 P2).
 	measure 'No Source Generation Message' =
@@ -376,6 +392,7 @@ table _Measures
 			    "No " & CONCATENATEX ( VALUES ( dim_source[display_name] ), dim_source[display_name], " or " ) & " generation in this period"
 			)
 		displayFolder: Generation
+		lineageTag: 4cc767bf-e6a6-4ff2-b1ab-93f9bb980589
 
 	/// Target axis (2000-2050): Ember-basis share, official points and targets on one line chart.
 	measure 'Axis RE Capacity Share (%)' =
@@ -383,22 +400,25 @@ table _Measures
 			RETURN CALCULATE ( SUM ( country_annual[re_share_capacity_pct] ), REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 		formatString: 0.0
 		displayFolder: NETR
+		lineageTag: 4a483bb3-1674-4efa-85f9-fac096244164
 
 	measure 'Axis Official (%)' =
 			VAR y = SELECTEDVALUE ( 'Target Axis'[year] )
 			RETURN CALCULATE ( MAX ( re_capacity_official[re_capacity_share_pct] ), re_capacity_official[year] = y )
 		formatString: 0.0
 		displayFolder: NETR
+		lineageTag: a330d64d-20f9-4b8f-af0b-eb7c2cbbb930
 
 	measure 'Axis Target (%)' =
 			VAR y = SELECTEDVALUE ( 'Target Axis'[year] )
 			RETURN CALCULATE ( MAX ( netr_target[re_capacity_share_pct] ), netr_target[target_year] = y )
 		formatString: 0.0
 		displayFolder: NETR
+		lineageTag: 7c02eca5-3eac-415a-9525-69a836b2e7b1
 
-	measure 'Target Source Note' =
-			"Targets: " & CONCATENATEX ( netr_target, netr_target[target_year] & " " & FORMAT ( netr_target[re_capacity_share_pct], "0" ) & "% (" & netr_target[source_name] & ")", "; ", netr_target[target_year], ASC )
+	measure 'Target Source Note' = "Targets: " & CONCATENATEX ( netr_target, netr_target[target_year] & " " & FORMAT ( netr_target[re_capacity_share_pct], "0" ) & "% (" & netr_target[source_name] & ")", "; ", netr_target[target_year], ASC )
 		displayFolder: NETR
+		lineageTag: 1fc7c063-10aa-4359-92ca-33b4d00f5502
 
 	/// ASEAN comparison (P5). The compared set comes from the disconnected 'Compare Country' slicer
 	/// (default: the 6 default peers when nothing is selected), so a clicked mark or a hovered tooltip,
@@ -416,19 +436,23 @@ table _Measures
 			RETURN IF ( NOT ISBLANK ( k ) && k IN sel, 1 )
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: c5e9e0dc-17ff-43b7-9d4e-2461f5e8f1ef
 
 	/// One country and one year only; never a sum of percentages across countries or years.
 	measure 'Country RE Share (%)' = IF ( HASONEVALUE ( dim_year[year] ) && HASONEVALUE ( dim_country[country_key] ), SUM ( country_annual[re_share_gen_pct] ) )
 		formatString: 0.0
 		displayFolder: ASEAN
+		lineageTag: 58dfc90e-a001-41e9-92c7-0a1fec4308b5
 
 	measure 'Country Carbon Intensity (gCO2e/kWh)' = IF ( HASONEVALUE ( dim_year[year] ) && HASONEVALUE ( dim_country[country_key] ), SUM ( country_annual[emissions_intensity_gco2e_kwh] ) )
 		formatString: #,0
 		displayFolder: ASEAN
+		lineageTag: 42bb5b5b-b6cd-4e6a-bbcf-18e0ee51b52e
 
 	measure 'Country Emissions (MtCO2e)' = IF ( HASONEVALUE ( dim_year[year] ) && HASONEVALUE ( dim_country[country_key] ), SUM ( country_annual[emissions_mtco2e] ) )
 		formatString: #,0.0
 		displayFolder: ASEAN
+		lineageTag: cca2a452-4fa1-4947-9d62-d8849e8e97cd
 
 	/// Latest year that EVERY compared country reports, up to the end of the selected year range
 	/// (doc 03 P5 edge case; twin: 03_ranking). On P1 the single-year slicer is the range.
@@ -450,6 +474,7 @@ table _Measures
 			    )
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: 75b7966f-55f2-4de3-8528-ffb6d3640221
 
 	/// The same for demand per capita, which needs OWID population (ends 2024 for BN, ID, LA, MM).
 	measure 'Common Per Capita Year' =
@@ -470,35 +495,41 @@ table _Measures
 			    )
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: bbc4a8eb-b965-4829-8096-46e736e883f1
 
 	/// Kept as the name visuals bind to; always the shared-year rule (review MEDIUM 4).
 	measure 'Comparison Year' = [Common Latest Year]
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: 1ec21a25-1d5c-40bf-bae6-ded6a3397cc2
 
 	measure 'RE Share at Comparison Year (%)' =
 			VAR y = [Comparison Year]
 			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[re_share_gen_pct] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: 0.0
 		displayFolder: ASEAN
+		lineageTag: 12564adb-6572-4029-88db-fe9c36336d91
 
 	measure 'Intensity at Comparison Year (gCO2e/kWh)' =
 			VAR y = [Comparison Year]
 			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[emissions_intensity_gco2e_kwh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: #,0
 		displayFolder: ASEAN
+		lineageTag: 215b5fc3-b610-424e-9b85-6650e693fda7
 
 	measure 'Demand at Comparison Year (TWh)' =
 			VAR y = [Comparison Year]
 			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[demand_twh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: #,0.0
 		displayFolder: ASEAN
+		lineageTag: 76d51cd4-1dd2-46b1-b5f6-227464c4e2a4
 
 	measure 'Demand per Capita at Common Year (MWh)' =
 			VAR y = [Common Per Capita Year]
 			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[demand_per_capita_mwh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: 0.00
 		displayFolder: ASEAN
+		lineageTag: aee4e55d-0d7b-478c-aa43-73fe51f1bdd6
 
 	/// Malaysia's rank on RE share among the compared countries (1 = highest; ties share a rank,
 	/// like SQL RANK()). Twin: 03_ranking.
@@ -524,6 +555,7 @@ table _Measures
 			RETURN IF ( NOT ISBLANK ( focus ), COUNTROWS ( FILTER ( scores, [@re] > focus ) ) + 1 )
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: 2b71ae37-fdd0-4962-930d-6b747cbf77b3
 
 	/// Malaysia's rank on carbon intensity among the compared countries (1 = lowest, i.e. cleanest;
 	/// like SQL RANK()). Twin: 03_ranking.
@@ -549,6 +581,7 @@ table _Measures
 			RETURN IF ( NOT ISBLANK ( focus ), COUNTROWS ( FILTER ( scores, [@re] < focus ) ) + 1 )
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: dace5776-fd3b-4db4-8075-ef0716e7e35f
 
 	measure 'Countries Compared' =
 			VAR y = [Comparison Year]
@@ -570,6 +603,7 @@ table _Measures
 			    )
 		formatString: 0
 		displayFolder: ASEAN
+		lineageTag: 150c875a-716c-4512-9fc3-54d66f61f5a2
 
 	measure 'Rank Label' =
 			VAR n = [Countries Compared]
@@ -582,11 +616,13 @@ table _Measures
 			        "Malaysia ranks " & r & " of " & n & " on renewable share (" & [Comparison Year] & ")"
 			    )
 		displayFolder: ASEAN
+		lineageTag: 0f958dd4-36f5-47c7-bb75-08014f198774
 
 	measure 'ASEAN Footnote' =
 			"Ranking, scatter and intensity bars use " & [Common Latest Year] & ", the latest year all selected countries report; per-capita demand uses "
 			    & [Common Per Capita Year] & " (OWID population). With no country selected, the six default peers are compared. Sources: Ember (CC BY 4.0), OWID (CC BY 4.0)."
 		displayFolder: ASEAN
+		lineageTag: 7e4d3701-edd6-4900-8864-8984a7e7cf86
 
 	/// Takeaway title: both ranks, since the share alone hides the coal-heavy mix (findings 3).
 	measure 'ASEAN Title' =
@@ -600,13 +636,16 @@ table _Measures
 			        "Malaysia: " & r & " of " & n & " on renewable share, " & ir & " of " & n & " on carbon intensity (" & [Comparison Year] & ")"
 			    )
 		displayFolder: ASEAN
+		lineageTag: 1cfa1c36-dfd8-4542-a6c9-ee61e73b72d0
 
 	measure 'ASEAN Subtitle' = "ASEAN peers · " & MIN ( dim_year[year] ) & "–" & MAX ( dim_year[year] ) & " · " & [Data As Of]
 		displayFolder: ASEAN
+		lineageTag: 44c00765-2e8f-4d26-ac37-bbffb79b8f09
 
 	/// T2 country tooltip: the hovered country at the hovered year, else its comparison year.
 	measure 'T2 Title' = SELECTEDVALUE ( dim_country[name] ) & " · " & [Comparison Year]
 		displayFolder: Tooltips
+		lineageTag: eb259940-f98a-4f73-92f9-33fc0cc2ebfd
 
 	measure 'T2 Generation Share (%)' =
 			VAR y = [Comparison Year]
@@ -616,21 +655,26 @@ table _Measures
 			) * 100
 		formatString: 0.0
 		displayFolder: Tooltips
+		lineageTag: 1d09a487-c60b-443f-8e41-14a397f75756
 
 	/// T1 KPI tooltip pages are filtered to one kpi_code each; text comes from ref.kpi (doc 03 T1).
 	measure 'KPI Name' = SELECTEDVALUE ( kpi[name] ) & " (" & SELECTEDVALUE ( kpi[unit] ) & ")"
 		displayFolder: Tooltips
+		lineageTag: cd1bb25a-a185-43ed-90d8-d0a5e70780b3
 
 	measure 'KPI Definition' = SELECTEDVALUE ( kpi[definition] )
 		displayFolder: Tooltips
+		lineageTag: 4201d371-7374-443f-89fc-b18c239e7876
 
 	measure 'KPI Formula' = "Formula: " & SELECTEDVALUE ( kpi[formula] )
 		displayFolder: Tooltips
+		lineageTag: 6f67805d-8184-4637-9553-cfab176f1755
 
 	measure 'KPI Source' =
 			VAR code = SELECTEDVALUE ( kpi[data_source_code] )
 			RETURN "Source: " & CALCULATE ( MAX ( data_source[credit_text] ), data_source[data_source_code] = code )
 		displayFolder: Tooltips
+		lineageTag: be056c8e-d686-4edc-b930-9e9613fdeb23
 
 	measure 'KPI Latest vs Previous' =
 			VAR y = [Selected Year]
@@ -655,6 +699,7 @@ table _Measures
 			VAR fmt = IF ( code = "DEMAND_PER_CAPITA", "0.00", IF ( code = "CARBON_INTENSITY", "#,0", "#,0.0" ) )
 			RETURN "Malaysia " & y & ": " & FORMAT ( cur, fmt ) & IF ( NOT ISBLANK ( prev ), " · " & ( y - 1 ) & ": " & FORMAT ( prev, fmt ) )
 		displayFolder: Tooltips
+		lineageTag: e27ec29b-52b3-4bf5-9df2-e7c530c8bc88
 
 	column Value
 		dataType: int64

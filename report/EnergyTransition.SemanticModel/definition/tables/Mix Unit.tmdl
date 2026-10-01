@@ -1,6 +1,8 @@
 table 'Mix Unit'
+	lineageTag: cbb2926e-db89-40a8-b35a-e765dd417e11
 
 	column 'Mix Unit'
+		lineageTag: b585085d-9837-4f6e-a2f2-574de5d8d572
 		summarizeBy: none
 		sourceColumn: [Value1]
 		sortByColumn: 'Mix Unit Order'
@@ -12,6 +14,7 @@ table 'Mix Unit'
 
 	column 'Mix Unit Fields'
 		isHidden
+		lineageTag: afb6f446-1e0e-4d96-80e4-5e9643fd1571
 		summarizeBy: none
 		sourceColumn: [Value2]
 		sortByColumn: 'Mix Unit Order'
@@ -27,6 +30,7 @@ table 'Mix Unit'
 	column 'Mix Unit Order'
 		isHidden
 		formatString: 0
+		lineageTag: c3e2d81a-d1fe-4fe3-8ae2-f5326a6470c1
 		summarizeBy: none
 		sourceColumn: [Value3]
 

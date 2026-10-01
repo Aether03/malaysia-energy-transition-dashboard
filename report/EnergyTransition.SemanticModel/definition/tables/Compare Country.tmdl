@@ -1,17 +1,20 @@
 /// Disconnected country list for the P5 slicer (countries only, never the ASEAN aggregate).
 /// Measures read the selection with VALUES; visuals show only compared countries via [Is Compared] = 1.
 table 'Compare Country'
+	lineageTag: 2ad240fb-d9bb-4e81-bd24-31022dbee954
 
 	column country_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: c0666597-e2cf-48ae-a113-89e55fe50d81
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [country_key]
 
 	column name
 		dataType: string
+		lineageTag: b353f430-2255-40b9-ab52-a0131faf2b97
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [name]
@@ -20,6 +23,7 @@ table 'Compare Country'
 	column is_default_peer
 		dataType: boolean
 		isHidden
+		lineageTag: b283ad23-0d42-404c-916b-d288f8936598
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [is_default_peer]
@@ -28,6 +32,7 @@ table 'Compare Country'
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 0bd187ca-35ff-49bd-9156-5ea6126301f4
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [display_order]

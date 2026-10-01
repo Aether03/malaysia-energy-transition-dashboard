@@ -1,6 +1,8 @@
 table 'ASEAN Metric'
+	lineageTag: ecb5dd33-4888-4e56-b5eb-46ed4d891344
 
 	column 'ASEAN Metric'
+		lineageTag: 14eb9a35-55fb-4ecf-811a-9fdde9a669a6
 		summarizeBy: none
 		sourceColumn: [Value1]
 		sortByColumn: 'ASEAN Metric Order'
@@ -12,6 +14,7 @@ table 'ASEAN Metric'
 
 	column 'ASEAN Metric Fields'
 		isHidden
+		lineageTag: 937082bf-0ae8-44e1-a205-f052d0f34ed4
 		summarizeBy: none
 		sourceColumn: [Value2]
 		sortByColumn: 'ASEAN Metric Order'
@@ -27,6 +30,7 @@ table 'ASEAN Metric'
 	column 'ASEAN Metric Order'
 		isHidden
 		formatString: 0
+		lineageTag: 3a645e11-d5c8-4a2d-bb5e-c3947c5de0ca
 		summarizeBy: none
 		sourceColumn: [Value3]
 

@@ -6,7 +6,7 @@
     "y": 104,
     "z": 50,
     "width": 784,
-    "height": 184,
+    "height": 152,
     "tabOrder": 50
   },
   "visual": {
@@ -54,6 +54,23 @@
           "projections": [
             {
               "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Ctx Generation (TWh)"
+                }
+              },
+              "queryRef": "_Measures.Ctx Generation (TWh)",
+              "nativeQueryRef": "TWh",
+              "displayName": "TWh"
+            }
+          ],
+          "fieldParameters": [
+            {
+              "parameterExpr": {
                 "Column": {
                   "Expression": {
                     "SourceRef": {
@@ -63,9 +80,8 @@
                   "Property": "Mix Unit"
                 }
               },
-              "queryRef": "Mix Unit.Mix Unit",
-              "nativeQueryRef": "Mix Unit",
-              "displayName": "Mix Unit"
+              "index": 0,
+              "length": 1
             }
           ]
         }

@@ -3,10 +3,10 @@
   "name": "p2_empty_state",
   "position": {
     "x": 1000,
-    "y": 232,
+    "y": 224,
     "z": 43,
     "width": 256,
-    "height": 56,
+    "height": 32,
     "tabOrder": 43
   },
   "visual": {

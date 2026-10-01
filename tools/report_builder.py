@@ -380,15 +380,17 @@ def measure_colours(colours: dict[str, str]) -> list[dict]:
 
 
 # ---------- slicers and field parameters ----------
-# A field-parameter column in a value well: Desktop binds the hidden "<name> Fields" column and keeps
-# the parameter name as the display name. Flip to False to bind the visible "<name>" column instead.
-PARAM_WELL_USES_FIELDS_COLUMN = False  # True failed in Desktop: "Can't determine relationships" (M2 GUI round 3)
+def param_role(table: str, default_measure: str, default_label: str) -> dict:
+    """A chart value well driven by a field parameter ('Mix Unit', 'ASEAN Metric').
 
-
-def param_projection(table: str) -> dict:
-    """Projection of a field parameter ('Mix Unit', 'ASEAN Metric') for a chart's value well."""
-    prop = f"{table} Fields" if PARAM_WELL_USES_FIELDS_COLUMN else table
-    return {**projection(column_ref(table, prop)), "displayName": table}
+    Desktop's shape (saved in M2 GUI round 4): the projection is the currently selected measure,
+    and `fieldParameters` points at the parameter column. Binding the parameter column itself
+    fails with "Can't determine relationships between the fields".
+    """
+    return {
+        "projections": [{**projection(measure_ref(default_measure)), "nativeQueryRef": default_label, "displayName": default_label}],
+        "fieldParameters": [{"parameterExpr": column_ref(table, table), "index": 0, "length": 1}],
+    }
 
 
 def in_filter(table: str, column: str, values: list[str], name_seed: str) -> dict:

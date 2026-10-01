@@ -86,7 +86,7 @@ def build() -> list[dict]:
             "queryState": {
                 "Category": {"projections": [projection(column_ref("dim_year", "year"), True)]},
                 "Series": {"projections": [projection(column_ref("dim_country", "name"))]},
-                "Y": {"projections": [rb.param_projection("ASEAN Metric")]},
+                "Y": rb.param_role("ASEAN Metric", "Country RE Share (%)", "RE share (%)"),
             }
         },
         "objects": {

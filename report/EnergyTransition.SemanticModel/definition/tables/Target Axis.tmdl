@@ -1,9 +1,11 @@
 /// Years 2000-2050 for the P2 target chart: data years plus target years (dim_year stops at the data).
 table 'Target Axis'
+	lineageTag: bbc62a60-959b-4a3b-8714-2ba9f336e9dd
 
 	column year
 		dataType: int64
 		formatString: 0
+		lineageTag: cab3643e-8005-400d-af7c-6bf2851f9206
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [year]

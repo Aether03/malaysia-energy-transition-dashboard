@@ -157,10 +157,49 @@
             "x": 2779.1034497391274,
             "y": 290.89333091179662
           },
-          "nodeIndex": "Template Param",
-          "nodeLineageTag": "e622df09-727b-441b-b612-2aa68620d9f7",
+          "nodeIndex": "ASEAN Metric",
+          "nodeLineageTag": "ecb5dd33-4888-4e56-b5eb-46ed4d891344",
           "size": {
             "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3063.1034497391274,
+            "y": 278.89333091179662
+          },
+          "nodeIndex": "Compare Country",
+          "nodeLineageTag": "2ad240fb-d9bb-4e81-bd24-31022dbee954",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3347.1034497391274,
+            "y": 290.89333091179662
+          },
+          "nodeIndex": "Mix Unit",
+          "nodeLineageTag": "cbb2926e-db89-40a8-b35a-e765dd417e11",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3631.1034497391274,
+            "y": 266.89333091179662
+          },
+          "nodeIndex": "Target Axis",
+          "nodeLineageTag": "bbc62a60-959b-4a3b-8714-2ba9f336e9dd",
+          "size": {
+            "height": 200,
             "width": 234
           },
           "zIndex": 0

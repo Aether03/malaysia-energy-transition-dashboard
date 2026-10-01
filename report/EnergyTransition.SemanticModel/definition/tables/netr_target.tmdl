@@ -15,17 +15,17 @@ table netr_target
 		summarizeBy: none
 		sourceColumn: re_capacity_share_pct
 
-	column source_name
-		dataType: string
-		lineageTag: 1ee98320-8597-469a-aa58-9081eae12f14
-		summarizeBy: none
-		sourceColumn: source_name
-
 	column source_url
 		dataType: string
 		lineageTag: 4f792446-2161-4b56-941d-d78bc29d298c
 		summarizeBy: none
 		sourceColumn: source_url
+
+	column source_name
+		dataType: string
+		lineageTag: 1ee98320-8597-469a-aa58-9081eae12f14
+		summarizeBy: none
+		sourceColumn: source_name
 
 	partition netr_target = m
 		mode: import

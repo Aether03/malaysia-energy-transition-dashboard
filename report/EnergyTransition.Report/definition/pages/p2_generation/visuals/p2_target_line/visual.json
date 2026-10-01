@@ -3,10 +3,10 @@
   "name": "p2_target_line",
   "position": {
     "x": 200,
-    "y": 300,
+    "y": 272,
     "z": 51,
     "width": 520.0,
-    "height": 200,
+    "height": 240,
     "tabOrder": 51
   },
   "visual": {
