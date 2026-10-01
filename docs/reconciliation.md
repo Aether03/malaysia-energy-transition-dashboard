@@ -44,3 +44,16 @@ These WARN rules fire by design. Each gap is a real difference between sources o
 | `DOSM_SUPPLY_WITHIN_10PCT` | MY 2022, 2023 | Ember generation is above DOSM's total supply by a gap that grows over time: 4.3% (2018), 6.0%, 6.8%, 7.0%, 11.4% (2022), 14.1% (2023). DOSM's series ends in Jun 2024. The cause is **not established**; plausible contributors are self-generation, co-generation and rooftop solar outside DOSM's supply statistics | Cross-check only (S1); no report page uses DOSM. The growing gap is stated as a caveat, not a finding |
 | `CF_AT_MOST_1` | 117 source-years | Ember's capacity is too small for the generation it reports. Examples: geothermal ("Other renewables") at 0–0.01 GW for the Philippines and Indonesia beside 10–15 TWh; Singapore waste-to-energy; Indonesian captive coal and bioenergy. Malaysia: only Other fossil 2024 (CF 1.10) | `030` treats implausible **renewable** capacity as unreported, so the RE capacity share is NULL for PHL, IDN, SGP and 4 VNM years instead of being understated. Capacity-factor visuals blank values above 1 |
 | `STALE_COUNTRY_YEARS` | Brunei, Laos, Myanmar | Ember's data for these three ends in 2024 | The ASEAN ranking uses the latest year all selected countries share (doc 03 P5) |
+
+## DAX vs SQL twins (M2 step 7, 2026-10-02)
+`tools/dax_twin_check.py` runs each question in DAX against the model open in Power BI Desktop (via Desktop's own ADOMD client, `tools/dax_query.ps1`) and in SQL against the mart views, mostly through the `sql/showcase` queries. Measured values must agree within max(0.05, 0.1%); years, ranks and counts must match exactly.
+
+**Result: 14/14 PASS.**
+- P1 KPIs + YoY (2025, and 2015 to prove the slicer is honoured)
+- P2 mix TWh/share; D1 Vietnam 2020 (country in context)
+- Demand growth (every year)
+- Capacity factor (MY 2024 leap year and 2025; Philippines 2023 geothermal gap)
+- P5 values and the rank card: 6 default peers, Singapore deselected, Brunei added (common year 2024, n = 7), range 2015–2020, P1 at 2024
+- Target chart 2000–2050
+
+The independent review's fix to the `'Compare Country'` selection measures was verified with query-scoped `DEFINE MEASURE` overrides on the open model, before a reload. The first model run had failed on `IF` returning a table.

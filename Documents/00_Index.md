@@ -105,7 +105,8 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Step 6: P1 verified in Desktop (2 rounds). The final cosmetic fixes (frame borders, nav text, card padding) are unverified and get checked in the next GUI round.
     - Step 7 is written: 73 measures (country in context, shares and YoY, capacity factor, demand growth, rank on the common year, target axis, T1/T2) + field parameters `Mix Unit` / `ASEAN Metric` + `Target Axis` table.
       - `tools/dax_query.ps1` uses Desktop's own `Microsoft.PowerBI.AdomdClient.dll`; `tools/dax_twin_check.py` has 10 twins.
-    - **Resume:** the independent DAX review (running) + the twin check (needs Desktop open), then steps 8–10 (one Sonnet agent).
+    - Step 7 **done**. Review: 0 CRITICAL; 3 HIGH/4 MEDIUM fixed (`'Compare Country'` selection table, exact twins). The **twin check passes 14/14** (`docs/reconciliation.md`).
+    - **Resume:** steps 8–10 (P1 completion, P2, P5 + T2) in one Sonnet agent, then the GUI round.
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.

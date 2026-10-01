@@ -405,7 +405,14 @@ table _Measures
 	/// which filter dim_country, can never shrink the set (independent review, HIGH 2-3).
 	measure 'Is Compared' =
 			VAR k = SELECTEDVALUE ( dim_country[country_key] )
-			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
+			VAR picked = VALUES ( 'Compare Country'[country_key] )
+			VAR filtered = ISFILTERED ( 'Compare Country' )
+			-- IF cannot return a table, so the choice sits inside FILTER: the slicer's countries, else the default peers
+			VAR sel =
+			    FILTER (
+			        ALL ( 'Compare Country'[country_key] ),
+			        IF ( filtered, 'Compare Country'[country_key] IN picked, CALCULATE ( COUNTROWS ( 'Compare Country' ), 'Compare Country'[is_default_peer] = TRUE () ) > 0 )
+			    )
 			RETURN IF ( NOT ISBLANK ( k ) && k IN sel, 1 )
 		formatString: 0
 		displayFolder: ASEAN
@@ -427,7 +434,14 @@ table _Measures
 	/// (doc 03 P5 edge case; twin: 03_ranking). On P1 the single-year slicer is the range.
 	measure 'Common Latest Year' =
 			VAR last_year = CALCULATE ( MAX ( dim_year[year] ), ALLSELECTED ( dim_year ) )
-			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
+			VAR picked = VALUES ( 'Compare Country'[country_key] )
+			VAR filtered = ISFILTERED ( 'Compare Country' )
+			-- IF cannot return a table, so the choice sits inside FILTER: the slicer's countries, else the default peers
+			VAR sel =
+			    FILTER (
+			        ALL ( 'Compare Country'[country_key] ),
+			        IF ( filtered, 'Compare Country'[country_key] IN picked, CALCULATE ( COUNTROWS ( 'Compare Country' ), 'Compare Country'[is_default_peer] = TRUE () ) > 0 )
+			    )
 			RETURN
 			    MINX (
 			        sel,
@@ -440,7 +454,14 @@ table _Measures
 	/// The same for demand per capita, which needs OWID population (ends 2024 for BN, ID, LA, MM).
 	measure 'Common Per Capita Year' =
 			VAR last_year = CALCULATE ( MAX ( dim_year[year] ), ALLSELECTED ( dim_year ) )
-			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
+			VAR picked = VALUES ( 'Compare Country'[country_key] )
+			VAR filtered = ISFILTERED ( 'Compare Country' )
+			-- IF cannot return a table, so the choice sits inside FILTER: the slicer's countries, else the default peers
+			VAR sel =
+			    FILTER (
+			        ALL ( 'Compare Country'[country_key] ),
+			        IF ( filtered, 'Compare Country'[country_key] IN picked, CALCULATE ( COUNTROWS ( 'Compare Country' ), 'Compare Country'[is_default_peer] = TRUE () ) > 0 )
+			    )
 			RETURN
 			    MINX (
 			        sel,
@@ -484,7 +505,14 @@ table _Measures
 	measure 'Focus RE Share Rank' =
 			VAR y = [Comparison Year]
 			VAR f = [Focus Country Key]
-			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
+			VAR picked = VALUES ( 'Compare Country'[country_key] )
+			VAR filtered = ISFILTERED ( 'Compare Country' )
+			-- IF cannot return a table, so the choice sits inside FILTER: the slicer's countries, else the default peers
+			VAR sel =
+			    FILTER (
+			        ALL ( 'Compare Country'[country_key] ),
+			        IF ( filtered, 'Compare Country'[country_key] IN picked, CALCULATE ( COUNTROWS ( 'Compare Country' ), 'Compare Country'[is_default_peer] = TRUE () ) > 0 )
+			    )
 			VAR scores =
 			    ADDCOLUMNS (
 			        sel,
@@ -499,7 +527,14 @@ table _Measures
 
 	measure 'Countries Compared' =
 			VAR y = [Comparison Year]
-			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
+			VAR picked = VALUES ( 'Compare Country'[country_key] )
+			VAR filtered = ISFILTERED ( 'Compare Country' )
+			-- IF cannot return a table, so the choice sits inside FILTER: the slicer's countries, else the default peers
+			VAR sel =
+			    FILTER (
+			        ALL ( 'Compare Country'[country_key] ),
+			        IF ( filtered, 'Compare Country'[country_key] IN picked, CALCULATE ( COUNTROWS ( 'Compare Country' ), 'Compare Country'[is_default_peer] = TRUE () ) > 0 )
+			    )
 			RETURN
 			    COUNTROWS (
 			        FILTER (
