@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "frame_footnote",
+  "position": {
+    "x": 200,
+    "y": 672,
+    "z": 99,
+    "width": 1056,
+    "height": 44,
+    "tabOrder": 99
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Sources: Ember Yearly Electricity Data (CC BY 4.0). Capacity factor = generation ÷ (capacity × hours in the year; 8,784 h in leap years), shown at the last year of the selected range; blank, never 0, when capacity is not reported. Targets: 31% by 2025 and 40% by 2035 (12MP / SEDA MyRER, 2021); 35% by 2030 and 70% by 2050 (NETR). Ember counts grid capacity only; the official share also counts off-grid and rooftop capacity. The target chart always spans 2000-2050 and ignores the year range.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#6b6a66"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

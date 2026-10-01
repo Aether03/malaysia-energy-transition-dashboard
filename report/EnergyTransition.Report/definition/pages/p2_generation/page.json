@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p2_generation",
+  "displayName": "Generation",
+  "displayOption": "FitToPage",
+  "width": 1280,
+  "height": 720,
+  "visualInteractions": [
+    {
+      "source": "p2_year_slicer",
+      "target": "p2_target_line",
+      "type": "NoFilter"
+    }
+  ]
+}

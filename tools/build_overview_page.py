@@ -1,7 +1,8 @@
 """Build the P1 Overview page as PBIR visual definitions (M1 step 9; M2 step 6 frame + polish).
 
 Layout follows the doc 04 §4 frame (nav rail, header, body, footnote strip); content
-follows doc 03 P1. Re-running rebuilds the page from scratch.
+follows doc 03 P1: header, KPI row, mix trend + NETR panel (to y 520), then the rank card
+and the findings box (y 536-656). Re-running rebuilds the page from scratch.
 
     .venv/Scripts/python tools/build_overview_page.py
 """
@@ -11,7 +12,11 @@ from __future__ import annotations
 import report_builder as rb
 from report_builder import column_ref, lit, measure_ref, projection, solid, text, visual
 
+P2_PAGE, P5_PAGE = "p2_generation", "p5_asean"
 KPI_W = (rb.CONTENT_W - 4 * rb.GAP) / 5  # 5 equal cards (doc 04 §4)
+MID_Y, MID_END = 264, 520  # mix chart and NETR panel
+BOTTOM_Y, BOTTOM_H = 536, 120  # rank card and findings row
+RANK_W = 400
 
 
 def build() -> list[dict]:
@@ -51,6 +56,8 @@ def build() -> list[dict]:
             {"solid": {"color": {"expr": measure_ref(colour_measure)}}} if colour_measure else solid(rb.TEXT_SECONDARY)
         )
         visuals.append(visual(f"p1_kpi_delta_{i}", kx, rb.BODY_Y + 100, KPI_W, 44, 60 + i, rb.card(delta, 10, delta_colour, False)))
+        # Cards cannot be clicked reliably: a transparent button over the value card opens P2 (doc 03 P1).
+        visuals.append(visual(f"p1_kpi_go_{i}", kx, rb.BODY_Y, KPI_W, 100, 80 + i, rb.nav_overlay(P2_PAGE)))
 
     area = {
         "visualType": "stackedAreaChart",
@@ -69,7 +76,7 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("Malaysia's generation mix by source (TWh), all years"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_mix_area", rb.CONTENT_X, 264, 640, 392, 70, area))
+    visuals.append(visual("p1_mix_area", rb.CONTENT_X, MID_Y, 640, MID_END - MID_Y, 70, area))
 
     targets = [  # (measure, legend label, colour): both bases beside the target (M2 step 1 decision)
         ("RE Capacity Share (%)", "Ember grid basis", rb.NAVY),
@@ -98,9 +105,45 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("Renewable share of installed capacity (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_netr_bars", 856, 264, 400, 272, 71, bars))
+    visuals.append(visual("p1_netr_bars", 856, MID_Y, 400, 188, 71, bars))
     visuals.append(
-        visual("p1_netr_label", 856, 536, 400, 120, 72, rb.card("NETR Progress Label", 10, solid(rb.TEXT_SECONDARY), False))
+        visual(
+            "p1_netr_label", 856, MID_Y + 188 + 8, 400, MID_END - (MID_Y + 188 + 8), 72,
+            rb.card("NETR Progress Label", 10, solid(rb.TEXT_SECONDARY), False),
+        )
+    )
+
+    # Bottom row: "Malaysia vs ASEAN" rank card (click -> P5) and the findings placeholder (M2 step 12).
+    visuals.append(
+        visual(
+            "p1_rank_card", rb.CONTENT_X, BOTTOM_Y, RANK_W, BOTTOM_H, 90,
+            rb.shape(None, {"expr": measure_ref("Rank Label")}, 14, rb.TEXT_PRIMARY, "Segoe UI Semibold",
+                     boxed=True, left_margin=12),
+        )
+    )
+    visuals.append(
+        visual(
+            "p1_rank_arrow", rb.CONTENT_X + RANK_W - 44, BOTTOM_Y, 40, BOTTOM_H, 91,
+            rb.shape(None, text("→"), 20, rb.ACCENT_BLUE, "Segoe UI Semibold", align="center"), tab=False,
+        )
+    )
+    visuals.append(visual("p1_rank_go", rb.CONTENT_X, BOTTOM_Y, RANK_W, BOTTOM_H, 92, rb.nav_overlay(P5_PAGE)))
+    findings_x = rb.CONTENT_X + RANK_W + rb.GAP
+    visuals.append(
+        visual(
+            "p1_findings", findings_x, BOTTOM_Y, rb.CONTENT_X + rb.CONTENT_W - findings_x, BOTTOM_H, 93,
+            rb.textbox(
+                [
+                    ("Headline findings", 11, rb.TEXT_PRIMARY, True),
+                    (
+                        "Three headline findings are added after the analysis (M2 step 12).",
+                        10,
+                        rb.TEXT_SECONDARY,
+                        False,
+                    ),
+                ]
+            ),
+        )
     )
     return visuals
 
