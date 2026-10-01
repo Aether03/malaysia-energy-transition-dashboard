@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p1_netr_label",
   "position": {
-    "x": 840,
-    "y": 540,
-    "z": 32,
-    "width": 416,
-    "height": 100,
-    "tabOrder": 32
+    "x": 856,
+    "y": 528,
+    "z": 72,
+    "width": 400,
+    "height": 120,
+    "tabOrder": 72
   },
   "visual": {
     "visualType": "card",
@@ -40,7 +40,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "11D"
+                  "Value": "10D"
                 }
               }
             },

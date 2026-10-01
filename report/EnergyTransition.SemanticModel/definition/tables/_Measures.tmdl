@@ -20,6 +20,10 @@ table _Measures
 		displayFolder: Context
 		lineageTag: 54229137-d1cb-46ea-b25a-f80fa4048e09
 
+	/// Header scope line under each takeaway title (doc 04 type.page-subtitle).
+	measure 'Overview Subtitle' = "Malaysia · " & [Selected Year] & " · " & [Data As Of]
+		displayFolder: Context
+
 	measure 'No Data Message' = IF ( ISBLANK ( [Total Generation (TWh)] ), "No data for " & [Selected Year] )
 		displayFolder: Context
 		lineageTag: 553f786c-e4f3-4d64-beee-02a40f6f114d
@@ -124,7 +128,36 @@ table _Measures
 		displayFolder: Overview
 		lineageTag: 9611248a-481d-48ec-857d-319e3c3a0989
 
+	/// Ember demand ÷ OWID (UN) population; blank where OWID has no population (M2 plan Q2).
+	measure 'Demand per Capita (MWh)' =
+			VAR y = [Selected Year]
+			RETURN
+			    CALCULATE (
+			        SUM ( country_annual[demand_per_capita_mwh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y
+			    )
+		formatString: 0.00
+		displayFolder: Overview
+
+	measure 'Demand per Capita YoY (%)' =
+			VAR y = [Selected Year]
+			VAR prev =
+			    CALCULATE (
+			        SUM ( country_annual[demand_per_capita_mwh] ),
+			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
+			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
+			    )
+			RETURN DIVIDE ( [Demand per Capita (MWh)] - prev, prev )
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Overview
+
 	/// Delta labels: arrow + value; colour measures apply the KPI polarity (doc 04 §3.5).
+	measure 'Demand per Capita Delta Label' =
+			VAR d = [Demand per Capita YoY (%)]
+			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
+		displayFolder: Overview\Deltas
+
 	measure 'Total Generation Delta Label' =
 			VAR d = [Total Generation YoY (%)]
 			RETURN IF ( ISBLANK ( d ), "—", IF ( d >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( d ), "0.0%" ) & " vs " & ( [Selected Year] - 1 ) )
@@ -200,9 +233,27 @@ table _Measures
 		displayFolder: NETR
 		lineageTag: a401e13a-48a6-434c-8cdb-44c136c4a856
 
+	/// Official reported share (ASEAN definition, incl. off-grid and rooftop) for the latest
+	/// official year up to the selected year; blank before the first official point (M2 step 1).
+	measure 'Official RE Capacity Year' =
+			VAR y = [Selected Year]
+			RETURN CALCULATE ( MAX ( re_capacity_official[year] ), re_capacity_official[year] <= y )
+		formatString: 0
+		displayFolder: NETR
+
+	measure 'Official RE Capacity Share (%)' =
+			VAR oy = [Official RE Capacity Year]
+			RETURN IF ( NOT ISBLANK ( oy ), CALCULATE ( MAX ( re_capacity_official[re_capacity_share_pct] ), re_capacity_official[year] = oy ) )
+		formatString: 0.0
+		displayFolder: NETR
+
+	/// Both bases side by side, so the Ember grid-only share is never read as missing the target.
 	measure 'NETR Progress Label' =
-			FORMAT ( [RE Capacity Share (%)], "0.0" ) & "% of installed capacity is renewable vs the "
-			    & FORMAT ( [NETR Target (%)], "0" ) & "% NETR target for " & [NETR Target Year]
+			VAR official = [Official RE Capacity Share (%)]
+			RETURN
+			    "Ember grid basis " & FORMAT ( [RE Capacity Share (%)], "0.0" ) & "%"
+			        & IF ( NOT ISBLANK ( official ), " · official " & FORMAT ( official, "0" ) & "% (incl. off-grid and rooftop, " & [Official RE Capacity Year] & ")" )
+			        & " · target " & FORMAT ( [NETR Target (%)], "0" ) & "% by " & [NETR Target Year]
 		displayFolder: NETR
 		lineageTag: 1d6b8c14-a32e-45d9-af32-5f4be7741e3f
 

@@ -100,7 +100,9 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - SQL `min server memory` is set to 1024 MB (Amirul approved it, 2026-09-30). Transform plus checks is back to about 1 s.
     - Step 4 (SQL showcase `01`–`05` + mart: `hours_in_year`, target `source_name`, `mart.re_capacity_official`) **done**. The spot values equal P1.
       - MY 2025 ranks: 3/6 on RE share, 5/6 on intensity; per capita 2/6 (2024).
-    - **Resume:** step 5 (GUI template capture: Amirul adds template visuals in Desktop; click-level steps in chat).
+    - Step 5 (template capture) **done**: `tools/templates/`. Desktop's auto date/time tables were removed and the setting turned off.
+    - Step 6 is built: `tools/report_builder.py` frame (nav rail, takeaway title, subtitle with the as-of date, footnote) and P1 rebuilt with 5 KPIs, explicit source colours and the Ember-vs-official-vs-target bars. **Untested in Desktop.**
+    - **Resume:** Amirul's reopen-and-screenshot check of P1, then step 7 (DAX library).
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.

@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "p1_footnote",
+  "name": "frame_footnote",
   "position": {
-    "x": 24,
-    "y": 652,
-    "z": 40,
-    "width": 1232,
-    "height": 48,
-    "tabOrder": 40
+    "x": 200,
+    "y": 672,
+    "z": 99,
+    "width": 1056,
+    "height": 44,
+    "tabOrder": 99
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Sources: Ember Yearly Electricity Data (CC BY 4.0); NETR targets via MIDA/IEA. Large hydro counted as renewable capacity (to be verified against the NETR text). KPIs describe Malaysia in the selected year.",
+                    "value": "Sources: Ember Yearly Electricity Data (CC BY 4.0); OWID population (CC BY 4.0). Targets: 31% by 2025 and 40% by 2035 (12MP / SEDA MyRER, 2021), 35% by 2030 (NETR pathway), 70% by 2050 (NETR, 2023). Ember counts grid capacity only; the official share also counts off-grid and rooftop capacity. Large hydro is renewable in both. KPIs describe Malaysia in the selected year.",
                     "textStyle": {
                       "fontSize": "9pt",
                       "color": "#6b6a66"

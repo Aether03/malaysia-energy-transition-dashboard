@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
-  "name": "p1_title",
+  "name": "p1_kpi_delta_4",
   "position": {
-    "x": 24,
-    "y": 6,
-    "z": 1,
-    "width": 1010,
-    "height": 56,
-    "tabOrder": 1
+    "x": 1057.6,
+    "y": 192,
+    "z": 64,
+    "width": 198.4,
+    "height": 40,
+    "tabOrder": 64
   },
   "visual": {
     "visualType": "card",
@@ -23,11 +23,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Overview Title"
+                  "Property": "Demand per Capita Delta Label"
                 }
               },
-              "queryRef": "_Measures.Overview Title",
-              "nativeQueryRef": "Overview Title"
+              "queryRef": "_Measures.Demand per Capita Delta Label",
+              "nativeQueryRef": "Demand per Capita Delta Label"
             }
           ]
         }
@@ -40,7 +40,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "16D"
+                  "Value": "10D"
                 }
               }
             },
@@ -49,7 +49,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#0b0b0b'"
+                      "Value": "'#52514e'"
                     }
                   }
                 }

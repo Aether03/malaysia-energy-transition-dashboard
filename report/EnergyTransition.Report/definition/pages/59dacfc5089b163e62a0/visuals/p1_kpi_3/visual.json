@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p1_kpi_3",
   "position": {
-    "x": 960,
-    "y": 100,
-    "z": 13,
-    "width": 296,
-    "height": 104,
-    "tabOrder": 13
+    "x": 843.2,
+    "y": 104,
+    "z": 53,
+    "width": 198.4,
+    "height": 88,
+    "tabOrder": 53
   },
   "visual": {
     "visualType": "card",
