@@ -11,6 +11,7 @@ table generation_annual
 
 	column year
 		dataType: int64
+		isHidden
 		formatString: 0
 		lineageTag: c0da9740-e6b5-4477-8a98-8e7d6af445df
 		summarizeBy: none

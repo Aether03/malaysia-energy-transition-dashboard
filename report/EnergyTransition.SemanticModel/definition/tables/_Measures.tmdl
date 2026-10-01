@@ -48,7 +48,8 @@ table _Measures
 			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
 			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
 			    )
-			RETURN DIVIDE ( [Total Generation (TWh)] - prev, prev )
+			VAR cur = [Total Generation (TWh)]
+			RETURN IF ( NOT ISBLANK ( cur ), DIVIDE ( cur - prev, prev ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Overview
 		lineageTag: 08b335d9-b3e1-4439-9eaf-44948da8de3d
@@ -73,7 +74,8 @@ table _Measures
 			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
 			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
 			    )
-			RETURN IF ( NOT ISBLANK ( prev ), [RE Share (%)] - prev )
+			VAR cur = [RE Share (%)]
+			RETURN IF ( NOT ISBLANK ( prev ) && NOT ISBLANK ( cur ), cur - prev )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Overview
 		lineageTag: b8b602e7-dfc4-4e9c-9de4-3965349b0631
@@ -98,7 +100,8 @@ table _Measures
 			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
 			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
 			    )
-			RETURN IF ( NOT ISBLANK ( prev ), [Fossil Share (%)] - prev )
+			VAR cur = [Fossil Share (%)]
+			RETURN IF ( NOT ISBLANK ( prev ) && NOT ISBLANK ( cur ), cur - prev )
 		formatString: +0.0;-0.0;0.0
 		displayFolder: Overview
 		lineageTag: a9a347ec-25ab-4df8-bfdd-82df3119c88d
@@ -123,7 +126,8 @@ table _Measures
 			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
 			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
 			    )
-			RETURN DIVIDE ( [Carbon Intensity (gCO2e/kWh)] - prev, prev )
+			VAR cur = [Carbon Intensity (gCO2e/kWh)]
+			RETURN IF ( NOT ISBLANK ( cur ), DIVIDE ( cur - prev, prev ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Overview
 		lineageTag: 9611248a-481d-48ec-857d-319e3c3a0989
@@ -148,7 +152,8 @@ table _Measures
 			        REMOVEFILTERS ( dim_country ), dim_country[is_focus] = TRUE (),
 			        REMOVEFILTERS ( dim_year ), dim_year[year] = y - 1
 			    )
-			RETURN DIVIDE ( [Demand per Capita (MWh)] - prev, prev )
+			VAR cur = [Demand per Capita (MWh)]
+			RETURN IF ( NOT ISBLANK ( cur ), DIVIDE ( cur - prev, prev ) )
 		formatString: 0.0%;-0.0%;0.0%
 		displayFolder: Overview
 
@@ -326,7 +331,7 @@ table _Measures
 			VAR hrs = CALCULATE ( MAX ( dim_year[hours_in_year] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			VAR gen = CALCULATE ( SUM ( generation_annual[generation_twh] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			VAR cap = CALCULATE ( SUM ( generation_annual[capacity_gw] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
-			RETURN IF ( cap > 0 && 1000 * gen <= cap * hrs, 100 * 1000 * gen / ( cap * hrs ) )
+			RETURN IF ( HASONEVALUE ( dim_source[source_key] ) && cap > 0 && 1000 * gen <= cap * hrs, 100 * 1000 * gen / ( cap * hrs ) )
 		formatString: 0.0
 		displayFolder: Generation
 
@@ -340,7 +345,7 @@ table _Measures
 			VAR hrs = CALCULATE ( MAX ( dim_year[hours_in_year] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			VAR blanks =
 			    FILTER (
-			        ALL ( dim_source[display_name] ),
+			        ALLSELECTED ( dim_source[display_name] ),
 			        VAR g = CALCULATE ( SUM ( generation_annual[generation_twh] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			        VAR c = CALCULATE ( SUM ( generation_annual[capacity_gw] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			        RETURN g > 0 && ( ISBLANK ( c ) || c = 0 || 1000 * g > c * hrs )
@@ -395,28 +400,38 @@ table _Measures
 			"Targets: " & CONCATENATEX ( netr_target, netr_target[target_year] & " " & FORMAT ( netr_target[re_capacity_share_pct], "0" ) & "% (" & netr_target[source_name] & ")", "; ", netr_target[target_year], ASC )
 		displayFolder: NETR
 
-	/// ASEAN comparison (P5). Values for the country and year in the visual's own context.
-	measure 'Country RE Share (%)' = IF ( HASONEVALUE ( dim_year[year] ), SUM ( country_annual[re_share_gen_pct] ) )
+	/// ASEAN comparison (P5). The compared set comes from the disconnected 'Compare Country' slicer
+	/// (default: the 6 default peers when nothing is selected), so a clicked mark or a hovered tooltip,
+	/// which filter dim_country, can never shrink the set (independent review, HIGH 2-3).
+	measure 'Is Compared' =
+			VAR k = SELECTEDVALUE ( dim_country[country_key] )
+			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
+			RETURN IF ( NOT ISBLANK ( k ) && k IN sel, 1 )
+		formatString: 0
+		displayFolder: ASEAN
+
+	/// One country and one year only; never a sum of percentages across countries or years.
+	measure 'Country RE Share (%)' = IF ( HASONEVALUE ( dim_year[year] ) && HASONEVALUE ( dim_country[country_key] ), SUM ( country_annual[re_share_gen_pct] ) )
 		formatString: 0.0
 		displayFolder: ASEAN
 
-	measure 'Country Carbon Intensity (gCO2e/kWh)' = IF ( HASONEVALUE ( dim_year[year] ), SUM ( country_annual[emissions_intensity_gco2e_kwh] ) )
+	measure 'Country Carbon Intensity (gCO2e/kWh)' = IF ( HASONEVALUE ( dim_year[year] ) && HASONEVALUE ( dim_country[country_key] ), SUM ( country_annual[emissions_intensity_gco2e_kwh] ) )
 		formatString: #,0
 		displayFolder: ASEAN
 
-	measure 'Country Emissions (MtCO2e)' = IF ( HASONEVALUE ( dim_year[year] ), SUM ( country_annual[emissions_mtco2e] ) )
+	measure 'Country Emissions (MtCO2e)' = IF ( HASONEVALUE ( dim_year[year] ) && HASONEVALUE ( dim_country[country_key] ), SUM ( country_annual[emissions_mtco2e] ) )
 		formatString: #,0.0
 		displayFolder: ASEAN
 
-	/// Latest year that EVERY selected country reports, within the selected year range
-	/// (doc 03 P5 edge case; twin: 03_ranking). Countries only, never the ASEAN aggregate.
+	/// Latest year that EVERY compared country reports, up to the end of the selected year range
+	/// (doc 03 P5 edge case; twin: 03_ranking). On P1 the single-year slicer is the range.
 	measure 'Common Latest Year' =
 			VAR last_year = CALCULATE ( MAX ( dim_year[year] ), ALLSELECTED ( dim_year ) )
-			VAR countries = CALCULATETABLE ( VALUES ( dim_country[country_key] ), ALLSELECTED ( dim_country ), dim_country[area_type] = "COUNTRY" )
+			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
 			RETURN
 			    MINX (
-			        countries,
-			        VAR k = dim_country[country_key]
+			        sel,
+			        VAR k = 'Compare Country'[country_key]
 			        RETURN CALCULATE ( MAX ( country_annual[year] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] <= last_year, NOT ISBLANK ( country_annual[re_share_gen_pct] ) )
 			    )
 		formatString: 0
@@ -425,69 +440,71 @@ table _Measures
 	/// The same for demand per capita, which needs OWID population (ends 2024 for BN, ID, LA, MM).
 	measure 'Common Per Capita Year' =
 			VAR last_year = CALCULATE ( MAX ( dim_year[year] ), ALLSELECTED ( dim_year ) )
-			VAR countries = CALCULATETABLE ( VALUES ( dim_country[country_key] ), ALLSELECTED ( dim_country ), dim_country[area_type] = "COUNTRY" )
+			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
 			RETURN
 			    MINX (
-			        countries,
-			        VAR k = dim_country[country_key]
+			        sel,
+			        VAR k = 'Compare Country'[country_key]
 			        RETURN CALCULATE ( MAX ( country_annual[year] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] <= last_year, NOT ISBLANK ( country_annual[demand_per_capita_mwh] ) )
 			    )
 		formatString: 0
 		displayFolder: ASEAN
 
-	/// A single year on the visual or slicer wins (P1, a hovered line point); otherwise the common year.
-	measure 'Comparison Year' = IF ( HASONEVALUE ( dim_year[year] ), VALUES ( dim_year[year] ), [Common Latest Year] )
+	/// Kept as the name visuals bind to; always the shared-year rule (review MEDIUM 4).
+	measure 'Comparison Year' = [Common Latest Year]
 		formatString: 0
 		displayFolder: ASEAN
 
 	measure 'RE Share at Comparison Year (%)' =
 			VAR y = [Comparison Year]
-			RETURN CALCULATE ( SUM ( country_annual[re_share_gen_pct] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
+			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[re_share_gen_pct] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: 0.0
 		displayFolder: ASEAN
 
 	measure 'Intensity at Comparison Year (gCO2e/kWh)' =
 			VAR y = [Comparison Year]
-			RETURN CALCULATE ( SUM ( country_annual[emissions_intensity_gco2e_kwh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
+			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[emissions_intensity_gco2e_kwh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: #,0
 		displayFolder: ASEAN
 
 	measure 'Demand at Comparison Year (TWh)' =
 			VAR y = [Comparison Year]
-			RETURN CALCULATE ( SUM ( country_annual[demand_twh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
+			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[demand_twh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: #,0.0
 		displayFolder: ASEAN
 
 	measure 'Demand per Capita at Common Year (MWh)' =
 			VAR y = [Common Per Capita Year]
-			RETURN CALCULATE ( SUM ( country_annual[demand_per_capita_mwh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y )
+			RETURN IF ( HASONEVALUE ( dim_country[country_key] ), CALCULATE ( SUM ( country_annual[demand_per_capita_mwh] ), REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 		formatString: 0.00
 		displayFolder: ASEAN
 
-	/// Malaysia's rank on RE share among the selected countries (1 = highest; ties share a rank,
+	/// Malaysia's rank on RE share among the compared countries (1 = highest; ties share a rank,
 	/// like SQL RANK()). Twin: 03_ranking.
 	measure 'Focus RE Share Rank' =
 			VAR y = [Comparison Year]
 			VAR f = [Focus Country Key]
+			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
 			VAR scores =
 			    ADDCOLUMNS (
-			        CALCULATETABLE ( VALUES ( dim_country[country_key] ), ALLSELECTED ( dim_country ), dim_country[area_type] = "COUNTRY" ),
+			        sel,
 			        "@re",
-			            VAR k = dim_country[country_key]
+			            VAR k = 'Compare Country'[country_key]
 			            RETURN CALCULATE ( SUM ( country_annual[re_share_gen_pct] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y )
 			    )
-			VAR focus = MAXX ( FILTER ( scores, dim_country[country_key] = f ), [@re] )
+			VAR focus = MAXX ( FILTER ( scores, 'Compare Country'[country_key] = f ), [@re] )
 			RETURN IF ( NOT ISBLANK ( focus ), COUNTROWS ( FILTER ( scores, [@re] > focus ) ) + 1 )
 		formatString: 0
 		displayFolder: ASEAN
 
 	measure 'Countries Compared' =
 			VAR y = [Comparison Year]
+			VAR sel = IF ( ISFILTERED ( 'Compare Country' ), VALUES ( 'Compare Country'[country_key] ), CALCULATETABLE ( VALUES ( 'Compare Country'[country_key] ), 'Compare Country'[is_default_peer] = TRUE () ) )
 			RETURN
 			    COUNTROWS (
 			        FILTER (
-			            CALCULATETABLE ( VALUES ( dim_country[country_key] ), ALLSELECTED ( dim_country ), dim_country[area_type] = "COUNTRY" ),
-			            VAR k = dim_country[country_key]
+			            sel,
+			            VAR k = 'Compare Country'[country_key]
 			            RETURN NOT ISBLANK ( CALCULATE ( SUM ( country_annual[re_share_gen_pct] ), REMOVEFILTERS ( dim_country ), dim_country[country_key] = k, REMOVEFILTERS ( dim_year ), dim_year[year] = y ) )
 			        )
 			    )
@@ -502,18 +519,16 @@ table _Measures
 			        TRUE (),
 			        n < 2, "Select at least two countries to compare",
 			        ISBLANK ( r ), "Malaysia is not in the current selection",
-			        "Malaysia ranks " & r & " of " & n & " on renewable share (" & [Comparison Year] & ") →"
+			        "Malaysia ranks " & r & " of " & n & " on renewable share (" & [Comparison Year] & ")"
 			    )
 		displayFolder: ASEAN
 
 	measure 'ASEAN Footnote' =
 			"Ranking, scatter and intensity bars use " & [Common Latest Year] & ", the latest year all selected countries report; per-capita demand uses "
-			    & [Common Per Capita Year] & " (OWID population). Sources: Ember (CC BY 4.0), OWID (CC BY 4.0)."
+			    & [Common Per Capita Year] & " (OWID population). With no country selected, the six default peers are compared. Sources: Ember (CC BY 4.0), OWID (CC BY 4.0)."
 		displayFolder: ASEAN
 
-	measure 'ASEAN Title' =
-			VAR n = [Countries Compared]
-			RETURN IF ( n >= 2, "Malaysia ranks " & [Focus RE Share Rank] & " of " & n & " on renewable share, " & [Comparison Year], "Select at least two countries to compare" )
+	measure 'ASEAN Title' = [Rank Label]
 		displayFolder: ASEAN
 
 	measure 'ASEAN Subtitle' = "ASEAN peers · " & MIN ( dim_year[year] ) & "–" & MAX ( dim_year[year] ) & " · " & [Data As Of]

@@ -10,12 +10,11 @@ $pkg = Get-AppxPackage -Name 'Microsoft.MicrosoftPowerBIDesktop' | Select-Object
 if (-not $pkg) { throw 'Power BI Desktop (Store edition) is not installed.' }
 Add-Type -Path (Join-Path $pkg.InstallLocation 'bin\Microsoft.PowerBI.AdomdClient.dll')
 
-# Each open Desktop file runs its own Analysis Services instance; take the newest one.
-$workspaces = Join-Path $env:LOCALAPPDATA 'Packages\Microsoft.MicrosoftPowerBIDesktop_8wekyb3d8bbwe\LocalCache\Local\Microsoft\Power BI Desktop Store App\AnalysisServicesWorkspaces'
-$portFile = Get-ChildItem -Path $workspaces -Recurse -Filter 'msmdsrv.port.txt' -ErrorAction SilentlyContinue |
-    Sort-Object LastWriteTime -Descending | Select-Object -First 1
-if (-not $portFile) { throw 'No running Power BI Desktop model found. Open report\EnergyTransition.pbip first.' }
-$port = ([System.IO.File]::ReadAllText($portFile.FullName, [System.Text.Encoding]::Unicode)).Trim()
+# Each open Desktop file runs its own Analysis Services engine (msmdsrv) on a local port.
+# Keep only this project open: with two files open, the newest engine is used.
+$engine = Get-Process msmdsrv -ErrorAction SilentlyContinue | Sort-Object StartTime -Descending | Select-Object -First 1
+if (-not $engine) { throw 'No running Power BI Desktop model found. Open report\EnergyTransition.pbip first.' }
+$port = (Get-NetTCPConnection -OwningProcess $engine.Id -State Listen | Where-Object LocalAddress -eq '127.0.0.1' | Select-Object -First 1).LocalPort
 
 $conn = New-Object Microsoft.AnalysisServices.AdomdClient.AdomdConnection("Data Source=localhost:$port")
 $conn.Open()

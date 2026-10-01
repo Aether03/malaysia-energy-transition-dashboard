@@ -34,6 +34,9 @@ TYPE_MAP = {
 
 SORT_BY = {("dim_source", "display_name"): "sort_order"}
 
+# Fact-table years are hidden so every year filter goes through dim_year (DAX review, LOW).
+HIDDEN = {("generation_annual", "year"), ("country_annual", "year")}
+
 
 def _columns(cursor, view: str) -> list[tuple[str, str, int]]:
     cursor.execute(
@@ -70,7 +73,7 @@ def _column_tmdl(view: str, name: str, sql_type: str, scale: int, tag: str | Non
     # Attribute order follows what Power BI Desktop writes, to keep diffs quiet.
     data_type = TYPE_MAP[sql_type]
     lines = [f"\tcolumn {name}", f"\t\tdataType: {data_type}"]
-    if name.endswith("_key"):
+    if name.endswith("_key") or (view, name) in HIDDEN:
         lines.append("\t\tisHidden")
     if data_type == "double":
         lines.append(f"\t\tformatString: {'0.' + '0' * min(scale, 3) if scale else '0'}")

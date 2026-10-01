@@ -1,0 +1,45 @@
+/// Disconnected country list for the P5 slicer (countries only, never the ASEAN aggregate).
+/// Measures read the selection with VALUES; visuals show only compared countries via [Is Compared] = 1.
+table 'Compare Country'
+
+	column country_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [country_key]
+
+	column name
+		dataType: string
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [name]
+		sortByColumn: display_order
+
+	column is_default_peer
+		dataType: boolean
+		isHidden
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [is_default_peer]
+
+	column display_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [display_order]
+
+	partition 'Compare Country' = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS (
+				    FILTER ( dim_country, dim_country[area_type] = "COUNTRY" ),
+				    "country_key", dim_country[country_key],
+				    "name", dim_country[name],
+				    "is_default_peer", dim_country[is_default_peer],
+				    "display_order", dim_country[display_order]
+				)
+

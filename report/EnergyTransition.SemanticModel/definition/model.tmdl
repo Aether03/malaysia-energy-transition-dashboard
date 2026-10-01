@@ -28,6 +28,7 @@ ref table re_capacity_official
 ref table 'Mix Unit'
 ref table 'ASEAN Metric'
 ref table 'Target Axis'
+ref table 'Compare Country'
 
 ref cultureInfo en-US
 

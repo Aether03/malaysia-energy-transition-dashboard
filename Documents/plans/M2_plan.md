@@ -162,6 +162,25 @@ Model tiers per doc 06 §4: **D** = Opus 5.5 (this session) · **S** = Sonnet 5.
   - The P2 line: step 9.
   - A finding candidate for step 12: the definition gap itself.
 
+## Step 7 review (independent Opus reviewer, 2026-10-02)
+0 CRITICAL. All findings were fixed before any page uses the measures:
+- **HIGH:**
+  - The harness tolerance let wrong years pass. Years, ranks and counts are now compared exactly.
+  - Clicks and tooltips shrank `ALLSELECTED(dim_country)`. The disconnected `'Compare Country'` slicer table now holds the compared set, and visuals show only compared countries via `[Is Compared] = 1`.
+  - P1's rank card would have said "of 7/10". With no selection, the set defaults to the 6 default peers.
+- **MEDIUM:**
+  - 'Comparison Year' is now always the shared-year rule.
+  - A one-country guard stops percentages being summed.
+  - A missing column now fails a twin.
+  - 4 harder twins were added: Brunei → 2024 and n = 7; P1 at 2015; range 2015–2020; P1 at 2024.
+- **LOW:**
+  - The YoY measures need both years.
+  - Capacity factor is per source only, and its note respects a source slicer.
+  - The fact years are hidden.
+  - `03_ranking` gained `range_end` and NULL-safe counts.
+  - `'ASEAN Title'` reuses `'Rank Label'`.
+- **Kept by design:** `'Target Axis'` is not limited by P2's year range, because the target chart always spans to 2050. That is a deliberate exception to doc 03 P2 "All visuals filter to the range".
+
 ## Definitions pinned for this milestone
 | Measure | Definition | Note |
 |---|---|---|
