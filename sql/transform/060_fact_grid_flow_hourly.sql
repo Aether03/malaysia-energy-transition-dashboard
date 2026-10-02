@@ -13,4 +13,5 @@ SELECT
     CAST(s.export_mw AS DECIMAL(10, 1)),
     YEAR(s.ts_local) * 10000 + MONTH(s.ts_local) * 100 + DAY(s.ts_local),
     CAST(DATEPART(HOUR, s.ts_local) AS TINYINT)
-FROM stg.grid_flow_hourly AS s;
+FROM stg.grid_flow_hourly AS s
+WHERE COALESCE(s.import_mw, 0) >= 0 AND COALESCE(s.export_mw, 0) >= 0;  -- else NO_NEGATIVE_FLOW (BLOCKING)

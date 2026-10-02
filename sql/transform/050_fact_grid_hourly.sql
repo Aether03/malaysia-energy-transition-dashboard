@@ -16,4 +16,5 @@ SELECT
     s.file_name,
     s.ts_text
 FROM stg.grid_hourly AS s
-WHERE s.is_complete = 1;
+WHERE s.is_complete = 1
+  AND s.demand_mw >= 0;  -- a negative hour fails NO_NEGATIVE_DEMAND (BLOCKING) instead of the CHECK

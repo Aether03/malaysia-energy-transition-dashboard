@@ -5,8 +5,12 @@
 -- iso_weekday is computed from a fixed Monday (1900-01-01) so SET DATEFIRST can't shift it.
 
 WITH bounds AS (
-    SELECT MIN(CAST(ts_local AS DATE)) AS first_date, MAX(CAST(ts_local AS DATE)) AS last_date
-    FROM stg.grid_hourly
+    SELECT MIN(d) AS first_date, MAX(d) AS last_date
+    FROM (
+        SELECT CAST(ts_local AS DATE) AS d FROM stg.grid_hourly
+        UNION ALL
+        SELECT CAST(ts_local AS DATE) FROM stg.grid_flow_hourly
+    ) AS all_dates
 ),
 days AS (  -- one row per date between the bounds (a few thousand at most)
     SELECT DATEADD(DAY, n.n, b.first_date) AS d
@@ -24,7 +28,8 @@ calendar AS (
         d                                                        AS date,
         CAST(YEAR(d) AS SMALLINT)                                AS year,
         CAST(MONTH(d) AS TINYINT)                                AS month,
-        CAST(LEFT(DATENAME(MONTH, d), 3) AS CHAR(3))             AS month_name,
+        CAST(SUBSTRING('JanFebMarAprMayJunJulAugSepOctNovDec', (MONTH(d) - 1) * 3 + 1, 3) AS CHAR(3))
+                                                                 AS month_name,  -- not DATENAME: language-proof
         CAST(DATEDIFF(DAY, '19000101', d) % 7 + 1 AS TINYINT)    AS iso_weekday
     FROM days
 ),
@@ -55,11 +60,11 @@ src AS (
 MERGE dw.dim_date AS t
 USING src AS s ON t.date_key = s.date_key
 WHEN MATCHED AND EXISTS (
-    SELECT s.season_th, s.season_my, s.is_holiday_th, s.is_holiday_my, s.is_holiday_sg
+    SELECT s.month_name, s.season_th, s.season_my, s.is_holiday_th, s.is_holiday_my, s.is_holiday_sg
     EXCEPT
-    SELECT t.season_th, t.season_my, t.is_holiday_th, t.is_holiday_my, t.is_holiday_sg
+    SELECT t.month_name, t.season_th, t.season_my, t.is_holiday_th, t.is_holiday_my, t.is_holiday_sg
 ) THEN
-    UPDATE SET season_th = s.season_th, season_my = s.season_my,
+    UPDATE SET month_name = s.month_name, season_th = s.season_th, season_my = s.season_my,
                is_holiday_th = s.is_holiday_th, is_holiday_my = s.is_holiday_my, is_holiday_sg = s.is_holiday_sg
 WHEN NOT MATCHED BY TARGET THEN
     INSERT (date_key, date, year, month, month_name, iso_weekday, is_weekend,

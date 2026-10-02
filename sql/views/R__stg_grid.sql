@@ -28,6 +28,8 @@ SELECT
     p.hour_part,
     p.minute_part,
     CASE WHEN p.local_date IS NOT NULL AND p.hour_part BETWEEN 0 AND 23 AND p.minute_part IN (0, 5)
+              AND p.ts_text LIKE '[0-3][0-9]/[01][0-9]/[12][0-9][0-9][0-9] [0-9]%:[0-5][0-9]'
+              AND LEN(p.ts_text) IN (15, 16)  -- 'dd/mm/yyyy h:mm' or 'dd/mm/yyyy hh:mm', nothing else
          THEN DATEADD(HOUR, p.hour_part, CAST(p.local_date AS DATETIME2(0))) END AS ts_local
 FROM (
     SELECT DISTINCT
@@ -53,7 +55,8 @@ FROM (
             ORDER BY
                 CASE WHEN t.minute_part = 0 THEN 0 ELSE 1 END,
                 CASE WHEN t.file_name = CONCAT('system_', YEAR(t.ts_local), '.csv') THEN 0 ELSE 1 END,
-                t.file_name
+                t.file_name,
+                t.ts_text  -- deterministic even if a file ever held '1:00' and '01:00'
         ) AS pick
     FROM stg.thailand_row AS t
     WHERE t.ts_local IS NOT NULL
@@ -66,7 +69,7 @@ SELECT
     g.grid_key,
     c.ts_local,
     DATEADD(MINUTE, -g.utc_offset_min, c.ts_local) AS ts_utc,
-    SUM(r.value) AS demand_mw,
+    CASE WHEN COUNT(r.value) = 5 THEN SUM(r.value) END AS demand_mw,  -- never a partial sum
     COUNT(r.value) AS parts_present,
     CAST(CASE WHEN COUNT(r.value) = 5 THEN 1 ELSE 0 END AS BIT) AS is_complete,
     c.file_name,
@@ -125,10 +128,12 @@ SELECT
 FROM (
     SELECT
         r.grid_code, r.file_name, r.ts_text, r.series, r.value,
-        DATEADD(MINUTE,
-                CASE WHEN RIGHT(r.ts_text, 5) = '00:00' THEN 1440
-                     ELSE TRY_CAST(SUBSTRING(r.ts_text, 12, 2) AS INT) * 60 + TRY_CAST(RIGHT(r.ts_text, 2) AS INT) END,
-                CAST(TRY_CONVERT(DATE, LEFT(r.ts_text, 10), 23) AS DATETIME2(0))) AS period_end  -- 23 = yyyy-mm-dd
+        CASE WHEN r.ts_text LIKE '[12][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]|[0-2][0-9]:[03]0' AND LEN(r.ts_text) = 16
+             THEN DATEADD(MINUTE,
+                          CASE WHEN RIGHT(r.ts_text, 5) = '00:00' THEN 1440
+                               ELSE TRY_CAST(SUBSTRING(r.ts_text, 12, 2) AS INT) * 60 + TRY_CAST(RIGHT(r.ts_text, 2) AS INT) END,
+                          CAST(TRY_CONVERT(DATE, LEFT(r.ts_text, 10), 23) AS DATETIME2(0)))  -- 23 = yyyy-mm-dd
+        END AS period_end  -- NULL unless 'yyyy-mm-dd|hh:00' or 'yyyy-mm-dd|hh:30'
     FROM raw.grid_interval AS r
     WHERE r.grid_code = 'SG_EMA'
 ) AS p;
@@ -139,7 +144,8 @@ SELECT
     g.grid_key,
     h.ts_local,
     DATEADD(MINUTE, -g.utc_offset_min, h.ts_local) AS ts_utc,
-    AVG(CASE WHEN h.series = 'System Demand (Actual)' THEN h.value END) AS system_demand_mw,
+    CASE WHEN COUNT(CASE WHEN h.series = 'System Demand (Actual)' THEN h.value END) = 2
+         THEN AVG(CASE WHEN h.series = 'System Demand (Actual)' THEN h.value END) END AS system_demand_mw,
     AVG(CASE WHEN h.series = 'NEM Demand (Actual)'    THEN h.value END) AS nem_demand_mw,
     AVG(CASE WHEN h.series = 'NEM Demand (Forecast)'  THEN h.value END) AS nem_forecast_mw,
     CAST(CASE WHEN COUNT(CASE WHEN h.series = 'System Demand (Actual)' THEN h.value END) = 2 THEN 1 ELSE 0 END AS BIT)
