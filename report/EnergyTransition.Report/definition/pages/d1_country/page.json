@@ -1,0 +1,50 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "d1_country",
+  "displayName": "Country Deep Dive",
+  "displayOption": "FitToPage",
+  "width": 1280,
+  "height": 720,
+  "visibility": "HiddenInViewMode",
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "d1countryfilter00001",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_country"
+              }
+            },
+            "Property": "name"
+          }
+        },
+        "type": "Categorical",
+        "howCreated": "Drillthrough"
+      }
+    ]
+  },
+  "pageBinding": {
+    "name": "d1countrybinding0001",
+    "type": "Drillthrough",
+    "parameters": [
+      {
+        "name": "d1countryparam000001",
+        "boundFilter": "d1countryfilter00001",
+        "asAggregation": false,
+        "qnaSingleSelectRequired": false,
+        "fieldExpr": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_country"
+              }
+            },
+            "Property": "name"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "frame_footnote",
+  "position": {
+    "x": 200,
+    "y": 672,
+    "z": 99,
+    "width": 1056,
+    "height": 44,
+    "tabOrder": 99
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Sources: Ember Yearly Electricity Data (CC BY 4.0); OWID population (CC BY 4.0). Capacity factor = generation ÷ (capacity × hours in year); blank, never 0, where Ember reports no capacity or capacity too small for the generation (e.g. Philippine and Indonesian geothermal, Thailand and Myanmar in every year). Right-click a country on the ASEAN page to drill here; Back returns with its filters.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#6b6a66"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

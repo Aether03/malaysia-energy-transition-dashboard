@@ -8,14 +8,15 @@ page folder, the second draws the complete rail on each page.
 
 from __future__ import annotations
 
+import build_d1_page
 import build_overview_page
 import build_p2_page
 import build_p5_page
 import build_tooltips
 import report_builder as rb
 
-BUILDERS = (build_overview_page, build_p2_page, build_p5_page, build_tooltips)
-ORDER = [rb.OVERVIEW_PAGE, build_p2_page.PAGE, build_p5_page.PAGE, build_tooltips.T2_PAGE]
+BUILDERS = (build_overview_page, build_p2_page, build_p5_page, build_d1_page, build_tooltips)
+ORDER = [rb.OVERVIEW_PAGE, build_p2_page.PAGE, build_p5_page.PAGE, build_d1_page.PAGE, build_tooltips.T2_PAGE]
 
 
 def main() -> None:
