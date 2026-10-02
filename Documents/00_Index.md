@@ -18,7 +18,7 @@
 - **Step 6 done:**
   - The P4 Thailand label is **"Sum of regional demand (EGAT)"**, with a footnote: hourly mean; published system peaks are 2–4% higher (`docs/reconciliation.md`).
   - The FR-22 sample week matches pandas vs SQL for both grids.
-- **Step 1 done (2026-10-03):** 7 Desktop-made templates in `tools/templates/` (`36c0667`, `5db6303`). The tile style is stored as mode Basic + orientation 1D; Date Picker as RelativeDatePicker. **Pending clean-up:** Amirul deletes the Scratch page and the Scratch Date table in Desktop and saves. Then check that `pages.json` no longer lists `bc795e87e12d18ccb09a`, that `tables/Scratch Date.tmdl` is gone, and that `validate_report.py` is clean.
+- **Step 1 done (2026-10-03):** 7 Desktop-made templates in `tools/templates/` (`36c0667`, `5db6303`). The tile style is stored as mode Basic + orientation 1D; Date Picker as RelativeDatePicker. **Clean-up done (2026-10-03):** Scratch page and table deleted in Desktop. That save also renumbered z-order and tabOrder on every visual, so the report files were restored to the committed, M2-verified state (`git checkout -- report/`); validator 0 problems. **Close Desktop WITHOUT saving** before the next pipeline run.
 - **Next session starts at step 7:** forecast tests first, then step 8 (development on 2023 only, protocol committed, `ecc:mle-reviewer` BEFORE any 2024 run), then step 9 (the single FINAL 2024 run per grid).
   - Use a fresh session, per the plan.
   - Both grids use the same locked protocol. V013 enforces one FINAL run per grid.
