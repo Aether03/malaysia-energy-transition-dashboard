@@ -9,7 +9,11 @@ import pandas as pd
 import pytest
 
 from pipeline.sources import singapore
-from pipeline.sources._common import SchemaMismatchError, assert_unique_keys
+from pipeline.sources._common import (
+    InvalidDownloadError,
+    SchemaMismatchError,
+    assert_unique_keys,
+)
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures" / "singapore"
 F1226 = FIXTURES / "20221226.xls"  # week Mon 2022-12-26 .. Sun 2023-01-01
@@ -32,8 +36,9 @@ WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 
 def _sheet(path):
-    """The published sheet as the module sees it: header=None, every cell text, blanks NaN."""
-    return pd.read_excel(path, header=None, dtype=str)
+    """The published sheet as the module sees it: header=None, every cell text, NA detection
+    off, so blanks are '' and only Excel error cells are NaN (M3 Python review H4)."""
+    return pd.read_excel(path, header=None, dtype=str, keep_default_na=False, na_filter=False)
 
 
 def _col(day, series=0):
@@ -414,7 +419,7 @@ def test_parse_sheet_uses_the_file_name_argument_for_the_file_name_column():
 
 def test_blank_cell_becomes_none_not_nan():
     df = _sheet(F0102)
-    df.iloc[ROW_FIRST_PERIOD + 10, _col(2, 1)] = np.nan  # Wed 05:30 NEM Demand (Actual)
+    df.iloc[ROW_FIRST_PERIOD + 10, _col(2, 1)] = ""  # Wed 05:30 NEM Demand (Actual), blank
     records = singapore.parse_sheet(df, "20230102.xls")
     values = _by_ts_series(records)
     assert len(records) == RECORDS_PER_FILE
@@ -422,6 +427,42 @@ def test_blank_cell_becomes_none_not_nan():
     assert values[("2023-01-04|05:30", "System Demand (Actual)")] is not None
     assert [v for v in (r[4] for r in records) if v is not None and math.isnan(v)] == []
     assert sum(1 for r in records if r[4] is None) == 1
+
+
+def test_excel_error_cell_stops_the_run_instead_of_becoming_null():
+    """With NA detection off, NaN can only be an Excel error cell (#N/A, #DIV/0!)."""
+    df = _sheet(F0102)
+    df.iloc[ROW_FIRST_PERIOD + 10, _col(2, 1)] = np.nan
+    with pytest.raises(SchemaMismatchError, match="error cell"):
+        singapore.parse_sheet(df, "20230102.xls")
+
+
+@pytest.mark.parametrize("text", ["NA", "N/A", "null", "nan", "#N/A", "inf"])
+def test_text_in_a_data_cell_stops_the_run(text):
+    df = _sheet(F0102)
+    df.iloc[ROW_FIRST_PERIOD, _col(0, 0)] = text
+    with pytest.raises(SchemaMismatchError):
+        singapore.parse_sheet(df, "20230102.xls")
+
+
+def test_content_right_of_the_seven_days_stops_the_run():
+    df = _sheet(F0102)
+    df[df.shape[1]] = ""
+    df.iloc[ROW_FIRST_PERIOD, df.shape[1] - 1] = "123.4"
+    with pytest.raises(SchemaMismatchError, match="right of"):
+        singapore.parse_sheet(df, "20230102.xls")
+
+
+def test_fixture_files_carry_the_xls_signature():
+    for path in (F1226, F0102):
+        singapore.verify_signature(path)
+
+
+def test_non_xls_body_is_rejected(tmp_path):
+    page = tmp_path / "20230102.xls"
+    page.write_text("<html>security check</html>", encoding="utf-8")
+    with pytest.raises(InvalidDownloadError):
+        singapore.verify_signature(page)
 
 
 def test_zero_is_a_value_not_a_blank():

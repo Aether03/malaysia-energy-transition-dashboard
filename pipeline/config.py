@@ -37,14 +37,14 @@ THAILAND_ZENODO_RECORD = "17109911"
 THAILAND_FILE_URL = f"https://zenodo.org/api/records/{THAILAND_ZENODO_RECORD}/files/{{file_name}}/content"
 # Zenodo's published MD5 per file (record metadata, checked 2026-10-03). Zenodo sends no
 # Last-Modified/ETag, so the checksum is the version: a revised file stops the run.
-# DSG: EMA weekly half-hourly system demand workbooks (Singapore Open Data Licence v1.0).
-EMA_HALF_HOURLY_URL = (
-    "https://www.ema.gov.sg/content/dam/corporate/resources/statistics/half-hourly-data/{year}/{file_name}"
-)
 THAILAND_MD5 = {
     "system_2023.csv": "426d0db764f75780f589a8aeb6b1ef65",
     "system_2024.csv": "5c1f09d6641ad6addb6f282f981e808a",
 }
+# DSG: EMA weekly half-hourly system demand workbooks (Singapore Open Data Licence v1.0).
+EMA_HALF_HOURLY_URL = (
+    "https://www.ema.gov.sg/content/dam/corporate/resources/statistics/half-hourly-data/{year}/{file_name}"
+)
 
 
 @dataclass(frozen=True)

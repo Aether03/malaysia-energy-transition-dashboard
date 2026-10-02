@@ -8,22 +8,33 @@ Raw is an exact copy (M3 plan Q1), reshaped to the shared long form:
 - `ts_text` = "<date cell as YYYY-MM-DD>|<period label as published>". The day's last label
   `00:00` means midnight at the END of that date; it keeps its own date here and is rolled
   into the next day only in stg (sql/views/R__stg_grid.sql).
-- Values keep the source's full precision (V011 widened the raw column).
+- Values are parsed from the cell text and land rounded to 6 dp (1 W) by raw's DECIMAL(18,6)
+  (V011). The source carries computed floats to 15 digits; nothing at or above 1 W is lost.
 - `parse_sheet` validates the whole layout (labels, series header, the 48 period labels, 7
-  consecutive dates from the Monday in the file name) and stops on any drift.
+  consecutive dates from the Monday in the file name, nothing to the right of the 7 days) and
+  stops on any drift. The workbook must have exactly one sheet.
+- Cells are read with NA detection off, so a blank cell is '' (-> NULL) and only an Excel
+  error cell (#N/A, #DIV/0!) arrives as NaN, which stops the run instead of becoming a
+  silent NULL (M3 Python review H4).
 """
 
 from __future__ import annotations
 
+import hashlib
 import math
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
+import requests
 
 from pipeline import config
 from pipeline.sources import _common
-from pipeline.sources._common import SchemaMismatchError, assert_unique_keys
+from pipeline.sources._common import (
+    InvalidDownloadError,
+    SchemaMismatchError,
+    assert_unique_keys,
+)
 
 GRID_CODE = "SG_EMA"
 SERIES: tuple[str, ...] = ("System Demand (Actual)", "NEM Demand (Actual)", "NEM Demand (Forecast)")
@@ -35,6 +46,7 @@ FIRST_WEEK = date(2022, 12, 26)
 LAST_WEEK = date(2024, 12, 30)
 
 DAYS = 7
+OLE2_SIGNATURE = bytes.fromhex("D0CF11E0A1B11AE1")  # legacy .xls (Compound File) header
 DATE_ROW, PERIOD_ROW, SERIES_ROW, FIRST_DATA_ROW = 1, 2, 4, 5
 PERIOD_LABELS: tuple[str, ...] = tuple(
     f"{(m // 60) % 24:02d}:{m % 60:02d}" for m in range(30, 24 * 60 + 1, 30)
@@ -57,20 +69,26 @@ def file_names() -> list[str]:
     return [f"{d:%Y%m%d}.xls" for d in week_starts(FIRST_WEEK, LAST_WEEK)]
 
 
+def _is_nan(value) -> bool:
+    return isinstance(value, float) and math.isnan(value)
+
+
 def _cell(df: pd.DataFrame, row: int, col: int) -> str | None:
+    """A label cell as stripped text; None if absent, blank or an error cell."""
     value = df.iat[row, col] if row < df.shape[0] and col < df.shape[1] else None
-    if value is None or (isinstance(value, float) and math.isnan(value)):
+    if value is None or _is_nan(value) or str(value).strip() == "":
         return None
     return str(value).strip()
 
 
-def _value(text) -> float | None:
-    if text is None or (isinstance(text, float) and math.isnan(text)):
-        return None
-    text = str(text).strip()
-    if text == "":
-        return None
-    return float(text)
+def _value(cell, where: str) -> float | None:
+    """A data cell: '' -> None; a number -> float; NaN (an Excel error cell) or text -> stop."""
+    if cell is None or _is_nan(cell):
+        raise SchemaMismatchError(f"{where}: Excel error cell (e.g. #N/A); refusing to load it as blank")
+    try:
+        return _common.parse_number(str(cell))
+    except ValueError as exc:
+        raise SchemaMismatchError(f"{where}: {exc}") from exc
 
 
 def _week_monday(file_name: str) -> date:
@@ -96,6 +114,11 @@ def parse_sheet(df: pd.DataFrame, file_name: str) -> list[tuple]:
     if labels != PERIOD_LABELS:
         raise SchemaMismatchError(f"{file_name}: period-ending labels changed: {labels}")
 
+    width = 1 + DAYS * len(SERIES)
+    extra = df.iloc[:, width:]
+    if not extra.empty and extra.map(lambda v: not (_is_nan(v) or str(v).strip() == "")).to_numpy().any():
+        raise SchemaMismatchError(f"{file_name}: content found right of the {DAYS} day blocks")
+
     monday = _week_monday(file_name)
     day_cols = [1 + i * len(SERIES) for i in range(DAYS)]
     dates = []
@@ -115,13 +138,18 @@ def parse_sheet(df: pd.DataFrame, file_name: str) -> list[tuple]:
             row = FIRST_DATA_ROW + offset
             ts_text = f"{day.isoformat()}|{label}"
             for k, series in enumerate(SERIES):
-                records.append((GRID_CODE, file_name, ts_text, series, _value(df.iat[row, col + k])))
+                where = f"{file_name} {ts_text} {series}"
+                records.append((GRID_CODE, file_name, ts_text, series, _value(df.iat[row, col + k], where)))
     return records
 
 
 def to_raw_records(path: Path | str) -> list[tuple]:
     path = Path(path)
-    return parse_sheet(pd.read_excel(path, header=None, dtype=str), path.name)
+    with pd.ExcelFile(path) as book:
+        if len(book.sheet_names) != 1:
+            raise SchemaMismatchError(f"{path.name}: expected 1 sheet, found {book.sheet_names}")
+        df = pd.read_excel(book, header=None, dtype=str, keep_default_na=False, na_filter=False)
+    return parse_sheet(df, path.name)
 
 
 def records_from(folder: Path, names: list[str] | None = None) -> list[tuple]:
@@ -136,15 +164,30 @@ def records_from(folder: Path, names: list[str] | None = None) -> list[tuple]:
     return records
 
 
+def verify_signature(path: Path) -> None:
+    """Reject a body that isn't a legacy .xls (e.g. a CDN/WAF HTML page served with 200)."""
+    with path.open("rb") as fh:
+        if fh.read(len(OLE2_SIGNATURE)) != OLE2_SIGNATURE:
+            raise InvalidDownloadError(f"{path.name} is not an .xls workbook")
+
+
 def download(refresh: bool = False, retries: int = 3) -> tuple[Path, str]:
-    """Download every weekly file into today's folder (or reuse them); returns (folder, source_version)."""
-    folder = None
-    for name in file_names():
-        url = config.EMA_HALF_HOURLY_URL.format(year=name[:4], file_name=name)
-        path, _ = _common.download(url, "singapore", name, refresh=refresh, retries=retries)
-        folder = path.parent
-    assert folder is not None
-    return folder, f"EMA half-hourly, {len(file_names())} weekly files {FIRST_WEEK}..{LAST_WEEK}"
+    """Download every weekly file into ONE folder (or reuse them); returns (folder, source_version).
+
+    The version is a SHA-256 over all files in order, so a silently republished workbook
+    changes the run log even though EMA sends no reliable per-file version.
+    """
+    folder = _common.today_folder("singapore")
+    digest = hashlib.sha256()
+    with requests.Session() as session:
+        for name in file_names():
+            url = config.EMA_HALF_HOURLY_URL.format(year=name[:4], file_name=name)
+            path, _ = _common.download(
+                url, "singapore", name, refresh=refresh, retries=retries,
+                folder=folder, validate=verify_signature, session=session,
+            )  # fmt: skip
+            digest.update(path.read_bytes())
+    return folder, f"EMA half-hourly, {len(file_names())} weekly files {FIRST_WEEK}..{LAST_WEEK}; sha256 {digest.hexdigest()[:12]}"
 
 
 def load(conn, records: list[tuple], run_id: int, source_file: str) -> int:

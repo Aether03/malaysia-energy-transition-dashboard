@@ -7,7 +7,11 @@ import pandas as pd
 import pytest
 
 from pipeline.sources import thailand
-from pipeline.sources._common import SchemaMismatchError, assert_unique_keys
+from pipeline.sources._common import (
+    InvalidDownloadError,
+    SchemaMismatchError,
+    assert_unique_keys,
+)
 
 FIXTURES = pathlib.Path(__file__).parent / "fixtures" / "thailand"
 F2023 = FIXTURES / "system_2023.csv"
@@ -482,5 +486,31 @@ def test_full_key_is_unique_and_a_duplicate_is_caught():
 def test_verify_checksum_rejects_a_revised_file(tmp_path):
     revised = tmp_path / "system_2023.csv"
     shutil.copy(F2023, revised)  # an excerpt, so its md5 can't match the published file
-    with pytest.raises(SchemaMismatchError, match="revised"):
+    with pytest.raises(InvalidDownloadError, match="differs from Zenodo"):
         thailand.verify_checksum(revised)
+
+
+# --- ragged rows (M3 Python review H2/H3) ------------------------------------------------
+
+
+def test_trailing_delimiter_on_data_rows_is_rejected_not_shifted(tmp_path):
+    header, rows = _load_fixture(F2024)
+    bad = _write_csv(tmp_path / "trailing.csv", header, [r + [""] for r in rows])
+    with pytest.raises(SchemaMismatchError, match="fields"):
+        thailand.read_file(bad)
+
+
+def test_short_or_truncated_row_is_rejected_not_padded(tmp_path):
+    header, rows = _load_fixture(F2024)
+    bad = _write_csv(tmp_path / "short.csv", header, rows[:-1] + [rows[-1][:8]])
+    with pytest.raises(SchemaMismatchError, match="fields"):
+        thailand.read_file(bad)
+
+
+@pytest.mark.parametrize("cell", ["nan", "inf", "1_000", "#N/A"])
+def test_non_numeric_cell_text_stops_the_run(tmp_path, cell):
+    header, rows = _load_fixture(F2024)
+    rows[0][header.index("north_demand")] = cell
+    bad = _write_csv(tmp_path / "text.csv", header, rows)
+    with pytest.raises(SchemaMismatchError, match="north_demand"):
+        _records(bad)

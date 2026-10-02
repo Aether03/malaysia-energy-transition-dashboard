@@ -16,18 +16,23 @@ Raw is an exact copy of both published files (M3 plan Q1):
 
 from __future__ import annotations
 
+import csv
 import hashlib
-import math
 from pathlib import Path
 
 import pandas as pd
 
 from pipeline import config
 from pipeline.sources import _common
-from pipeline.sources._common import SchemaMismatchError, assert_unique_keys
+from pipeline.sources._common import (
+    InvalidDownloadError,
+    SchemaMismatchError,
+    assert_unique_keys,
+)
 
 GRID_CODE = "TH_EGAT"
 FILES: tuple[str, ...] = ("system_2023.csv", "system_2024.csv")
+FILE_YEAR = {"system_2023.csv": 2023, "system_2024.csv": 2024}
 DATETIME_COLUMN = "datetime"
 
 _COMMON = (
@@ -46,21 +51,31 @@ KEY_COLUMNS = ("grid_code", "file_name", "ts_text", "series")
 
 
 def read_file(path: Path | str) -> pd.DataFrame:
-    """Read one published file as text; the column set must be one of the known variants."""
-    df = pd.read_csv(path, dtype=str, keep_default_na=False, encoding="utf-8-sig")
-    if frozenset(df.columns) not in HEADER_VARIANTS or len(set(df.columns)) != len(df.columns):
-        raise SchemaMismatchError(f"Thailand header changed in {Path(path).name}: {list(df.columns)}")
-    return df
+    """Read one published file as text; the column set must be one of the known variants.
+
+    Read with the csv module, not pandas: pandas silently turns a trailing delimiter into an
+    index column (shifting every value one series to the right) and pads short rows with
+    blanks. Here every row must have exactly the header's width (M3 Python review H2/H3).
+    """
+    name = Path(path).name
+    with open(path, encoding="utf-8-sig", newline="") as fh:
+        rows = list(csv.reader(fh))
+    if not rows:
+        raise SchemaMismatchError(f"{name} is empty")
+    header, body = rows[0], rows[1:]
+    if frozenset(header) not in HEADER_VARIANTS or len(header) != len(frozenset(header)):
+        raise SchemaMismatchError(f"Thailand header changed in {name}: {header}")
+    for line_no, row in enumerate(body, start=2):
+        if len(row) != len(header):
+            raise SchemaMismatchError(f"{name} line {line_no}: {len(row)} fields, header has {len(header)}")
+    return pd.DataFrame(body, columns=header, dtype=str)
 
 
-def _value(text: str) -> float | None:
-    text = text.strip()
-    if text == "":
-        return None
-    number = float(text)
-    if math.isnan(number):
-        return None
-    return number
+def _value(text: str, where: str) -> float | None:
+    try:
+        return _common.parse_number(text)
+    except ValueError as exc:
+        raise SchemaMismatchError(f"{where}: {exc}") from exc
 
 
 def to_raw_records(df: pd.DataFrame, file_name: str) -> list[tuple]:
@@ -69,7 +84,9 @@ def to_raw_records(df: pd.DataFrame, file_name: str) -> list[tuple]:
     records: list[tuple] = []
     for row in df.to_dict("records"):
         ts_text = row[DATETIME_COLUMN]
-        records.extend((GRID_CODE, file_name, ts_text, name, _value(row[name])) for name in series)
+        records.extend(
+            (GRID_CODE, file_name, ts_text, name, _value(row[name], f"{file_name} {ts_text} {name}")) for name in series
+        )
     return records
 
 
@@ -83,26 +100,26 @@ def records_from(folder: Path) -> list[tuple]:
 
 
 def verify_checksum(path: Path) -> str:
-    """Return the file's MD5; raise SchemaMismatchError if it differs from Zenodo's published one."""
+    """Return the file's MD5; raise InvalidDownloadError if it differs from Zenodo's published one."""
     md5 = hashlib.md5(path.read_bytes()).hexdigest()  # matches Zenodo's published checksum; not a security use
     expected = config.THAILAND_MD5[path.name]
     if md5 != expected:
-        raise SchemaMismatchError(f"{path.name} md5 {md5} differs from Zenodo's {expected}: the record was revised")
+        raise InvalidDownloadError(f"{path.name} md5 {md5} differs from Zenodo's {expected}")
     return md5
 
 
 def download(refresh: bool = False, retries: int = 3) -> tuple[Path, str]:
-    """Download both files into today's folder (or reuse them), verify their checksums;
-    returns (folder, source_version)."""
+    """Download both files into one folder (or reuse them). The checksum runs inside the
+    download, so a corrupt or revised file is deleted and retried, never cached; a record
+    that really was revised fails after the retries. Returns (folder, source_version)."""
+    folder = _common.today_folder("thailand")
     versions = []
-    folder = None
     for name in FILES:
-        path, _ = _common.download(
-            config.THAILAND_FILE_URL.format(file_name=name), "thailand", name, refresh=refresh, retries=retries
-        )
-        folder = path.parent
-        versions.append(f"{name[7:11]} md5 {verify_checksum(path)[:8]}")
-    assert folder is not None
+        _common.download(
+            config.THAILAND_FILE_URL.format(file_name=name), "thailand", name,
+            refresh=refresh, retries=retries, folder=folder, validate=verify_checksum,
+        )  # fmt: skip
+        versions.append(f"{FILE_YEAR[name]} md5 {config.THAILAND_MD5[name][:8]}")
     return folder, f"zenodo {config.THAILAND_ZENODO_RECORD} v1.0; " + "; ".join(versions)
 
 

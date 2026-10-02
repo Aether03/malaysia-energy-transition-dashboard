@@ -4,6 +4,11 @@ Generated at seed time from the pinned `holidays` package (national holidays onl
 state or regional ones), then corrected by `seed/holiday_override.csv`, where each row
 was hand-checked against an official list. The table is fully derived, so it is
 rebuilt on every seed: a package upgrade that drops a holiday can't leave a stale row.
+
+Years cover every hourly grid's span plus one year either side (M3 review: Singapore's
+first file starts 2022-12-26). An override that no longer matches the package (a REMOVE of
+a date the package lacks) or repeats a date stops the seed: the hand check is stale.
+Named public_holidays, not calendar, so it can't shadow the standard library module.
 """
 
 from __future__ import annotations
@@ -17,8 +22,9 @@ import holidays
 
 log = logging.getLogger(__name__)
 
-# The Thailand files span 2023-01-01 to 2025-01-01 local time; MY is ready for GSO.
-HOLIDAY_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+# Hourly data spans 2022-12-26 (SG's first week) to 2025-01-05 (SG's last week); one year
+# of margin either side. tests/test_public_holidays.py checks this against both sources.
+HOLIDAY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025, 2026)
 COUNTRIES: tuple[str, ...] = ("TH", "MY", "SG")  # names requested in en_US (the TH default is Thai script)
 OVERRIDE_FILE = "holiday_override.csv"
 OVERRIDE_COLUMNS = ("country_code", "holiday_date", "name", "action")  # action: ADD or REMOVE
@@ -43,10 +49,16 @@ def read_overrides(seed_dir: Path) -> list[tuple[str, date, str, str]]:
         if tuple(reader.fieldnames or ()) != OVERRIDE_COLUMNS:
             raise ValueError(f"{OVERRIDE_FILE}: header must be {list(OVERRIDE_COLUMNS)}, got {reader.fieldnames}")
         rows = []
+        seen: set[tuple[str, date]] = set()
         for row in reader:
-            if row["country_code"] not in COUNTRIES or row["action"] not in ("ADD", "REMOVE"):
+            row = {k: (v or "").strip() for k, v in row.items()}
+            if row["country_code"] not in COUNTRIES or row["action"] not in ("ADD", "REMOVE") or not row["name"]:
                 raise ValueError(f"{OVERRIDE_FILE}: bad row {row}")
-            rows.append((row["country_code"], date.fromisoformat(row["holiday_date"]), row["name"], row["action"]))
+            key = (row["country_code"], date.fromisoformat(row["holiday_date"]))
+            if key in seen:
+                raise ValueError(f"{OVERRIDE_FILE}: duplicate row for {key}")
+            seen.add(key)
+            rows.append((*key, row["name"], row["action"]))
     return rows
 
 
@@ -55,7 +67,9 @@ def build_holidays(seed_dir: Path) -> list[tuple[str, date, str, str]]:
     table = package_holidays()
     for country, day, name, action in read_overrides(seed_dir):
         if action == "REMOVE":
-            table.pop((country, day), None)
+            if (country, day) not in table:
+                raise ValueError(f"{OVERRIDE_FILE}: REMOVE {country} {day} matches no package holiday; re-check it")
+            del table[(country, day)]
         else:
             table[(country, day)] = (name, "override")
     return [(c, d, name, origin) for (c, d), (name, origin) in sorted(table.items())]
