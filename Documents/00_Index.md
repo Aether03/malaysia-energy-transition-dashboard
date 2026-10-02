@@ -128,6 +128,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - **Small open check:** the first click on the Reset buttons, and the KPI hover with no brown fill, at the start of the next Desktop session.
   - **Next: M3** (grid load and forecast, Thailand open data; doc 06 Phase 3). Start with `/plan`.
     - **Rule:** rebuild report pages only while Desktop is closed.
+    - **Desktop quirk (2026-10-03):** Desktop 2.158 saves `preserveNewVisualVisibility` in bookmark options, then refuses to open the file. Remove it after any save that touches bookmarks; `validate_report.py` flags it.
     - Use `tools/build_report.py` + `validate_report.py`, and `tools/dax_twin_check.py` with Desktop open.
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
