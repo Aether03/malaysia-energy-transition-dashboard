@@ -125,7 +125,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Empty-DB rebuild passes (13 migrations, idempotent, BLOCKING all PASS, 4 known WARNs, reconciliation 5/5).
     - Twins 14/14; findings audited.
     - Outcome and lessons: `plans/M2_plan.md` "Outcome".
-    - **Small open check:** the first click on the Reset buttons, and the KPI hover with no brown fill, at the start of the next Desktop session.
+    - Final Desktop check passed (2026-10-03): Reset buttons restore the defaults on P1, P2 and P5; KPI hover stays white. **M2 fully closed.**
   - **Next: M3** (grid load and forecast, Thailand open data; doc 06 Phase 3). Start with `/plan`.
     - **Rule:** rebuild report pages only while Desktop is closed.
     - **Desktop quirk (2026-10-03):** Desktop 2.158 saves `preserveNewVisualVisibility` in bookmark options, then refuses to open the file. Remove it after any save that touches bookmarks; `validate_report.py` flags it.
