@@ -6,7 +6,11 @@
   - `040`–`060` + 8 hourly DQ rules, all PASS. Facts: TH 17,564 h, SG 17,808 h, 52,708 flow rows.
   - The FLOW rule is scoped to MY: EDL flows are gross over many lines.
   - Amirul chose to have Claude write the season CASE.
-  **Next:** the independent review of steps 3–5 (`ecc:python-reviewer` + `ecc:database-reviewer`), then step 6 (EGAT peak check). Step 1 (templates) is waiting on Amirul's Desktop save. **Uncommitted draft:** `sql/transform/040_dim_date.sql` (season CASE = Amirul's TODO). It needs `stg.grid_hourly` (step 5), so **don't run `pipeline run`/`transform` until step 5 lands**. This session covers steps 1–6; a fresh session takes steps 7–13. No M3 code yet
+  **Running (2026-10-03):** three background agents.
+  - `ecc:database-reviewer` and `ecc:python-reviewer` on steps 3–5: their findings get fixed before step 7.
+  - Step 6 (a Sonnet agent: EGAT published peak vs the regional sum + the FR-22 sample week 2024-04-22..28 for TH and SG), which appends to `docs/reconciliation.md`.
+  - If the session dies, re-run their briefs from the plan rows.
+  Step 1 (templates) is waiting on Amirul's Desktop save. Then step 7 (forecast tests first) in a **fresh session**, per the plan. **Uncommitted draft:** `sql/transform/040_dim_date.sql` (season CASE = Amirul's TODO). It needs `stg.grid_hourly` (step 5), so **don't run `pipeline run`/`transform` until step 5 lands**. This session covers steps 1–6; a fresh session takes steps 7–13. No M3 code yet
 
 > **Skill test in progress.** This project is the live test of the `plan-project` skill. Every session must append its observations on the skill (friction, cost, routing, what worked) to the memory file `~/.claude/projects/C--Users-user-Desktop-PetProject/memory/project_plan_project_first_test.md`. Evaluate and improve the skill **only after the project is complete** (Amirul, 2026-09-30).
 
