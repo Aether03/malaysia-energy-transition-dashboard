@@ -364,9 +364,16 @@ def series_colours(table: str, column: str, colours: dict[str, str]) -> list[dic
 
 
 def highlight_colours(table: str, column: str, value: str, highlight: str = NAVY, others: str = PEER_MUTED) -> list[dict]:
-    """Default fill for every series/category (muted) plus one highlighted value (doc 04 §3.3)."""
+    """Default fill for every series/category (muted) plus one highlighted value (doc 04 §3.3).
+
+    Line series ignore the selector-free default (GUI round 5), so every country in the seed
+    also gets its own explicit muted entry.
+    """
+    with (ROOT / "seed" / "dim_country.csv").open(encoding="utf-8-sig", newline="") as fh:
+        names = [row["name"] for row in csv.DictReader(fh) if row["area_type"] == "COUNTRY" and row["name"] != value]
     return [
         {"properties": {"fill": solid(others)}},
+        *({"properties": {"fill": solid(others)}, "selector": series_selector(table, column, n)} for n in names),
         {"properties": {"fill": solid(highlight)}, "selector": series_selector(table, column, value)},
     ]
 
