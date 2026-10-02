@@ -172,6 +172,16 @@ def tooltip_page(body: dict, page_name: str) -> dict:
 
 
 # ---------- components ----------
+# Invisible in every button state: without hover/press entries Desktop paints the theme's first
+# colour (coal brown) on hover (GUI round 7).
+CLEAR_BUTTON_FILL = [
+    {"properties": {"show": lit("true")}},
+    *(
+        {"properties": {"fillColor": solid(NAVY), "transparency": lit("100D")}, "selector": {"id": state}}
+        for state in ("default", "hover", "press")
+    ),
+]
+
 # The theme gives every visual a card background and border (theme "*"); frame shapes and
 # nav buttons opt out so they sit directly on the page or the rail.
 BARE = {
@@ -276,10 +286,7 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
                     "selector": {"id": "default"},
                 }
             ],
-            "fill": [
-                {"properties": {"show": lit("true")}},
-                {"properties": {"fillColor": solid(NAVY), "transparency": lit("100D")}, "selector": {"id": "default"}},
-            ],
+            "fill": CLEAR_BUTTON_FILL,
             "outline": [{"properties": {"show": lit("false")}}],
         },
         "visualContainerObjects": {
@@ -306,10 +313,7 @@ def nav_overlay(page_name: str, tooltip: str | None = None) -> dict:
         "visualType": "actionButton",
         "objects": {
             "icon": [{"properties": {"shapeType": text("blank")}, "selector": {"id": "default"}}],
-            "fill": [
-                {"properties": {"show": lit("true")}},
-                {"properties": {"fillColor": solid(NAVY), "transparency": lit("100D")}, "selector": {"id": "default"}},
-            ],
+            "fill": CLEAR_BUTTON_FILL,
             "outline": [{"properties": {"show": lit("false")}}],
         },
         "visualContainerObjects": {
@@ -489,6 +493,27 @@ def year_range_slicer(header: str = "Years") -> dict:
     return slicer("dim_year", "year", header, mode="Between", sync_group="year_range")
 
 
+BOOKMARKS = ROOT / "report" / "EnergyTransition.Report" / "definition" / "bookmarks"
+
+
+def page_bookmark(page_name: str) -> str | None:
+    """Name of the "Reset ..." bookmark Amirul created in Desktop for this page (doc 03 A4), if any."""
+    for path in sorted(BOOKMARKS.glob("*.bookmark.json")):
+        b = json.loads(path.read_text(encoding="utf-8"))
+        if b.get("displayName", "").startswith("Reset") and b.get("explorationState", {}).get("activeSection") == page_name:
+            return b["name"]
+    return None
+
+
+def reset_button(bookmark_name: str) -> dict:
+    """Nav-rail button that applies the page's Reset bookmark (default slicers and filters)."""
+    body = nav_button("↺  Reset filters", "", False)
+    body["visualContainerObjects"]["visualLink"] = [
+        {"properties": {"show": lit("true"), "type": text("Bookmark"), "bookmark": text(bookmark_name)}}
+    ]
+    return body
+
+
 # ---------- page frame ----------
 def frame(
     page_name: str,
@@ -515,6 +540,10 @@ def frame(
         ),
     ]
     existing = [(label, name) for label, name in NAV if (PAGES / name).is_dir()]
+    bookmark = page_bookmark(page_name)
+    if bookmark:
+        y = BODY_Y + len(existing) * 48 + 24
+        visuals.append(visual("frame_reset", 8, y, 160, 44, 15, reset_button(bookmark)))
     for i, (label, name) in enumerate(existing):
         y = BODY_Y + i * 48
         visuals.append(visual(f"frame_nav_{i}", 8, y, 160, 44, 2 + i, nav_button(label, name, name == page_name)))

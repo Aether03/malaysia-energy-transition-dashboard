@@ -3,9 +3,8 @@
   "name": "d1_country",
   "displayName": "Country Deep Dive",
   "displayOption": "FitToPage",
-  "width": 1280,
   "height": 720,
-  "visibility": "HiddenInViewMode",
+  "width": 1280,
   "filterConfig": {
     "filters": [
       {
@@ -46,5 +45,6 @@
         }
       }
     ]
-  }
+  },
+  "visibility": "HiddenInViewMode"
 }

@@ -47,10 +47,7 @@ def back_button() -> dict:
                     "selector": {"id": "default"},
                 },
             ],
-            "fill": [
-                {"properties": {"show": lit("true")}},
-                {"properties": {"fillColor": rb.solid(rb.NAVY), "transparency": lit("100D")}, "selector": {"id": "default"}},
-            ],
+            "fill": rb.CLEAR_BUTTON_FILL,
             "outline": [{"properties": {"show": lit("false")}}],
         },
         "visualContainerObjects": {
@@ -64,7 +61,7 @@ def back_button() -> dict:
 def build() -> list[dict]:
     visuals = []
     for v in build_p2_page.build():
-        if v["name"] in DROP or v["name"].startswith("frame_nav"):
+        if v["name"] in DROP or v["name"].startswith(("frame_nav", "frame_reset")):
             continue  # hidden page: no rail highlight; the Back button replaces it
         v = copy.deepcopy(v)
         v["name"] = v["name"].replace("p2_", "d1_", 1)
