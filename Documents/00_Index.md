@@ -1,16 +1,30 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-03 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0, M1 and **M2 are done** (M2: 2026-10-03, pushed). **Now:** M3, grid load and forecast (doc 06 Phase 3). Step plan `Documents/plans/M3_plan.md` drafted 2026-10-03 and **APPROVED 2026-10-03** in the plan canvas (2 rounds). Q1: raw is an exact copy, with no SQL imputation. Q2: a locked, one-shot 2024 backtest protocol, mle-reviewer before the run. Q3: daily net flows. Q4: search the other ASEAN grids first. Q5: hourly DQ rules now. Q6: the forecast runs in `pipeline run`. **In progress (2026-10-03):** step 1 (template capture, Amirul in Desktop), step 2 (a Sonnet background agent writes `docs/grid_sources.md`; if the session dies, re-run its brief from the plan's step 2 row), step 3 **done** (`66dfbb6`: V010 applied, seeds, 80 TH / 44 MY holidays; Children's Day removed by override). Step 4 **done**: `thailand.py` loads all 281,424 raw rows in about 11 s; idempotent; Zenodo MD5s pinned as the version; 54 tests (Sonnet wrote them first, against real-row fixtures). Step 2 **done**: only Singapore EMA qualifies (SODL v1.0 read from the primary terms page); **Amirul: add it** (2026-10-03). Steps 4b/5/5b **done**:
-  - `singapore.py`: 106 weekly .xls files, 106,848 raw rows; V011 lossless precision; V012 SG holidays.
-  - `R__stg_grid.sql`: TH and SG staging in one file. SG uses System Demand (Actual); the half-hour ending 00:00 rolls into the next day.
-  - `040`–`060` + 8 hourly DQ rules, all PASS. Facts: TH 17,564 h, SG 17,808 h, 52,708 flow rows.
-  - The FLOW rule is scoped to MY: EDL flows are gross over many lines.
-  - Amirul chose to have Claude write the season CASE.
-  **Running (2026-10-03):** three background agents.
-  - `ecc:database-reviewer` and `ecc:python-reviewer` on steps 3–5: their findings get fixed before step 7.
-  - Step 6 (a Sonnet agent: EGAT published peak vs the regional sum + the FR-22 sample week 2024-04-22..28 for TH and SG), which appends to `docs/reconciliation.md`.
-  - If the session dies, re-run their briefs from the plan rows.
-  Step 1 (templates) is waiting on Amirul's Desktop save. Then step 7 (forecast tests first) in a **fresh session**, per the plan. **Uncommitted draft:** `sql/transform/040_dim_date.sql` (season CASE = Amirul's TODO). It needs `stg.grid_hourly` (step 5), so **don't run `pipeline run`/`transform` until step 5 lands**. This session covers steps 1–6; a fresh session takes steps 7–13. No M3 code yet
+**Updated:** 2026-10-03 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0, M1 and **M2 are done**. **Now: M3**, grid load and forecast. Step plan `Documents/plans/M3_plan.md`, **APPROVED 2026-10-03** (Q1–Q6). Read its decisions and the 12-row backtest protocol first.
+
+**M3 resume point (2026-10-03, end of session 1). Steps 2–6 are done and pushed:**
+- **Step 2:** of the other ASEAN grids, only **Singapore (EMA)** qualifies (SODL v1.0, read from the primary terms page; `docs/grid_sources.md`). **Amirul: add it.** So P4 has two grids, TH_EGAT (default) and SG_EMA, with a selector.
+- **Steps 3–5b:**
+  - V010–V013.
+  - `thailand.py` (281,424 raw rows; MD5-pinned) and `singapore.py` (106 weekly .xls, 106,848 raw rows).
+  - `public_holidays.py` (TH/MY/SG, 2021–26; renamed from `calendar.py`).
+  - `R__stg_grid.sql`; `040`–`060`.
+  - **Facts:** TH 17,564 h (4 published gaps), SG 17,808 h (complete), 52,708 flow rows.
+  - 22 DQ rules: every hourly rule PASSes; only the 4 known M2 WARNs remain.
+- **Step 5 review done:**
+  - Python: 4 HIGH, 7 MEDIUM, LOW items.
+  - Database: 0 CRITICAL, 1 HIGH, 5 MEDIUM, LOW items.
+  - All fixed in `30adf17` and `90f30b9`. 269 tests pass.
+- **Step 6 done:**
+  - The P4 Thailand label is **"Sum of regional demand (EGAT)"**, with a footnote: hourly mean; published system peaks are 2–4% higher (`docs/reconciliation.md`).
+  - The FR-22 sample week matches pandas vs SQL for both grids.
+- **Waiting on Amirul:** **step 1**, the template capture in Desktop (9 click steps; the plan's step 1 row has the list).
+- **Next session starts at step 7:** forecast tests first, then step 8 (development on 2023 only, protocol committed, `ecc:mle-reviewer` BEFORE any 2024 run), then step 9 (the single FINAL 2024 run per grid).
+  - Use a fresh session, per the plan.
+  - Both grids use the same locked protocol. V013 enforces one FINAL run per grid.
+  - Singapore's NEM forecast (`stg.singapore_hourly.nem_forecast_mw`) is a candidate third benchmark. Settle it in the protocol, and only on the NEM basis.
+- **Backlog → M5:** ruff findings in the M2 DOSM/OWID files.
+- **Rules:** close Desktop before `pipeline run`; never rebuild report pages while Desktop is open.
 
 > **Skill test in progress.** This project is the live test of the `plan-project` skill. Every session must append its observations on the skill (friction, cost, routing, what worked) to the memory file `~/.claude/projects/C--Users-user-Desktop-PetProject/memory/project_plan_project_first_test.md`. Evaluate and improve the skill **only after the project is complete** (Amirul, 2026-09-30).
 
