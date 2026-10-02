@@ -1,6 +1,6 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-09-30 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** planning complete (all 6 approved 2026-09-30). **Build NOT started**; it waits for Amirul's explicit go. Next: M0 (doc 06 Phase 0), after `/plan` on the Deep model
+**Updated:** 2026-10-03 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0, M1 and **M2 are done** (M2: 2026-10-03, pushed). **Next:** M3, grid load and forecast (doc 06 Phase 3); start with `/plan` on the Deep model
 
 > **Skill test in progress.** This project is the live test of the `plan-project` skill. Every session must append its observations on the skill (friction, cost, routing, what worked) to the memory file `~/.claude/projects/C--Users-user-Desktop-PetProject/memory/project_plan_project_first_test.md`. Evaluate and improve the skill **only after the project is complete** (Amirul, 2026-09-30).
 
@@ -120,13 +120,22 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - GUI rounds 5–6: P2 fully works; the P5 trend toggle works; peer colours muted explicitly.
     - **Rule:** never rebuild while Desktop is open, because a Desktop save overwrites the files.
     - D1 drill-through page built (`tools/build_d1_page.py`, untested); P1 findings box filled from `docs/findings.md`.
-    - **Resume:** GUI round 7 (J2: P1 → P2 → P5 → right-click → D1 → Back; synced year slicer; Amirul creates the Reset bookmarks for P1, P2 and P5), then Claude wires the Reset buttons, then M2 acceptance (empty-DB rebuild, twins, push).
+    - Round 7: the J2 journey works (P1 → P2 → P5 → D1 → Back, synced years). The Reset bookmarks are Desktop-made, and the Reset buttons are wired to them.
+  - **M2 COMPLETE 2026-10-03.**
+    - Empty-DB rebuild passes (13 migrations, idempotent, BLOCKING all PASS, 4 known WARNs, reconciliation 5/5).
+    - Twins 14/14; findings audited.
+    - Outcome and lessons: `plans/M2_plan.md` "Outcome".
+    - **Small open check:** the first click on the Reset buttons, and the KPI hover with no brown fill, at the start of the next Desktop session.
+  - **Next: M3** (grid load and forecast, Thailand open data; doc 06 Phase 3). Start with `/plan`.
+    - **Rule:** rebuild report pages only while Desktop is closed.
+    - Use `tools/build_report.py` + `validate_report.py`, and `tools/dax_twin_check.py` with Desktop open.
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.
     - YEAR() is UTC, not local time.
     - A source with capacity but NULL generation is dropped.
     - Concurrent-run guard (`sp_getapplock`).
+  - **Backlog from M2 (M5):** retry report-page tooltips (T1/T2 pages exist, unused); find the cause of the DOSM gap; add the ⓘ About button with P6.
   - **Backlog from the review (M5):** exercise the roles with `CREATE USER … WITHOUT LOGIN` tests; an `sp_getapplock` guard on migrations; a check for out-of-order versions; DENY on `meta.schema_version` for `role_pipeline`; constraint-naming consistency.
 
 ## Fixes & improvements backlog
