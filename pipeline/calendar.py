@@ -19,7 +19,7 @@ log = logging.getLogger(__name__)
 
 # The Thailand files span 2023-01-01 to 2025-01-01 local time; MY is ready for GSO.
 HOLIDAY_YEARS: tuple[int, ...] = (2023, 2024, 2025)
-COUNTRIES: tuple[str, ...] = ("TH", "MY")  # names requested in en_US (the TH default is Thai script)
+COUNTRIES: tuple[str, ...] = ("TH", "MY", "SG")  # names requested in en_US (the TH default is Thai script)
 OVERRIDE_FILE = "holiday_override.csv"
 OVERRIDE_COLUMNS = ("country_code", "holiday_date", "name", "action")  # action: ADD or REMOVE
 

@@ -1,3 +1,4 @@
 grid_code,name,country_iso3,utc_offset_min,data_source_code,is_published
 TH_EGAT,Thailand national grid (EGAT),THA,420,DTH,1
 MY_PEN_GSO,Peninsular Malaysia grid (GSO),MYS,480,D4,0
+SG_EMA,Singapore national grid (EMA),SGP,480,DSG,1
