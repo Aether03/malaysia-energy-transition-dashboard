@@ -213,10 +213,36 @@ Model tiers per doc 06 §4: **D** = Opus 5.5 (this session) · **S** = Sonnet 5.
 | Long session / usage limits | Medium | The index resume point is updated before each agent run and after each step |
 
 ## Acceptance (the doc 06 M2 check)
-- [ ] On an empty DB: `migrate && seed && run` exits 0; a second run merges 0 rows for D1, D2 and D3
-- [ ] BLOCKING rules all PASS; the WARNs are only the predicted, documented ones
-- [ ] Every DAX measure equals its SQL twin (step 7), independently reviewed
-- [ ] J2 works: P1 → P2 → P5 → D1 → Back, with Reset and synced slicers
-- [ ] NETR hydro definition verified and cited; P1 polish done (title, as-of box, explicit colours)
-- [ ] 3 findings in `docs/findings.md`, audited
-- [ ] Commits pushed; doc 06, the index and the skill-test memory updated
+- [x] On an empty DB (`EnergyDW_M2Test`, 2026-10-03): `migrate && seed && run` exits 0; a second run merges 0 rows for D1, D2 and D3
+- [x] BLOCKING rules all PASS; the WARNs are only the 4 predicted, documented ones (`docs/reconciliation.md`)
+- [x] Every DAX measure equals its SQL twin: **14/14** on the Desktop-saved model, independently reviewed (step 7)
+- [x] J2 works: P1 → P2 → P5 → D1 → Back, with synced year slicers (GUI round 7). Reset buttons are wired to Desktop-made bookmarks; their first click test is in the final check
+- [x] NETR hydro definition verified and cited; P1 polish done (title, as-of box, explicit colours)
+- [x] 3 findings in `docs/findings.md`, audited (`audit-my-work`), and on P1
+- [x] Commits pushed; doc 06, the index and the skill-test memory updated
+
+## Outcome (2026-10-03)
+**Built:**
+- **Data:** OWID (D2) and DOSM (D3) loaders. Shared `_common` source helpers. V008/V009. 6 new WARN rules.
+- **SQL:** showcase `01`–`07`.
+- **Model:** 75-measure DAX library with field parameters, `'Target Axis'` and `'Compare Country'`. 14 DAX/SQL twins via Desktop's own ADOMD client.
+- **Report:** a shared page frame (`tools/report_builder.py`), five generated pages (P1, P2, P5, hidden D1 and T2), and `tools/build_report.py` + `validate_report.py`.
+
+**Changed from the plan (each decided with Amirul):**
+- 31/40% are re-attributed to 12MP/MyRER; Ember-basis and official capacity shares are shown side by side.
+- The `'Compare Country'` selection table (review HIGH).
+- Built-in tooltips instead of report-page tooltips (T1/T2 pages don't render in this Desktop; retry in M5).
+- The P5 title adds the intensity rank.
+
+**Reviews:**
+- Database: 0 CRITICAL/HIGH.
+- DAX: 3 HIGH fixed.
+- Findings audit: 4 HIGH framing fixes.
+
+**Friction:** 7 GUI rounds. Most lost time came from guessed PBIR formats: `show` flags, slicer defaults, field-parameter wells, chart minimum heights. Capturing one Desktop-made example per feature fixed each one. RAM starvation of SQL Server was fixed with `min server memory`.
+
+**Backlog → M5:**
+- Report-page tooltips (mini mix bar).
+- The DOSM gap cause (unexplained).
+- The low items from the M1 transform review.
+- The ⓘ About button (with P6).
