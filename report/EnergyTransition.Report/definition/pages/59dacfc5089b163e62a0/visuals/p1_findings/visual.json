@@ -19,9 +19,9 @@
               {
                 "textRuns": [
                   {
-                    "value": "Headline findings",
+                    "value": "Headline findings (2015–2025, Ember basis; caveats in docs/findings.md)",
                     "textStyle": {
-                      "fontSize": "11pt",
+                      "fontSize": "10pt",
                       "color": "#0b0b0b",
                       "fontWeight": "bold"
                     }
@@ -31,10 +31,32 @@
               {
                 "textRuns": [
                   {
-                    "value": "Three headline findings are added after the analysis (M2 step 12).",
+                    "value": "1. The renewable share roughly doubled (9.6% → 19.7%, 3-year averages), mostly in a 2015–17 hydro step; since 2017 hydro and solar share the growth.",
                     "textStyle": {
-                      "fontSize": "10pt",
-                      "color": "#52514e"
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "2. Each kWh got 9.5% cleaner, yet power-sector emissions rose 27%: generation grew 40%, and all the fossil growth was coal.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "3. Malaysia is 3rd of 6 ASEAN peers on renewable share but 5th of 6 on carbon intensity (606 g/kWh, 2025): the coal-to-gas balance matters too.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
                     }
                   }
                 ]
