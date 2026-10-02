@@ -32,6 +32,15 @@ EMBER_YEARLY_URL = (
 OWID_ENERGY_URL = "https://owid-public.owid.io/data/energy/owid-energy-data.csv"
 DOSM_SUPPLY_URL = "https://storage.data.gov.my/energy/electricity_supply.csv"
 DOSM_CONSUMPTION_URL = "https://storage.data.gov.my/energy/electricity_consumption.csv"
+# DTH: Thai power system hourly data, Zenodo record pinned to v1.0 (published 2025-09-13).
+THAILAND_ZENODO_RECORD = "17109911"
+THAILAND_FILE_URL = f"https://zenodo.org/api/records/{THAILAND_ZENODO_RECORD}/files/{{file_name}}/content"
+# Zenodo's published MD5 per file (record metadata, checked 2026-10-03). Zenodo sends no
+# Last-Modified/ETag, so the checksum is the version: a revised file stops the run.
+THAILAND_MD5 = {
+    "system_2023.csv": "426d0db764f75780f589a8aeb6b1ef65",
+    "system_2024.csv": "5c1f09d6641ad6addb6f282f981e808a",
+}
 
 
 @dataclass(frozen=True)
