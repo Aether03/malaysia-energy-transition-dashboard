@@ -123,6 +123,10 @@ def main() -> int:
                 if it[end] not in visuals:
                     errors.append(f"{page_dir.name}: interaction {end} {it[end]} is not a visual")
         print(f"{page_dir.name}: {len(visuals)} visuals, page {pw}x{ph}, type {page.get('type', 'Default')}")
+    # Desktop 2.158 saves bookmark options its own loader rejects under schema 2.1.0 (M2 close-out).
+    for path in sorted((PAGES.parent / "bookmarks").glob("*.bookmark.json")):
+        if "preserveNewVisualVisibility" in json.loads(path.read_text(encoding="utf-8")).get("options", {}):
+            errors.append(f"bookmarks/{path.name}: options.preserveNewVisualVisibility blocks opening; remove it")
     print(f"{total} visuals checked, {len(errors)} problems")
     for e in errors:
         print("  -", e)

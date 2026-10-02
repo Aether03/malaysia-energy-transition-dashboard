@@ -3,8 +3,7 @@
   "displayName": "Reset Overview",
   "name": "8119a4ca95e70e0e05b4",
   "options": {
-    "targetVisualNames": [],
-    "preserveNewVisualVisibility": true
+    "targetVisualNames": []
   },
   "explorationState": {
     "version": "1.3",
