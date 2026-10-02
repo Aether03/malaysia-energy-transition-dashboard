@@ -9,6 +9,8 @@ and the findings box (y 536-656). Re-running rebuilds the page from scratch.
 
 from __future__ import annotations
 
+import csv
+
 import report_builder as rb
 from report_builder import column_ref, lit, measure_ref, projection, solid, text, visual
 
@@ -17,6 +19,20 @@ KPI_W = (rb.CONTENT_W - 4 * rb.GAP) / 5  # 5 equal cards (doc 04 §4)
 MID_Y, MID_END = 264, 520  # mix chart and NETR panel
 BOTTOM_Y, BOTTOM_H = 536, 120  # rank card and findings row
 RANK_W = 400
+
+
+def kpi_tooltips() -> dict[str, str]:
+    """T1 text per KPI from the seeds, so the hover text matches ref.kpi and the source credits."""
+    with (rb.ROOT / "seed" / "data_source.csv").open(encoding="utf-8-sig", newline="") as fh:
+        sources = {row["data_source_code"]: row["credit_text"] for row in csv.DictReader(fh)}
+    with (rb.ROOT / "seed" / "kpi.csv").open(encoding="utf-8-sig", newline="") as fh:
+        return {
+            row["kpi_code"]: (
+                f"{row['name']} ({row['unit']}). {row['definition']} Formula: {row['formula']}. "
+                f"Source: {sources[row['data_source_code']]}. Click for the Generation page."
+            )
+            for row in csv.DictReader(fh)
+        }
 
 
 def build() -> list[dict]:
@@ -42,14 +58,15 @@ def build() -> list[dict]:
     }
     visuals.append(visual("p1_year_slicer", 1056, rb.HEADER_Y, 200, 64, 40, slicer))
 
-    kpis = [  # (measure, delta label, delta colour measure or None = neutral)
-        ("Total Generation (TWh)", "Total Generation Delta Label", None),
-        ("RE Share (%)", "RE Share Delta Label", "RE Share Delta Color"),
-        ("Fossil Share (%)", "Fossil Share Delta Label", "Fossil Share Delta Color"),
-        ("Carbon Intensity (gCO2e/kWh)", "Carbon Intensity Delta Label", "Carbon Intensity Delta Color"),
-        ("Demand per Capita (MWh)", "Demand per Capita Delta Label", None),
+    kpis = [  # (measure, delta label, delta colour measure or None = neutral, ref.kpi code)
+        ("Total Generation (TWh)", "Total Generation Delta Label", None, "TOTAL_GENERATION"),
+        ("RE Share (%)", "RE Share Delta Label", "RE Share Delta Color", "RE_SHARE_GEN"),
+        ("Fossil Share (%)", "Fossil Share Delta Label", "Fossil Share Delta Color", "FOSSIL_SHARE_GEN"),
+        ("Carbon Intensity (gCO2e/kWh)", "Carbon Intensity Delta Label", "Carbon Intensity Delta Color", "CARBON_INTENSITY"),
+        ("Demand per Capita (MWh)", "Demand per Capita Delta Label", None, "DEMAND_PER_CAPITA"),
     ]
-    for i, (measure, delta, colour_measure) in enumerate(kpis):
+    definitions = kpi_tooltips()
+    for i, (measure, delta, colour_measure, code) in enumerate(kpis):
         kx = rb.CONTENT_X + i * (KPI_W + rb.GAP)
         visuals.append(visual(f"p1_kpi_{i}", kx, rb.BODY_Y, KPI_W, 100, 50 + i, rb.card(measure, 28, solid(rb.TEXT_PRIMARY), True)))
         delta_colour = (
@@ -57,7 +74,8 @@ def build() -> list[dict]:
         )
         visuals.append(visual(f"p1_kpi_delta_{i}", kx, rb.BODY_Y + 100, KPI_W, 44, 60 + i, rb.card(delta, 10, delta_colour, False)))
         # Cards cannot be clicked reliably: a transparent button over the value card opens P2 (doc 03 P1).
-        visuals.append(visual(f"p1_kpi_go_{i}", kx, rb.BODY_Y, KPI_W, 100, 80 + i, rb.nav_overlay(P2_PAGE)))
+        # Its hover text carries the doc 03 T1 content (report-page tooltips don't render here; M2 GUI round 6).
+        visuals.append(visual(f"p1_kpi_go_{i}", kx, rb.BODY_Y, KPI_W, 100, 80 + i, rb.nav_overlay(P2_PAGE, definitions[code])))
 
     area = {
         "visualType": "stackedAreaChart",
@@ -128,7 +146,10 @@ def build() -> list[dict]:
             rb.shape(None, text("→"), 20, rb.ACCENT_BLUE, "Segoe UI Semibold", align="center"), tab=False,
         )
     )
-    visuals.append(visual("p1_rank_go", rb.CONTENT_X, BOTTOM_Y, RANK_W, BOTTOM_H, 92, rb.nav_overlay(P5_PAGE)))
+    visuals.append(
+        visual("p1_rank_go", rb.CONTENT_X, BOTTOM_Y, RANK_W, BOTTOM_H, 92,
+               rb.nav_overlay(P5_PAGE, "Rank among the six largest ASEAN power systems. Click for the ASEAN comparison."))
+    )
     findings_x = rb.CONTENT_X + RANK_W + rb.GAP
     visuals.append(
         visual(

@@ -113,8 +113,13 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
       - Field parameters use Desktop's `fieldParameters` shape (captured from Amirul's rebind); the P2 mix toggle is verified.
       - P5 title shows both ranks (new `Focus Intensity Rank` + twin).
       - **Twins 14/14 on the saved model.**
-    - **Open:** the T2 report-page tooltip doesn't show, although Desktop confirms the setting is right. Next test: turn off "Chart-specific tooltips".
-    - **Resume:** GUI round 5 (P2 demand charts, P5 trend toggle, tooltip test), then step 11 (D1, T1, bookmarks), fill P1's findings box, then M2 acceptance.
+    - **Tooltips decided (Amirul, 2026-10-02):** report-page tooltips don't render in this Desktop, even when set in the GUI (round 6).
+      - So T2's figures go into each ASEAN chart's built-in tooltip.
+      - T1's definition, formula and source (from `seed/kpi.csv`) go into the hover text of P1's KPI click-through buttons.
+      - The T2 page stays in the project, unused. **Backlog M5:** retry report-page tooltips (mini mix bar).
+    - GUI rounds 5–6: P2 fully works; the P5 trend toggle works; peer colours muted explicitly.
+    - **Rule:** never rebuild while Desktop is open, because a Desktop save overwrites the files.
+    - **Resume:** step 11 (D1 drill-through, Reset bookmarks, synced slicers), fill P1's findings box, then M2 acceptance.
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.

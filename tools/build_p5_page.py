@@ -29,11 +29,13 @@ ROW2_Y, ROW2_H = 356, 224
 RANK_Y, RANK_H = 596, 60
 
 INTENSITY = "Intensity at Comparison Year (gCO2e/kWh)"
+# doc 03 T2 content, shown in each country visual's built-in tooltip (report-page tooltips don't render here).
+T2_FIELDS = ["Comparison Year", "RE Share at Comparison Year (%)", INTENSITY, "Demand at Comparison Year (TWh)"]
 
 
 def country_visual(name: str, x: float, y: float, w: float, h: float, z: int, body: dict) -> dict:
-    """A visual that shows countries: compared set only, T2 tooltip on hover."""
-    rb.tooltip_page(body, TOOLTIP_PAGE)
+    """A visual that shows countries: compared set only, the T2 figures in its built-in tooltip."""
+    rb.tooltip_fields(body, T2_FIELDS)
     return visual(name, x, y, w, h, z, body, filter_config=rb.measure_filter(name, "Is Compared", 1))
 
 

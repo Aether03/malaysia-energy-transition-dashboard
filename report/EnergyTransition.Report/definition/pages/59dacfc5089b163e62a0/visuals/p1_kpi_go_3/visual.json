@@ -130,6 +130,13 @@
                   "Value": "'p2_generation'"
                 }
               }
+            },
+            "enabledTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Carbon intensity of electricity (gCO₂e/kWh). The greenhouse-gas emissions released per unit of electricity generated in a year. Formula: Power-sector emissions ÷ total generation (Ember ''Emissions intensity''). Source: Ember (2026), Yearly Electricity Data, CC BY 4.0. Click for the Generation page.'"
+                }
+              }
             }
           }
         }

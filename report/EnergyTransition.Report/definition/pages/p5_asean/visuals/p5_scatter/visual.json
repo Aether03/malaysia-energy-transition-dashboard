@@ -86,6 +86,24 @@
               "nativeQueryRef": "Demand at Comparison Year (TWh)"
             }
           ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_Measures"
+                    }
+                  },
+                  "Property": "Comparison Year"
+                }
+              },
+              "queryRef": "_Measures.Comparison Year",
+              "nativeQueryRef": "Comparison Year"
+            }
+          ]
         }
       }
     },
@@ -597,33 +615,6 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
-                }
-              }
-            }
-          }
-        }
-      ],
-      "visualTooltip": [
-        {
-          "properties": {
-            "show": {
-              "expr": {
-                "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "type": {
-              "expr": {
-                "Literal": {
-                  "Value": "'ReportPage'"
-                }
-              }
-            },
-            "section": {
-              "expr": {
-                "Literal": {
-                  "Value": "'t2_country'"
                 }
               }
             }

@@ -149,6 +149,20 @@ def measure_filter(visual_name: str, measure: str, value: int = 1) -> dict:
     }
 
 
+def tooltip_fields(body: dict, measures: list[str]) -> dict:
+    """Add measures to a visual's built-in tooltip (the Tooltips well), skipping any already bound.
+
+    Used instead of report-page tooltips, which do not render in this Desktop setup even when set in
+    the GUI (M2 GUI round 6; decision: built-in tooltips now, retry pages in M5).
+    """
+    state = body["query"]["queryState"]
+    bound = {p["queryRef"] for role in state.values() for p in role.get("projections", [])}
+    extra = [projection(measure_ref(m)) for m in measures if f"_Measures.{m}" not in bound]
+    if extra:
+        state.setdefault("Tooltips", {"projections": []})["projections"].extend(extra)
+    return body
+
+
 def tooltip_page(body: dict, page_name: str) -> dict:
     """Assign a report-page tooltip to a visual (visualContainerObjects.visualTooltip)."""
     body.setdefault("visualContainerObjects", {})["visualTooltip"] = [
@@ -284,9 +298,10 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
     }
 
 
-def nav_overlay(page_name: str) -> dict:
+def nav_overlay(page_name: str, tooltip: str | None = None) -> dict:
     """Transparent blank button for a card that must be clickable (cards cannot carry a reliable
-    page-navigation action). Lay it exactly over the card, above it in z order."""
+    page-navigation action). Lay it exactly over the card, above it in z order. `tooltip` is the
+    button's hover text (it covers the card, so the card's own tooltip can't show)."""
     return {
         "visualType": "actionButton",
         "objects": {
@@ -305,6 +320,7 @@ def nav_overlay(page_name: str) -> dict:
                         "show": lit("true"),
                         "type": text("PageNavigation"),
                         "navigationSection": text(page_name),
+                        **({"enabledTooltip": text(tooltip)} if tooltip else {}),
                     }
                 }
             ],

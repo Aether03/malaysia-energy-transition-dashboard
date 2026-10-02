@@ -138,10 +138,28 @@ cultureInfo en-US
 			          "ConceptualProperty": "Mix Unit"
 			        }
 			      },
+			      "State": "Generated"
+			    },
+			    "asean_metric.asean_metric": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "ASEAN Metric",
+			          "ConceptualProperty": "ASEAN Metric"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "table_measures.ctx_generation_twh": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "Ctx Generation (TWh)"
+			        }
+			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Mix Unit": {
+			          "TWh": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -152,17 +170,17 @@ cultureInfo en-US
 			        }
 			      ]
 			    },
-			    "asean_metric.asean_metric": {
+			    "table_measures.country_re_share_": {
 			      "Definition": {
 			        "Binding": {
-			          "ConceptualEntity": "ASEAN Metric",
-			          "ConceptualProperty": "ASEAN Metric"
+			          "ConceptualEntity": "_Measures",
+			          "ConceptualProperty": "Country RE Share (%)"
 			        }
 			      },
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "ASEAN Metric": {
+			          "RE share (%)": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

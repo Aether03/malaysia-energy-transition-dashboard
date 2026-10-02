@@ -130,6 +130,13 @@
                   "Value": "'p2_generation'"
                 }
               }
+            },
+            "enabledTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Total generation (TWh). Total electricity generated in a country in a given year across all sources. Formula: Sum of generation across all sources (Ember ''Total generation''). Source: Ember (2026), Yearly Electricity Data, CC BY 4.0. Click for the Generation page.'"
+                }
+              }
             }
           }
         }

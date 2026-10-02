@@ -130,6 +130,13 @@
                   "Value": "'p2_generation'"
                 }
               }
+            },
+            "enabledTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Fossil share of generation (%). The percentage of a country''s annual electricity generation that comes from fossil fuels. Formula: (Coal + Gas + Other fossil) ÷ Total generation × 100. Source: Ember (2026), Yearly Electricity Data, CC BY 4.0. Click for the Generation page.'"
+                }
+              }
             }
           }
         }

@@ -130,6 +130,13 @@
                   "Value": "'p5_asean'"
                 }
               }
+            },
+            "enabledTooltip": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Rank among the six largest ASEAN power systems. Click for the ASEAN comparison.'"
+                }
+              }
             }
           }
         }
