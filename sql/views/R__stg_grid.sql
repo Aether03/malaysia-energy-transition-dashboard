@@ -10,6 +10,13 @@
 --   * System demand = sum of the 5 regional *_demand series; an hour is complete only when all 5
 --     are present. Flows map the published column names to a counterparty and a direction.
 --   * No imputation: a missing hour is simply absent.
+--
+-- Singapore (SG_EMA, M3 plan step 5b): EMA weekly files, half-hours labelled by period END.
+--   * ts_text 'YYYY-MM-DD|HH:MM'; the label '00:00' is midnight at the END of that date.
+--   * Hour h (local) = the mean of the half-hours ending h:30 and h+1:00 (MW averages); an hour
+--     is complete only when both halves are present.
+--   * P4 uses System Demand (Actual), which includes embedded generation (closest to Thailand's
+--     total regional demand). NEM actual and NEM forecast are kept for the forecast benchmark.
 
 CREATE OR ALTER VIEW stg.thailand_row AS
 -- One row per published (file, timestamp) with its parsed local time.
@@ -105,10 +112,56 @@ HAVING MAX(CASE WHEN m.direction = 'IMP' THEN r.value END) IS NOT NULL
     OR MAX(CASE WHEN m.direction = 'EXP' THEN r.value END) IS NOT NULL;
 GO
 
+CREATE OR ALTER VIEW stg.singapore_halfhour AS
+SELECT
+    p.grid_code,
+    p.file_name,
+    p.ts_text,
+    p.series,
+    p.value,
+    p.period_end,
+    DATEADD(HOUR, DATEPART(HOUR, DATEADD(MINUTE, -30, p.period_end)),
+            CAST(CAST(DATEADD(MINUTE, -30, p.period_end) AS DATE) AS DATETIME2(0))) AS ts_local
+FROM (
+    SELECT
+        r.grid_code, r.file_name, r.ts_text, r.series, r.value,
+        DATEADD(MINUTE,
+                CASE WHEN RIGHT(r.ts_text, 5) = '00:00' THEN 1440
+                     ELSE TRY_CAST(SUBSTRING(r.ts_text, 12, 2) AS INT) * 60 + TRY_CAST(RIGHT(r.ts_text, 2) AS INT) END,
+                CAST(TRY_CONVERT(DATE, LEFT(r.ts_text, 10), 23) AS DATETIME2(0))) AS period_end  -- 23 = yyyy-mm-dd
+    FROM raw.grid_interval AS r
+    WHERE r.grid_code = 'SG_EMA'
+) AS p;
+GO
+
+CREATE OR ALTER VIEW stg.singapore_hourly AS
+SELECT
+    g.grid_key,
+    h.ts_local,
+    DATEADD(MINUTE, -g.utc_offset_min, h.ts_local) AS ts_utc,
+    AVG(CASE WHEN h.series = 'System Demand (Actual)' THEN h.value END) AS system_demand_mw,
+    AVG(CASE WHEN h.series = 'NEM Demand (Actual)'    THEN h.value END) AS nem_demand_mw,
+    AVG(CASE WHEN h.series = 'NEM Demand (Forecast)'  THEN h.value END) AS nem_forecast_mw,
+    CAST(CASE WHEN COUNT(CASE WHEN h.series = 'System Demand (Actual)' THEN h.value END) = 2 THEN 1 ELSE 0 END AS BIT)
+        AS is_complete,
+    -- Lineage: the hour's first half-hour (the one ending at :30). MIN(ts_text) would sort the
+    -- day-end label '|00:00' first and point the 23:00 hour at the wrong row.
+    MAX(CASE WHEN DATEPART(MINUTE, h.period_end) = 30 THEN h.file_name END) AS file_name,
+    MAX(CASE WHEN DATEPART(MINUTE, h.period_end) = 30 THEN h.ts_text END)   AS ts_text
+FROM stg.singapore_halfhour AS h
+JOIN dw.dim_grid AS g
+    ON g.grid_code = h.grid_code
+WHERE h.period_end IS NOT NULL
+GROUP BY g.grid_key, g.utc_offset_min, h.ts_local;
+GO
+
 -- Every grid's hourly demand in one shape; dw.fact_grid_hourly loads the complete hours.
 CREATE OR ALTER VIEW stg.grid_hourly AS
 SELECT grid_key, ts_local, ts_utc, demand_mw, is_complete, file_name, ts_text
-FROM stg.thailand_hourly;
+FROM stg.thailand_hourly
+UNION ALL
+SELECT grid_key, ts_local, ts_utc, system_demand_mw, is_complete, file_name, ts_text
+FROM stg.singapore_hourly;
 GO
 
 CREATE OR ALTER VIEW stg.grid_flow_hourly AS
