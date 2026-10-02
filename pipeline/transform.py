@@ -27,11 +27,19 @@ def transform_and_check(run) -> bool:
                 db.run_script(cursor, path.read_text(encoding="utf-8-sig"))
             cursor.execute(
                 "SELECT (SELECT COUNT(*) FROM dw.fact_generation_annual), "
-                "(SELECT COUNT(*) FROM dw.fact_country_annual)"
+                "(SELECT COUNT(*) FROM dw.fact_country_annual), "
+                "(SELECT COUNT(*) FROM dw.fact_grid_hourly), "
+                "(SELECT COUNT(*) FROM dw.fact_grid_flow_hourly)"
             )
-            gen_rows, country_rows = cursor.fetchone()
-            step.rows_merged = int(gen_rows) + int(country_rows)
-            step.message = f"fact_generation_annual={gen_rows}, fact_country_annual={country_rows} (uncommitted)"
+            counts = dict(
+                zip(
+                    ("fact_generation_annual", "fact_country_annual", "fact_grid_hourly", "fact_grid_flow_hourly"),
+                    (int(n) for n in cursor.fetchone()),
+                    strict=True,
+                )
+            )
+            step.rows_merged = sum(counts.values())
+            step.message = ", ".join(f"{k}={v}" for k, v in counts.items()) + " (uncommitted)"
 
         with run.step("CHECK") as step:
             results = dq.evaluate(cursor)
