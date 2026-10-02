@@ -119,7 +119,8 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
       - The T2 page stays in the project, unused. **Backlog M5:** retry report-page tooltips (mini mix bar).
     - GUI rounds 5–6: P2 fully works; the P5 trend toggle works; peer colours muted explicitly.
     - **Rule:** never rebuild while Desktop is open, because a Desktop save overwrites the files.
-    - **Resume:** step 11 (D1 drill-through, Reset bookmarks, synced slicers), fill P1's findings box, then M2 acceptance.
+    - D1 drill-through page built (`tools/build_d1_page.py`, untested); P1 findings box filled from `docs/findings.md`.
+    - **Resume:** GUI round 7 (J2: P1 → P2 → P5 → right-click → D1 → Back; synced year slicer; Amirul creates the Reset bookmarks for P1, P2 and P5), then Claude wires the Reset buttons, then M2 acceptance (empty-DB rebuild, twins, push).
   - **Next: M2** (Malaysia and ASEAN). Start with `/plan` on doc 06 Phase 2. Carry-overs: the NETR hydro definition, P1 polish (title alignment, as-of box), per-source colours bound explicitly.
   - **Low findings from the transform review (M5):**
     - The negative-generation rule has no tolerance.
