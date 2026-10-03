@@ -64,7 +64,8 @@ PK: `(area, year, electricity_source)`.
 **`raw.grid_interval`**: one long table for all interval sources, so GSO plugs in without schema change (doc 02 §1).
 | Field | Type | Required | Constraints | Notes |
 |---|---|---|---|---|
-| grid_code | VARCHAR(20) | ✓ | PK part | `TH_EGAT`, later `MY_PEN_GSO` |
+| grid_code | VARCHAR(20) | ✓ | PK part | `TH_EGAT`, `SG_EMA`, later `MY_PEN_GSO` |
+| source_file | VARCHAR(60) | ✓ | PK part | **M3 Q1:** raw is an exact copy of every file, so a day that appears in two files (Thailand's year-end spill-over) is kept twice, side by side |
 | ts_text | VARCHAR(30) | ✓ | PK part | Timestamp exactly as the source wrote it |
 | series | VARCHAR(40) | ✓ | PK part | e.g. `north_demand`, `malaysia_IMP`, `system_demand` (GSO) |
 | value | DECIMAL(12,2) | | | MW; NULL where the source cell is blank |
@@ -93,9 +94,9 @@ PK: `(area, year, electricity_source)`.
 | **`dw.dim_country`** | country_key INT IDENTITY PK · iso3 CHAR(3) UNIQUE NULL · name NVARCHAR(100) NOT NULL UNIQUE · area_type VARCHAR(10) NOT NULL (`COUNTRY`/`REGION`) · is_asean BIT · is_focus BIT DEFAULT 0 (Malaysia = 1) · is_default_peer BIT (MY, ID, TH, VN, PH, SG) · display_order SMALLINT | P5 slicer defaults, Malaysia highlight (doc 04 §3.3), `ASEAN` aggregate row for benchmark |
 | **`dw.dim_source`** | source_key INT IDENTITY PK · source_code VARCHAR(20) UNIQUE · display_name NVARCHAR(40) · group_name VARCHAR(10) (`FOSSIL`/`RENEWABLE`) · sort_order SMALLINT UNIQUE (1–7 = stacking order) · color_hex CHAR(7) · color_hex_dark CHAR(7) | Doc 04 §3.2 palette bound to the entity, so colour follows the source under any filter |
 | **`dw.dim_year`** | year SMALLINT PK · is_complete BIT · decade SMALLINT | Annual facts. `is_complete` drives P1's "latest complete year" default |
-| **`dw.dim_date`** | date_key INT PK (yyyymmdd) · date DATE UNIQUE · year SMALLINT FK→dim_year · month TINYINT · month_name CHAR(3) · iso_weekday TINYINT · is_weekend BIT · season_th VARCHAR(10) (`HOT`/`RAINY`/`COOL`) · season_my VARCHAR(12) (`NE_MONSOON`/`SW_MONSOON`/`INTER`) · is_holiday_th BIT · is_holiday_my BIT | P4 toggles; forecast features. Holidays from the `holidays` package at build (**Recommended**) |
+| **`dw.dim_date`** | date_key INT PK (yyyymmdd) · date DATE UNIQUE · year SMALLINT FK→dim_year · month TINYINT · month_name CHAR(3) · iso_weekday TINYINT · is_weekend BIT · season_th VARCHAR(10) (`HOT`/`RAINY`/`COOL`) · season_my VARCHAR(12) (`NE_MONSOON`/`SW_MONSOON`/`INTER`) · is_holiday_th BIT · is_holiday_my BIT · is_holiday_sg BIT (V012) | P4 toggles; forecast features. Holidays from the `holidays` package at build (**Recommended**) |
 | **`dw.dim_hour`** | hour TINYINT PK (0–23) · label CHAR(5) | P4 load curves, heatmap |
-| **`dw.dim_grid`** | grid_key INT IDENTITY PK · grid_code VARCHAR(20) UNIQUE · name NVARCHAR(80) · country_key FK · utc_offset_min SMALLINT (TH 420, MY 480) · data_source_code FK · is_published BIT | P4 grid selector. `MY_PEN_GSO.is_published = 0` until TNB consents (doc 03 P4) |
+| **`dw.dim_grid`** | grid_key INT IDENTITY PK · grid_code VARCHAR(20) UNIQUE · name NVARCHAR(80) · country_key FK · utc_offset_min SMALLINT (TH 420, MY 480, SG 480) · data_source_code FK · is_published BIT | P4 grid selector. `MY_PEN_GSO.is_published = 0` until TNB consents (doc 03 P4) |
 | **`dw.dim_region`** | region_key INT IDENTITY PK · region_code CHAR(3) UNIQUE (`PEN`,`SAB`,`SAR`) · name NVARCHAR(40) | P3 region cards |
 | **`dw.dim_state`** | state_key INT IDENTITY PK · state_code CHAR(3) UNIQUE · name NVARCHAR(60) · geo_shape_name NVARCHAR(60) (exact geoBoundaries `shapeName`, verified at build) · region_key FK · is_federal_territory BIT | P3 Shape Map join key (doc 03 P3) |
 | **`dw.dim_data_source`** | data_source_code VARCHAR(10) PK (`D1`…`D6`, `DTH`, `GEO`) · name · licence NVARCHAR(60) · url NVARCHAR(400) · credit_text NVARCHAR(400) · consent_status VARCHAR(20) (`OPEN`/`REQUESTED`/`GRANTED`/`REFUSED`) · is_publishable BIT | P6 sources table and consent status. Export filter (doc 02 §3.2) |
@@ -110,8 +111,8 @@ PK: `(area, year, electricity_source)`.
 | **`dw.fact_grid_hourly`** | grid × UTC hour · PK (grid_key, ts_utc) | ts_local DATETIME2(0) · demand_mw DECIMAL(10,1) · is_imputed BIT DEFAULT 0 · date_key INT · hour TINYINT | dim_grid, dim_date, dim_hour | P4 curves, heatmap, peak, load factor; forecast input |
 | **`dw.fact_grid_flow_hourly`** | grid × UTC hour × counterparty · PK (grid_key, ts_utc, counterparty) | import_mw DECIMAL(10,1) NULL · export_mw DECIMAL(10,1) NULL | dim_grid, dim_date, dim_hour | **Recommended new**: Thailand↔Malaysia interconnector flows (see Q1) |
 | **`dw.fact_sector_monthly`** | month × sector × measure · PK (date_key, sector, measure) | value_gwh DECIMAL(14,4) | dim_date | DQ cross-check only (see Q2) |
-| **`dw.forecast_run`** | PK model_run_id INT IDENTITY | grid_key FK · trained_at DATETIME2(0) · model_name VARCHAR(40) · train_start/train_end/test_start/test_end DATE · mape_model · mape_baseline · mae_model · mae_baseline DECIMAL(8,3) · params_json NVARCHAR(MAX) CHECK (ISJSON(params_json)=1) · git_commit CHAR(40) · is_current BIT | dim_grid | P4 metric cards, backtest window |
-| **`dw.fact_load_forecast`** | run × grid × UTC hour · PK (model_run_id, grid_key, ts_utc) | actual_mw · forecast_mw · baseline_mw DECIMAL(10,1) · date_key INT · hour TINYINT | forecast_run, dim_grid, dim_date, dim_hour | P4 actual vs model vs baseline |
+| **`dw.forecast_run`** | PK model_run_id INT IDENTITY | grid_key FK · load_run_id FK · **run_kind** (`DEV` / `FINAL` / `POST_HOC`; one FINAL per grid, V013) · trained_at · model_name · train_start/train_end/test_start/test_end DATE (train_end = end of the last fold's training, V014) · mape_model · mape_baseline · mae_model · mae_baseline · improvement_pct · improvement_ci_low/high DECIMAL(8,3) · scored_hours · excluded_hours INT · params_json (the locked protocol) · metrics_json (per month, day type, secondary references, fingerprint) · git_commit · **protocol_commit** CHAR(40) · is_current BIT (never a DEV run) | dim_grid | P4 metric cards, verdict, backtest window |
+| **`dw.fact_load_forecast`** | run × grid × UTC hour · PK (model_run_id, grid_key, ts_utc) | ts_local · actual_mw (NULL in a gap) · forecast_mw · baseline_mw DECIMAL(10,1) · is_scored BIT (actual, model and baseline all present) · date_key INT · hour TINYINT | forecast_run, dim_grid, dim_date, dim_hour | P4 actual vs model vs baseline |
 
 **Derived in `stg`/`mart` (not stored):**
 - Capacity factor = `generation_twh × 1000 / (capacity_gw × hours_in_year)`, with hours = 8,784 in leap years and 8,760 otherwise.
@@ -130,7 +131,7 @@ PK: `(area, year, electricity_source)`.
 | `meta.schema_version` | version INT PK · script_name NVARCHAR(200) · applied_at DATETIME2(0) · checksum CHAR(64) | Migration tracking (§5) |
 
 ### 2.6 `mart` views (the Power BI contract)
-`mart.dim_country`, `mart.dim_source`, `mart.dim_year`, `mart.dim_date`, `mart.dim_hour`, `mart.dim_grid` (only `is_published = 1` grids), `mart.dim_region`, `mart.dim_state`, `mart.dim_data_source`, `mart.kpi`, `mart.netr_target`, `mart.generation_annual`, `mart.country_annual`, `mart.region_annual`, `mart.state_reliability`, `mart.grid_hourly`, `mart.grid_flow_hourly`, `mart.forecast_run_current`, `mart.load_forecast_current`, `mart.run_latest`, `mart.dq_latest`. Each view selects explicit columns (no `SELECT *`), so a raw-schema change can't silently alter the report.
+`mart.dim_country`, `mart.dim_source`, `mart.dim_year`, `mart.dim_date`, `mart.dim_hour`, `mart.dim_grid` (only `is_published = 1` grids), `mart.dim_region`, `mart.dim_state`, `mart.dim_data_source`, `mart.kpi`, `mart.netr_target`, `mart.generation_annual`, `mart.country_annual`, `mart.region_annual`, `mart.state_reliability`, `mart.grid_hourly`, `mart.grid_flow_daily` (daily net flow, M3 Q3), `mart.forecast_date` and `mart.season_pick` (disconnected P4 controls), `mart.forecast_run_current`, `mart.load_forecast_current`, `mart.forecast_status`, `mart.run_latest`, `mart.dq_latest`. Each view selects explicit columns (no `SELECT *`), so a raw-schema change can't silently alter the report.
 
 ## 3. Relationships
 
@@ -195,7 +196,7 @@ erDiagram
 | `dw.fact_country_annual` | country_key=`1` (Malaysia), year=`2024`, total_generation_twh=`195.0000`, demand_twh=`194.0000`, emissions_intensity_gco2e_kwh=`560.000`, population=`35000000`, demand_per_capita_mwh=`5.5429`, re_share_gen_pct=`19.500`, re_share_capacity_pct=`27.000` |
 | `dw.fact_state_reliability` | state_key=`1` (an example state), year=`2022`, saifi=`9.999`, saidi_min=`NULL` (deliberately impossible values; the handbook is restricted, so no real figure appears in this repo) |
 | `dw.fact_grid_hourly` | grid_key=`1` (TH_EGAT), ts_utc=`2024-04-25 07:00:00`, ts_local=`2024-04-25 14:00:00`, demand_mw=`34850.0`, is_imputed=`0`, date_key=`20240425`, hour=`14` |
-| `dw.forecast_run` | model_run_id=`3`, grid_key=`1`, model_name=`lgbm_calendar_lags_v1`, train_start=`2023-01-08`, train_end=`2024-09-30`, test_start=`2024-10-01`, test_end=`2024-12-31`, mape_model=`2.900`, mape_baseline=`5.400`, is_current=`1` |
+| `dw.forecast_run` | model_run_id=`7`, grid_key=`1`, run_kind=`FINAL`, model_name=`lightgbm`, train_start=`2023-01-08`, train_end=`2024-11-30`, test_start=`2024-01-01`, test_end=`2024-12-31`, mape_model=`3.309`, mape_baseline=`6.227`, improvement_pct=`46.864` (CI `39.324`–`52.849`), protocol_commit=`d7a03e2…`, is_current=`1`. The backtest is 12 monthly rolling origins across 2024 (M3 Q2), not a single Oct–Dec split |
 | `meta.dq_result` | run_id=`12`, rule_code=`MIX_SUMS_TO_100`, status=`PASS`, rows_affected=`0`, checked_at=`2026-10-05 09:14:02` |
 
 ## 7. Fixes & improvements

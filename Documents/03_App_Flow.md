@@ -97,16 +97,17 @@ Common to every page (**Recommended**): a header with the page title as a takeaw
 - Sabah and Sarawak shapes show "not reported" styling, since SAIFI by state covers Peninsular states only.
 
 ### P4 — Grid Load & Forecast
-**Layout:** header → **data-source banner** ("Showing: Thailand national grid (open data proxy)" or "Peninsular Malaysia, GSO" once consented) → row: typical daily load curve (weekday vs weekend, by season) · hour × month **heatmap** → monthly peak demand (MW) and load factor (%) as **two aligned single-axis charts** (per doc 04 F1, 2026-09-30) → **forecast panel**: date picker for a backtest day → actual vs model vs baseline (line, 24 h) → metric cards: model MAPE, baseline MAPE, improvement % → **Thailand ↔ Malaysia interconnector flows** (hourly import/export MW, 2023–24, from the Thailand dataset's `malaysia_IMP`/`malaysia_EXP`; one single-axis chart; hover shows the hour and MW; added per doc 05 review, 2026-09-30) → method and limitations text.
+**Layout:** header → **data-source banner** ("Showing: Thailand national grid (EGAT) · Open-data stand-in for Peninsular Malaysia…", or Singapore's "ASEAN peer grid", or "Peninsular Malaysia, GSO" once consented) → row: typical daily load curve (weekday vs weekend, by season) · hour × month **heatmap** → monthly peak demand (MW) and load factor (%) as **two aligned single-axis charts** (per doc 04 F1, 2026-09-30) → **forecast panel**: date picker for a backtest day → actual vs model vs baseline (line, 24 h) → metric cards: model MAPE, baseline MAPE, improvement % → **Thailand ↔ Malaysia interconnector flows** (the **daily mean net flow** in MW, signed so above 0 = Thailand exports, 2023–24, with the annual export and import GWh in the subtitle; from the Thailand dataset's `malaysia_IMP`/`malaysia_EXP`; one single-axis chart; hover shows the day and average MW; added per doc 05 review, 2026-09-30; daily per M3 Q3, because 17,544 hourly points exceed Power BI's line sampling) → method and limitations text.
 
 | Element | User action | Result |
 |---|---|---|
-| Grid selector (Thailand / Peninsular MY) | Select | Whole page switches grid. Peninsular MY option is **hidden until GSO consent** (**Decided**) |
-| Season / weekday-weekend toggle | Click | Load-curve lines switch |
+| Grid selector (Thailand / Singapore; Peninsular MY when consented) | Select | Whole page switches grid. Singapore added by the M3 grid search (Q4). Peninsular MY option is **hidden until GSO consent** (**Decided**) |
+| Season / weekday-weekend toggle | Click | Load-curve lines switch: weekday vs weekend & holiday are the curve's two lines, and the season tile slicer narrows only the curve (a disconnected `season_pick` table), so the heatmap and peak charts stay whole-year |
 | Heatmap cell | Hover | Hour, month, average MW |
 | Date picker (backtest days only) | Pick | Forecast chart shows that day's actual, model and baseline |
 | Metric cards | Hover | T1 tooltip: MAPE/MAE definition, backtest window |
 
+**Verdict:** under the cards, the pre-committed decision (beats or does not beat the seasonal-naive baseline, with the 95% CI) and the pre-declared secondary statement against the weekday-aware naive (`docs/forecast.md`). With no day picked, the panel shows the grid's 2024 peak day.
 **States:** Empty: date outside the backtest window → "Forecast available for <start>–<end>". Error: if the forecast step failed in the last run, the panel shows "Forecast not generated in latest run — see About page" (from `meta.load_log`).
 **Edge cases:** Time zones differ (Thailand UTC+7, Malaysia UTC+8; neither uses daylight saving) → store UTC and local time explicitly (doc 05). Missing intervals in the source → shown as gaps, not interpolated in the chart. Interpolation is only used for model features, and is logged.
 
