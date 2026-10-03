@@ -49,7 +49,15 @@
   - Both beat the baseline, so **no WARN banner**. Both also beat the weekday-aware naive (TH 33.9%, CI 26.0 to 40.1; SG 24.4%, CI 15.7 to 32.4).
   - Weak months: TH April (Songkran) and January. Records: `d73808f`, `4198eb1`. `pipeline forecast` replay: identical.
   - **Never run `--final` again.** A change means a labelled POST_HOC run.
-- **Next: step 10** (`R__mart_m3` + showcase `08`/`09`), then 11 (model + twins), 12 (P4 page + GUI rounds), 13 (acceptance). DEV runs 1–6 stay in `dw.forecast_run` and are never shown.
+- **Step 10 done (`52fc295`):** `R__mart_m3` (published grids only), plus showcase `08` peak/LF, `09` forecast metrics recomputed from the facts (max diff 0.0005), `10` load curves and `11` flows. All expected values match.
+- **Step 11 done (`1840270`, `1d620cf`, `228c604`, `4797887`):** 10 generated tables and 11 relationships.
+  - `forecast_date` and `season_pick` are disconnected controls (no hand-written interactions).
+  - 34 P4 measures. **Twins: 22/22 pass, plus a season-toggle twin, untested until the next Desktop open.**
+  - New tool: `tools/model_refresh.ps1` refreshes Desktop's model via TMSL, so no click is needed.
+  - `dax_query.ps1` now writes UTF-8 (en-dash season labels).
+  - Desktop quirk: `at` can't be a DAX variable name (it parses as SYNTAXERROR).
+- **Docs 01/03/05 as-built edits done (`1bf4b34`).**
+- **Step 12 in progress:** a Sonnet agent is building `tools/build_p4_page.py`, which will be continued across GUI rounds. Then step 13: acceptance (empty-DB rebuild, twins, doc 06, push). DEV runs 1–6 stay in `dw.forecast_run` and are never shown.
 - **Old step 9 note:** it needed Amirul's go because the run is irreversible and H3's banner policy was his call.
   - **Runbook:**
     1. `pipeline forecast --final --grid TH_EGAT`

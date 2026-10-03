@@ -45,7 +45,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'ASEAN'"
+                  "Value": "'Grid load'"
                 }
               }
             },
@@ -54,7 +54,7 @@
                 "color": {
                   "expr": {
                     "Literal": {
-                      "Value": "'#ffffff'"
+                      "Value": "'#cde2fb'"
                     }
                   }
                 }
@@ -236,7 +236,7 @@
             "navigationSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'p5_asean'"
+                  "Value": "'p4_grid_load'"
                 }
               }
             }
