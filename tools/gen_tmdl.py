@@ -24,7 +24,7 @@ MART_VIEWS = (
     "generation_annual", "country_annual", "run_latest", "dq_latest", "re_capacity_official",
     # M3 P4
     "dim_date", "dim_hour", "dim_grid", "grid_hourly", "grid_flow_daily", "forecast_date",
-    "forecast_run_current", "load_forecast_current", "forecast_status",
+    "forecast_run_current", "load_forecast_current", "forecast_status", "season_pick",
 )  # fmt: skip
 
 TYPE_MAP = {
@@ -41,6 +41,7 @@ SORT_BY = {
     ("dim_hour", "label"): "hour",
     ("dim_grid", "name"): "display_order",
     ("grid_hourly", "season"): "season_order",
+    ("season_pick", "season"): "season_order",
 }
 
 # Fact-table years are hidden so every year filter goes through dim_year (DAX review, LOW).

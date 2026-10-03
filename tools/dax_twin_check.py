@@ -221,6 +221,13 @@ P4_TWINS = (
         ("grid_code", "season", "day_type", "hour"), ("mw",),
     ),
     Twin(
+        "P4 load-curve season toggle, Thailand Hot season picked (curve only)",
+        f'EVALUATE SUMMARIZECOLUMNS ( grid_hourly[day_type], dim_hour[hour], {TH}, {YEARS}, '
+        'TREATAS ( { "Hot (Mar–May)" }, season_pick[season] ), "mw", [Avg Load Curve (MW)] )',
+        _derived("10_load_curves", "SELECT day_type, hour, mean_mw AS mw FROM {q} WHERE grid_code = 'TH_EGAT' AND season_order = 1"),
+        ("day_type", "hour"), ("mw",),
+    ),
+    Twin(
         "P4 backtest metric cards, both grids (SQL recomputes MAPE/MAE from the facts)",
         'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], "mape_model", [Backtest MAPE Model (%)], "mape_baseline", [Backtest MAPE Baseline (%)], '
         '"mae_model", [Backtest MAE Model (MW)], "mae_baseline", [Backtest MAE Baseline (MW)], "improvement", [Backtest Improvement (%)] )',

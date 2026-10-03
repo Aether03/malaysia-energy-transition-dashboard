@@ -57,3 +57,7 @@ relationship 6f1b2c3d-0014-4a1e-9b01-000000000014
 relationship 6f1b2c3d-0015-4a1e-9b01-000000000015
 	fromColumn: forecast_status.grid_key
 	toColumn: dim_grid.grid_key
+
+relationship 6f1b2c3d-0016-4a1e-9b01-000000000016
+	fromColumn: season_pick.grid_key
+	toColumn: dim_grid.grid_key

@@ -87,6 +87,14 @@ JOIN dw.dim_date AS d
 WHERE g.is_published = 1;
 GO
 
+-- The load-curve season toggle (P4). Related to dim_grid only, so the grid slicer narrows it to
+-- that grid's three seasons, but never to grid_hourly: the pick reaches the curve alone, through
+-- [Avg Load Curve (MW)] (TREATAS), and leaves the heatmap and peak charts whole-year.
+CREATE OR ALTER VIEW mart.season_pick AS
+SELECT DISTINCT grid_key, season, season_order
+FROM mart.grid_hourly;
+GO
+
 -- Daily net flow per counterparty (M3 Q3): positive = the grid exports. Only hours the source
 -- filled count (an hour with neither direction is a gap, not 0). MWh = MW over one hour.
 CREATE OR ALTER VIEW mart.grid_flow_daily AS

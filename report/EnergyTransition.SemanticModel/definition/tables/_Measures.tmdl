@@ -723,6 +723,11 @@ table _Measures
 		displayFolder: Grid load
 		lineageTag: 1b1e5082-e473-4ba1-b32b-7c0b53073f99
 
+	measure 'Avg Load Curve (MW)' = CALCULATE ( [Avg Load (MW)], TREATAS ( VALUES ( season_pick[season] ), grid_hourly[season] ) )
+		formatString: #,0
+		displayFolder: Grid load
+		lineageTag: af898564-e398-4e37-aa7f-d2fdcf56858f
+
 	measure 'Peak Load (MW)' = IF ( [Grid Selected], MAX ( grid_hourly[demand_mw] ) )
 		formatString: #,0
 		displayFolder: Grid load
