@@ -32,7 +32,21 @@ def complete_hourly(demand: pd.Series) -> pd.Series:
     Raises ValueError on an empty series, a duplicate timestamp, a timezone-aware index, or a
     timestamp that is not on the hour.
     """
-    raise NotImplementedError
+    if demand.empty:
+        raise ValueError("empty demand series")
+    index = demand.index
+    if not isinstance(index, pd.DatetimeIndex):
+        raise TypeError("demand must be indexed by timestamps")
+    if index.tz is not None:
+        raise ValueError("demand must be indexed by naive local timestamps, not timezone-aware ones")
+    if index.has_duplicates:
+        raise ValueError(f"duplicate timestamps: {list(index[index.duplicated()][:5])}")
+    off_hour = index[index != index.floor("h")]
+    if len(off_hour):
+        raise ValueError(f"timestamps not on the hour: {list(off_hour[:5])}")
+    ordered = demand.astype(float).sort_index()
+    hours = pd.date_range(ordered.index[0], ordered.index[-1], freq="h", name="ts_local")
+    return ordered.reindex(hours).rename("demand_mw")
 
 
 def build_features(demand: pd.Series, holidays: Collection[date]) -> pd.DataFrame:
@@ -48,4 +62,25 @@ def build_features(demand: pd.Series, holidays: Collection[date]) -> pd.DataFram
 
     No feature for hour t may depend on an actual later than t - `MIN_LAG_H` hours.
     """
-    raise NotImplementedError
+    actual = complete_hourly(demand)
+    index = actual.index
+    weekend = (index.dayofweek >= 5).astype(int)
+    holiday_days = pd.DatetimeIndex(sorted(pd.Timestamp(d) for d in holidays))
+    holiday = index.normalize().isin(holiday_days).astype(int)
+    frame = pd.DataFrame(
+        {
+            "hour": index.hour,
+            "iso_weekday": index.dayofweek + 1,
+            "month": index.month,
+            "is_weekend": weekend,
+            "is_holiday": holiday,
+            "is_day_off": weekend | holiday,
+        },
+        index=index,
+    )
+    # Shifting by a time offset (not by position) moves each reading to exactly k hours later.
+    for k in LAGS_H:
+        frame[f"lag_{k}"] = actual.shift(k, freq="h").reindex(index)
+    trailing = actual.rolling(ROLLING_WINDOW_H, min_periods=ROLLING_MIN_PERIODS).mean()
+    frame["roll_mean_24"] = trailing.shift(MIN_LAG_H, freq="h").reindex(index)
+    return frame[list(FEATURE_COLUMNS)]

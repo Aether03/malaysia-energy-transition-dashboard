@@ -11,10 +11,15 @@ from __future__ import annotations
 from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from datetime import date
+from itertools import pairwise
 from typing import Any, Protocol
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
+
+from pipeline.forecast.baseline import naive_24, seasonal_naive
+from pipeline.forecast.features import build_features, complete_hourly
 
 
 @dataclass(frozen=True)
@@ -32,10 +37,26 @@ def monthly_folds(data_start: pd.Timestamp, first_month: str, last_month: str, e
     `es_start` = `test_start` - `es_days` days. Raises ValueError if `last_month` is before
     `first_month`, `es_days` < 1, or any fold's fit window [data_start, es_start) is empty.
     """
-    raise NotImplementedError
+    if es_days < 1:
+        raise ValueError(f"es_days must be at least 1, got {es_days}")
+    first, last = pd.Period(first_month, freq="M"), pd.Period(last_month, freq="M")
+    if last < first:
+        raise ValueError(f"last month {last_month} is before first month {first_month}")
+    start = pd.Timestamp(data_start)
+    folds = []
+    for month in pd.period_range(first, last, freq="M"):
+        test_start = month.start_time
+        es_start = test_start - pd.Timedelta(days=es_days)
+        if not start < es_start:
+            raise ValueError(f"fold {month}: no fit hours between {start} and {es_start}")
+        folds.append(Fold(str(month), start, es_start, test_start, month.end_time.floor("h")))
+    return folds
 
 
 EARLY_STOPPING_ROUNDS = 100
+DEFAULT_BOOST_ROUNDS = 2000
+_ROUND_ALIASES = ("num_iterations", "num_iteration", "n_iter", "num_tree", "num_trees", "num_round",
+                  "num_rounds", "nrounds", "num_boost_round", "n_estimators", "max_iter")  # fmt: skip
 
 
 class Regressor(Protocol):
@@ -54,13 +75,36 @@ class LgbmRegressor:
     """
 
     def __init__(self, params: Mapping[str, Any], seed: int, num_threads: int = 1) -> None:
-        raise NotImplementedError
+        training = dict(params)
+        self.early_stopping_rounds = int(training.pop("early_stopping_rounds", EARLY_STOPPING_ROUNDS))
+        self.num_boost_round = DEFAULT_BOOST_ROUNDS
+        for alias in _ROUND_ALIASES:
+            if alias in training:
+                self.num_boost_round = int(training.pop(alias))
+        if not any(key in training for key in ("verbose", "verbosity")):
+            training["verbosity"] = -1
+        # Determinism (protocol #10): fixed seed and thread count, deterministic histogram building.
+        training.update(seed=seed, num_threads=num_threads, deterministic=True, force_row_wise=True)
+        self.params = training
+        self.booster: lgb.Booster | None = None
+        self.best_iteration: int | None = None
 
     def fit(self, X_fit: pd.DataFrame, y_fit: pd.Series, X_es: pd.DataFrame, y_es: pd.Series) -> None:
-        raise NotImplementedError
+        fit_set = lgb.Dataset(X_fit, label=y_fit, free_raw_data=False)
+        es_set = lgb.Dataset(X_es, label=y_es, reference=fit_set, free_raw_data=False)
+        self.booster = lgb.train(
+            self.params,
+            fit_set,
+            num_boost_round=self.num_boost_round,
+            valid_sets=[es_set],
+            callbacks=[lgb.early_stopping(self.early_stopping_rounds, verbose=False)],
+        )
+        self.best_iteration = self.booster.best_iteration or self.num_boost_round
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        raise NotImplementedError
+        if self.booster is None:
+            raise RuntimeError("predict called before fit")
+        return self.booster.predict(X, num_iteration=self.best_iteration)
 
 
 RESULT_COLUMNS: tuple[str, ...] = ("fold", "actual_mw", "forecast_mw", "baseline_mw", "naive24_mw", "is_scored")
@@ -91,4 +135,47 @@ def run_backtest(
     Raises ValueError if `folds` is empty, unsorted or overlapping, or if the actuals end before
     the last fold's `test_end` (every test hour must lie inside the series' span).
     """
-    raise NotImplementedError
+    if not folds:
+        raise ValueError("no folds")
+    for fold in folds:
+        if not fold.fit_start < fold.es_start < fold.test_start <= fold.test_end:
+            raise ValueError(f"fold {fold.name}: windows out of order")
+    for earlier, later in pairwise(folds):
+        if later.test_start <= earlier.test_end:
+            raise ValueError(f"folds {earlier.name} and {later.name} are unsorted or overlap")
+
+    actual = complete_hourly(demand)
+    last_end = folds[-1].test_end
+    if actual.index[-1] < last_end:
+        raise ValueError(f"the actuals end at {actual.index[-1]}, before the last test hour {last_end}")
+    actual = actual.loc[:last_end]
+    features = build_features(actual, holidays)
+    reference = pd.concat([seasonal_naive(actual), naive_24(actual)], axis=1)
+    index = actual.index
+    present = actual.notna().to_numpy()
+
+    parts = []
+    for fold in folds:
+        fit = present & (index >= fold.fit_start) & (index < fold.es_start)
+        es = present & (index >= fold.es_start) & (index < fold.test_start)
+        test = (index >= fold.test_start) & (index <= fold.test_end)
+        model = model_factory()
+        model.fit(features[fit], actual[fit], features[es], actual[es])
+        # Every feature is >= 24 h old at its hour, so predicting the whole month at once gives
+        # the same values as issuing each day's forecast at its own local midnight.
+        part = pd.DataFrame(
+            {
+                "fold": fold.name,
+                "actual_mw": actual[test],
+                "forecast_mw": np.asarray(model.predict(features[test]), dtype=float),
+                "baseline_mw": reference.loc[test, "baseline_mw"],
+                "naive24_mw": reference.loc[test, "naive24_mw"],
+            },
+            index=index[test],
+        )
+        parts.append(part)
+    result = pd.concat(parts)
+    result["is_scored"] = (
+        result["actual_mw"].notna() & result["forecast_mw"].notna() & result["baseline_mw"].notna()
+    )
+    return result[list(RESULT_COLUMNS)]

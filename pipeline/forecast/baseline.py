@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import pandas as pd
 
+from pipeline.forecast.features import complete_hourly
+
 BASELINE_LAG_H = 168
 NAIVE_LAG_H = 24
 
@@ -15,14 +17,17 @@ def lagged(demand: pd.Series, lag_h: int) -> pd.Series:
     is still the reading taken exactly `lag_h` hours before t, and NaN where that hour is missing
     or before the series starts. Raises ValueError if `lag_h` < 1.
     """
-    raise NotImplementedError
+    if lag_h < 1:
+        raise ValueError(f"lag_h must be at least 1, got {lag_h}")
+    actual = complete_hourly(demand)
+    return actual.shift(lag_h, freq="h").reindex(actual.index)
 
 
 def seasonal_naive(demand: pd.Series) -> pd.Series:
     """`lagged(demand, BASELINE_LAG_H)` named `baseline_mw`: the same hour one week earlier."""
-    raise NotImplementedError
+    return lagged(demand, BASELINE_LAG_H).rename("baseline_mw")
 
 
 def naive_24(demand: pd.Series) -> pd.Series:
     """`lagged(demand, NAIVE_LAG_H)` named `naive24_mw`: the same hour one day earlier."""
-    raise NotImplementedError
+    return lagged(demand, NAIVE_LAG_H).rename("naive24_mw")

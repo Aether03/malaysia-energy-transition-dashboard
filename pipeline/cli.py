@@ -73,6 +73,55 @@ def _cmd_run(args: argparse.Namespace) -> int:
         _extract_and_load(run, refresh=args.refresh)
         if not _transform(run):
             return 1
+        _forecast(run, mode="replay", grids=None)
+    return 0
+
+
+def _forecast(run, mode: str, grids: list[str] | None) -> None:
+    """One FORECAST step per grid (M3 Q6). A failure marks the step FAILED and propagates (exit 1);
+    committed data and the previous current forecast stay in place."""
+    from pipeline import db
+    from pipeline.forecast import run as forecast
+
+    if mode == "replay":
+        record = forecast.read_record()
+        if not record:
+            with run.step("FORECAST") as step:
+                step.message = "no FINAL run recorded yet; nothing to replay"
+            return
+        targets = sorted(record) if grids is None else grids
+    else:
+        if grids is None:
+            conn = db.connect()
+            try:
+                grids = forecast.forecast_grids(conn)
+            finally:
+                conn.close()
+        targets = grids
+    for grid_code in targets:
+        conn = db.connect()
+        try:
+            source = forecast.load_grid(conn, grid_code).data_source_code
+        finally:
+            conn.close()
+        with run.step("FORECAST", source) as step:
+            if mode == "dev":
+                outcome = forecast.run_dev(grid_code, run.run_id)
+                step.message = f"{grid_code} DEV: {outcome.scores}"
+            elif mode == "final":
+                outcome = forecast.run_final(grid_code, run.run_id)
+                step.message = f"{grid_code} FINAL: {outcome.scores}"
+            else:
+                step.message = f"{grid_code}: " + forecast.replay(grid_code, record[grid_code], run.run_id)
+            step.rows_merged = None if mode == "replay" else len(outcome.results)
+
+
+def _cmd_forecast(args: argparse.Namespace) -> int:
+    from pipeline.meta import RunLog
+
+    mode = "dev" if args.dev else "final" if args.final else "replay"
+    with RunLog() as run:
+        _forecast(run, mode=mode, grids=args.grid or None)
     return 0
 
 
@@ -125,6 +174,14 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("transform", help="rebuild dw.* from stg, gated by data-quality rules").set_defaults(
         func=_cmd_transform
     )
+    forecast_parser = sub.add_parser(
+        "forecast", help="day-ahead load forecast backtest: replay the recorded FINAL run (default), --dev or --final"
+    )
+    mode = forecast_parser.add_mutually_exclusive_group()
+    mode.add_argument("--dev", action="store_true", help="development run on the protocol's 2023 months")
+    mode.add_argument("--final", action="store_true", help="the single locked 2024 backtest (needs a committed protocol)")
+    forecast_parser.add_argument("--grid", action="append", help="grid code (repeatable); default: every published grid")
+    forecast_parser.set_defaults(func=_cmd_forecast)
     run_parser = sub.add_parser("run", help="extract, load, transform and check")
     run_parser.add_argument("--dry-run", action="store_true", help="log a run without touching data")
     run_parser.add_argument("--refresh", action="store_true", help="re-download even if today's file exists")
