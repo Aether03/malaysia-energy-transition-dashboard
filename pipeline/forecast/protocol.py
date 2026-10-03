@@ -16,7 +16,7 @@ The JSON block has exactly this shape (the values are examples):
       "lightgbm": {"objective": "l2", "learning_rate": 0.05, ...},
       "seed": 20231008,
       "num_threads": 1,
-      "bootstrap": {"n_boot": 2000, "level": 0.95}
+      "bootstrap": {"n_boot": 2000, "level": 0.95, "block_days": 7}
     }
 """
 
@@ -35,7 +35,22 @@ from pipeline import config
 from pipeline.forecast.features import FEATURE_COLUMNS
 
 PROTOCOL_REL = "docs/forecast.md"
-GUARDED_REL: tuple[str, ...] = (PROTOCOL_REL, "pipeline/forecast")
+RECORD_REL = "docs/forecast_final.json"
+# Everything that changes the FINAL numbers or the once-only record (MLE review H2, M2): the
+# protocol, the record, the forecast code and CLI, the holiday calendar and its overrides, the
+# pinned libraries, and the SQL that builds the hourly demand.
+GUARDED_REL: tuple[str, ...] = (
+    PROTOCOL_REL,
+    RECORD_REL,
+    "pipeline/forecast",
+    "pipeline/cli.py",
+    "pipeline/public_holidays.py",
+    "pipeline/seeds.py",
+    "seed/holiday_override.csv",
+    "requirements.txt",
+    "sql/views/R__stg_grid.sql",
+    "sql/transform/050_fact_grid_hourly.sql",
+)
 
 
 _MONTH = re.compile(r"\d{4}-(0[1-9]|1[0-2])")
@@ -62,6 +77,7 @@ class Protocol:
     num_threads: int
     n_boot: int
     level: float
+    block_days: int
     raw: dict[str, Any]  # the parsed JSON block as written, stored in forecast_run.params_json
 
 
@@ -101,7 +117,7 @@ def protocol_from_dict(raw: Any) -> Protocol:
     final_first, final_last = _months(raw, "final")
     if dev_last >= final_first:
         raise ProtocolError(f"dev months reach into the final period ({dev_last} >= {final_first})")
-    bootstrap = _section(raw, "bootstrap", ("n_boot", "level"))
+    bootstrap = _section(raw, "bootstrap", ("n_boot", "level", "block_days"))
     level = bootstrap["level"]
     if not _is_number(level) or not 0 < level < 1:
         raise ProtocolError(f"bootstrap level must be a number strictly between 0 and 1, got {level!r}")
@@ -120,6 +136,7 @@ def protocol_from_dict(raw: Any) -> Protocol:
         num_threads=_positive_int(raw["num_threads"], "num_threads"),
         n_boot=_positive_int(bootstrap["n_boot"], "bootstrap.n_boot"),
         level=float(level),
+        block_days=_positive_int(bootstrap["block_days"], "bootstrap.block_days"),
         raw=raw,
     )
 
@@ -140,8 +157,9 @@ def committed_protocol(repo: Path = config.ROOT) -> tuple[str, str]:
     the hash of HEAD; both 40 lowercase hex characters, read with `git` run in `repo`.
 
     Raises ProtocolError if `repo` is not a git work tree, `PROTOCOL_REL` is missing or not
-    tracked, or any path under `GUARDED_REL` has an uncommitted change: staged, unstaged, or an
-    untracked file.
+    tracked, any path under `GUARDED_REL` has an uncommitted change (staged, unstaged, deleted,
+    or an untracked file), or a tracked guarded file is marked assume-unchanged or skip-worktree
+    (which would hide an edit from `git status`).
     """
     if _git(repo, "rev-parse", "--is-inside-work-tree") != "true":
         raise ProtocolError(f"{repo} is not a git work tree")
@@ -150,6 +168,12 @@ def committed_protocol(repo: Path = config.ROOT) -> tuple[str, str]:
     )
     if tracked.returncode != 0:
         raise ProtocolError(f"{PROTOCOL_REL} is not committed")
+    hidden = [
+        line for line in _git(repo, "ls-files", "-v", "--", *GUARDED_REL).splitlines()
+        if line[:1].islower() or line[:1] == "S"
+    ]  # fmt: skip
+    if hidden:
+        raise ProtocolError(f"guarded files hidden from git status (assume-unchanged/skip-worktree): {hidden}")
     changes = _git(repo, "status", "--porcelain=v1", "--untracked-files=all", "--", *GUARDED_REL)
     if changes:
         raise ProtocolError(f"uncommitted changes in the protocol or forecast code:\n{changes}")
@@ -161,9 +185,18 @@ def committed_protocol(repo: Path = config.ROOT) -> tuple[str, str]:
     return protocol_commit, head_commit
 
 
+def protocol_at_commit(commit: str, repo: Path = config.ROOT) -> Protocol:
+    """The protocol as committed in `commit` (replay checks its record against it)."""
+    if not _HEX40.fullmatch(commit):
+        raise ProtocolError(f"not a commit hash: {commit!r}")
+    return parse_protocol(_git(repo, "show", f"{commit}:{PROTOCOL_REL}"))
+
+
 def _git(repo: Path, *args: str) -> str:
     try:
-        done = subprocess.run(["git", *args], cwd=repo, capture_output=True, text=True, check=False)
+        done = subprocess.run(
+            ["git", *args], cwd=repo, capture_output=True, text=True, encoding="utf-8", check=False
+        )
     except OSError as exc:
         raise ProtocolError(f"git is not available: {exc}") from exc
     if done.returncode != 0:

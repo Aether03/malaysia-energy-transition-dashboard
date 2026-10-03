@@ -120,6 +120,10 @@ def _cmd_forecast(args: argparse.Namespace) -> int:
     from pipeline.meta import RunLog
 
     mode = "dev" if args.dev else "final" if args.final else "replay"
+    if mode == "final" and len(args.grid or []) != 1:
+        # One grid per FINAL run: commit docs/forecast_final.json before the next (the gate enforces it).
+        log.error("--final runs one grid at a time: pass exactly one --grid")
+        return 2
     with RunLog() as run:
         _forecast(run, mode=mode, grids=args.grid or None)
     return 0
@@ -179,7 +183,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     mode = forecast_parser.add_mutually_exclusive_group()
     mode.add_argument("--dev", action="store_true", help="development run on the protocol's 2023 months")
-    mode.add_argument("--final", action="store_true", help="the single locked 2024 backtest (needs a committed protocol)")
+    mode.add_argument("--final", action="store_true", help="the single locked 2024 backtest of ONE --grid (needs a committed protocol)")
     forecast_parser.add_argument("--grid", action="append", help="grid code (repeatable); default: every published grid")
     forecast_parser.set_defaults(func=_cmd_forecast)
     run_parser = sub.add_parser("run", help="extract, load, transform and check")

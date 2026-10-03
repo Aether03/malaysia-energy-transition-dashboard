@@ -1,4 +1,5 @@
-"""Reference forecasts: seasonal naive (the doc 02 §4 baseline) and naive t - 24 h (protocol #9)."""
+"""Reference forecasts: seasonal naive (the doc 02 §4 baseline), and two secondary references:
+naive t - 24 h (protocol #9) and the weekday-aware naive (MLE review H3)."""
 
 from __future__ import annotations
 
@@ -26,6 +27,17 @@ def lagged(demand: pd.Series, lag_h: int) -> pd.Series:
 def seasonal_naive(demand: pd.Series) -> pd.Series:
     """`lagged(demand, BASELINE_LAG_H)` named `baseline_mw`: the same hour one week earlier."""
     return lagged(demand, BASELINE_LAG_H).rename("baseline_mw")
+
+
+def weekday_naive(demand: pd.Series) -> pd.Series:
+    """The weekday-aware naive, named `weekday_naive_mw`: the actual at t - 24 h when t falls on
+    Tuesday to Friday (yesterday was a weekday too), otherwise at t - 168 h (Saturday, Sunday and
+    Monday look back one week). Holidays are not special-cased. Aligned by timestamp like `lagged`.
+    """
+    day = lagged(demand, NAIVE_LAG_H)
+    week = lagged(demand, BASELINE_LAG_H)
+    tue_to_fri = (day.index.dayofweek >= 1) & (day.index.dayofweek <= 4)
+    return day.where(tue_to_fri, week).rename("weekday_naive_mw")
 
 
 def naive_24(demand: pd.Series) -> pd.Series:

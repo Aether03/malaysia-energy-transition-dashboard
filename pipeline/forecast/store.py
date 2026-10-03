@@ -40,7 +40,9 @@ def fact_rows(results: pd.DataFrame, model_run_id: int, grid_key: int, utc_offse
     `is_scored` disagrees with "actual, forecast and baseline all present".
     """
     rows = []
-    for ts, _fold, actual, forecast, base, _naive, is_scored in results[list(RESULT_COLUMNS)].itertuples(name=None):
+    for ts, _fold, actual, forecast, base, _naive, _weekday, is_scored in results[list(RESULT_COLUMNS)].itertuples(
+        name=None
+    ):
         if _missing(forecast):
             raise ValueError(f"{ts}: the forecast is missing (dw.fact_load_forecast.forecast_mw is NOT NULL)")
         expected = not (_missing(actual) or _missing(base))
@@ -144,4 +146,5 @@ def _round(value: Any, places: str) -> Decimal | None:
     """Half-up rounding of the float's shortest decimal form (str(), not its binary expansion)."""
     if _missing(value):
         return None
-    return Decimal(str(float(value))).quantize(Decimal(places), rounding=ROUND_HALF_UP)
+    rounded = Decimal(str(float(value))).quantize(Decimal(places), rounding=ROUND_HALF_UP)
+    return abs(rounded) if rounded.is_zero() else rounded  # never -0.000 (SQL Server stores 0.000)

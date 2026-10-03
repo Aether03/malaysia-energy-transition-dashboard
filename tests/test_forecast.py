@@ -862,6 +862,7 @@ def _result_frame():
             "forecast_mw": [100.25, 100.5, 3.75, 50.0],
             "baseline_mw": [100.75, 20.0, NAN, 80.0],
             "naive24_mw": [90.0, NAN, 90.0, 90.0],
+            "weekday_naive_mw": [95.0, 95.0, NAN, 95.0],
             "is_scored": [True, False, False, True],
         },
         index=idx,
@@ -1053,3 +1054,57 @@ def test_run_row_rejects_a_commit_that_is_not_40_lowercase_hex(field, bad):
 def test_run_row_rejects_what_the_table_constraints_reject(overrides):
     with pytest.raises(ValueError):
         store.run_row(**_run_kwargs(**overrides))
+
+
+# --- MLE review additions: weekday-aware naive, block bootstrap, no negative zero ----------
+
+
+def test_weekday_naive_looks_back_a_day_on_tuesday_to_friday_and_a_week_otherwise():
+    n = 24 * 21
+    out = baseline.weekday_naive(_ramp(n))  # 2024-01-01 is a Monday; value = hour offset
+    assert out.name == "weekday_naive_mw"
+    offsets = np.arange(n)
+    weekday = (offsets // 24) % 7  # 0 = Monday
+    back = np.where((weekday >= 1) & (weekday <= 4), 24, 168)
+    expected = np.where(offsets >= back, offsets - back, np.nan)
+    np.testing.assert_array_equal(out.to_numpy(), expected)
+
+
+def test_weekday_naive_aligns_by_timestamp():
+    n = 24 * 21
+    out = baseline.weekday_naive(_drop(_ramp(n), 200))  # Tuesday 2024-01-09 08:00 is missing
+    assert np.isnan(out.loc["2024-01-10 08:00"])  # Wednesday looks back 24 h onto the gap
+    assert out.loc["2024-01-16 08:00"] == 14 * 24 + 8  # next Tuesday looks back to Monday 01-15 08:00
+    assert out.loc["2024-01-15 08:00"] == 7 * 24 + 8  # Monday looks back a week, to Monday 01-08 08:00
+
+
+def test_block_bootstrap_with_blocks_as_long_as_the_sample_collapses_to_the_point_estimate():
+    """Circular blocks of n_days days: every replicate is a rotation of all days, so it pools them all."""
+    actual, model, base = _noisy_days(14, seed=12)
+    point = metrics.score(actual, model, base).improvement_pct
+    low, high = metrics.day_block_bootstrap_ci(actual, model, base, n_boot=60, seed=1, block_days=14)
+    assert low == pytest.approx(point) and high == pytest.approx(point)
+
+
+def test_block_bootstrap_is_reproducible_and_one_day_blocks_are_the_default():
+    actual, model, base = _noisy_days(30, seed=13)
+    weekly = metrics.day_block_bootstrap_ci(actual, model, base, n_boot=80, seed=5, block_days=7)
+    assert weekly == metrics.day_block_bootstrap_ci(actual, model, base, n_boot=80, seed=5, block_days=7)
+    assert metrics.day_block_bootstrap_ci(actual, model, base, n_boot=80, seed=5) == metrics.day_block_bootstrap_ci(
+        actual, model, base, n_boot=80, seed=5, block_days=1
+    )
+    low, high = weekly
+    assert low < metrics.score(actual, model, base).improvement_pct < high
+
+
+@pytest.mark.parametrize("block_days", [0, -7])
+def test_block_bootstrap_rejects_a_block_below_one_day(block_days):
+    actual, model, base = _noisy_days(5, seed=14)
+    with pytest.raises(ValueError):
+        metrics.day_block_bootstrap_ci(actual, model, base, n_boot=10, seed=0, block_days=block_days)
+
+
+def test_run_row_never_stores_a_negative_zero():
+    row = store.run_row(**_run_kwargs(scores=dataclasses.replace(SCORES, improvement_pct=-0.0004), ci=(-0.0004, 0.0)))
+    assert str(row["improvement_pct"]) == "0.000"
+    assert str(row["improvement_ci_low"]) == "0.000"

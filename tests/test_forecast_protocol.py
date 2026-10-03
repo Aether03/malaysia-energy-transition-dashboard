@@ -28,7 +28,7 @@ def _raw():
         "lightgbm": {"objective": "l2", "learning_rate": 0.05, "num_leaves": 31},
         "seed": 20231008,
         "num_threads": 1,
-        "bootstrap": {"n_boot": 2000, "level": 0.95},
+        "bootstrap": {"n_boot": 2000, "level": 0.95, "block_days": 7},
     }
 
 
@@ -55,7 +55,12 @@ def _doc_with(mutate):
 
 def test_protocol_paths():
     assert protocol.PROTOCOL_REL == "docs/forecast.md"
-    assert protocol.GUARDED_REL == ("docs/forecast.md", "pipeline/forecast")
+    assert protocol.RECORD_REL == "docs/forecast_final.json"
+    assert protocol.GUARDED_REL == (
+        "docs/forecast.md", "docs/forecast_final.json", "pipeline/forecast", "pipeline/cli.py",
+        "pipeline/public_holidays.py", "pipeline/seeds.py", "seed/holiday_override.csv", "requirements.txt",
+        "sql/views/R__stg_grid.sql", "sql/transform/050_fact_grid_hourly.sql",
+    )  # fmt: skip
     assert issubclass(ProtocolError, RuntimeError)
 
 
@@ -75,6 +80,7 @@ def test_parse_protocol_reads_every_field():
     assert parsed.num_threads == 1
     assert parsed.n_boot == 2000
     assert parsed.level == 0.95
+    assert parsed.block_days == 7
     assert parsed.raw == _raw()
 
 
@@ -158,7 +164,7 @@ def test_a_missing_top_level_key(key):
 @pytest.mark.parametrize(
     ("section", "key"),
     [("dev", "first_month"), ("dev", "last_month"), ("final", "first_month"), ("final", "last_month"),
-     ("bootstrap", "n_boot"), ("bootstrap", "level")],
+     ("bootstrap", "n_boot"), ("bootstrap", "level"), ("bootstrap", "block_days")],
 )  # fmt: skip
 def test_a_missing_nested_key(section, key):
     with pytest.raises(ProtocolError):
@@ -456,3 +462,49 @@ def test_a_directory_that_is_not_a_git_repo_is_refused(tmp_path, monkeypatch):
     monkeypatch.setenv("GIT_CEILING_DIRECTORIES", str(tmp_path))  # never discover a repository above it
     with pytest.raises(ProtocolError):
         protocol.committed_protocol(plain)
+
+
+# --- MLE review additions: hidden edits, the record under the gate, protocol at a commit ---
+
+
+@needs_git
+@pytest.mark.parametrize("flag", ["--assume-unchanged", "--skip-worktree"])
+def test_an_edit_hidden_from_git_status_is_refused(repo, flag):
+    _git(repo, "update-index", flag, "pipeline/forecast/x.py")
+    _write(repo, "pipeline/forecast/x.py", "X = 99\n")
+    assert _git(repo, "status", "--porcelain") == ""  # git status no longer shows the edit
+    with pytest.raises(ProtocolError, match="hidden"):
+        protocol.committed_protocol(repo)
+
+
+@needs_git
+def test_the_record_is_guarded_once_it_exists(repo):
+    _write(repo, "docs/forecast_final.json", "{}\n")  # written by a FINAL run, not yet committed
+    with pytest.raises(ProtocolError):
+        protocol.committed_protocol(repo)
+    _commit(repo, "record")
+    protocol.committed_protocol(repo)  # committed: the next grid may run
+    (repo / "docs" / "forecast_final.json").unlink()  # deleting it to allow a second FINAL
+    with pytest.raises(ProtocolError):
+        protocol.committed_protocol(repo)
+
+
+@needs_git
+@pytest.mark.parametrize("rel", ["requirements.txt", "seed/holiday_override.csv", "sql/views/R__stg_grid.sql"])
+def test_an_uncommitted_input_file_is_refused(repo, rel):
+    _write(repo, rel, "changed\n")
+    with pytest.raises(ProtocolError):
+        protocol.committed_protocol(repo)
+
+
+@needs_git
+def test_protocol_at_commit_reads_the_protocol_as_committed_then(repo):
+    _write(repo, "docs/forecast.md", _doc())
+    _commit(repo, "protocol v1")
+    first = _head(repo)
+    _write(repo, "docs/forecast.md", _doc_with(lambda raw: raw.__setitem__("seed", 99)))
+    _commit(repo, "protocol v2")
+    assert protocol.protocol_at_commit(first, repo).seed == 20231008
+    assert protocol.protocol_at_commit(_head(repo), repo).seed == 99
+    with pytest.raises(ProtocolError):
+        protocol.protocol_at_commit("not-a-hash", repo)

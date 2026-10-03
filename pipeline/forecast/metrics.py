@@ -123,20 +123,28 @@ def day_block_bootstrap_ci(
     n_boot: int,
     seed: int,
     level: float = 0.95,
+    block_days: int = 1,
 ) -> tuple[float, float]:
-    """Percentile CI of `improvement_pct`, resampling whole local days (protocol #8).
+    """Percentile CI of `improvement_pct`, resampling runs of whole local days (protocol #8).
 
-    Only scored hours are used. The blocks are the local calendar dates of the index. Each of
-    the `n_boot` replicates draws as many dates as there are, with replacement, from
-    `numpy.random.default_rng(seed)`, pools all scored hours of the drawn dates, and computes
-    `improvement_pct` from the pooled MAPEs. Returns the (1 - level) / 2 and (1 + level) / 2
+    Only scored hours are used. The days are the local calendar dates that have a scored hour,
+    in date order. With `block_days` = 1 each of the `n_boot` replicates draws as many days as
+    there are, with replacement. With `block_days` = b > 1 it is a circular moving-block
+    bootstrap: each replicate draws ceil(n_days / b) start days uniformly, takes the b
+    consecutive days from each (wrapping past the last day to the first), and keeps the first
+    n_days of them, so day-to-day error correlation within a week is preserved (MLE review M4).
+    Draws come from `numpy.random.default_rng(seed)`. Each replicate pools all scored hours of
+    its days and computes `improvement_pct` from the pooled MAPEs. Returns the (1 - level) / 2 and (1 + level) / 2
     quantiles (numpy's default linear method). The same inputs and seed give the same CI.
 
-    Raises ValueError if no hour is scored, `n_boot` < 1, or `level` is not strictly between 0 and 1.
+    Raises ValueError if no hour is scored, `n_boot` < 1, `block_days` < 1, or `level` is not
+    strictly between 0 and 1.
     A replicate whose pooled baseline MAPE is 0 raises (from `improvement_pct`) rather than being skipped.
     """
     if n_boot < 1:
         raise ValueError(f"n_boot must be at least 1, got {n_boot}")
+    if block_days < 1:
+        raise ValueError(f"block_days must be at least 1, got {block_days}")
     if not 0 < level < 1:
         raise ValueError(f"level must be strictly between 0 and 1, got {level}")
     mask = scored_mask(actual, model, baseline)
@@ -148,12 +156,19 @@ def day_block_bootstrap_ci(
     ape_model = np.abs(a - model[mask].to_numpy(dtype=float)) / a
     ape_baseline = np.abs(a - baseline[mask].to_numpy(dtype=float)) / a
     # Per-day sums, so a replicate's pooled MAPE is (sum of its days' APE) / (its hours).
-    day_codes, days = pd.factorize(actual.index[mask].normalize())
+    day_codes, days = pd.factorize(actual.index[mask].normalize(), sort=True)
     n_days = len(days)
     sum_model = np.bincount(day_codes, weights=ape_model, minlength=n_days)
     sum_baseline = np.bincount(day_codes, weights=ape_baseline, minlength=n_days)
     hours = np.bincount(day_codes, minlength=n_days)
-    draws = np.random.default_rng(seed).integers(0, n_days, size=(n_boot, n_days))
+    rng = np.random.default_rng(seed)
+    if block_days == 1:
+        draws = rng.integers(0, n_days, size=(n_boot, n_days))
+    else:
+        n_blocks = -(-n_days // block_days)
+        starts = rng.integers(0, n_days, size=(n_boot, n_blocks))
+        runs = (starts[:, :, None] + np.arange(block_days)) % n_days
+        draws = runs.reshape(n_boot, n_blocks * block_days)[:, :n_days]
     pooled_hours = hours[draws].sum(axis=1)
     mape_model = sum_model[draws].sum(axis=1) / pooled_hours * 100
     mape_baseline = sum_baseline[draws].sum(axis=1) / pooled_hours * 100

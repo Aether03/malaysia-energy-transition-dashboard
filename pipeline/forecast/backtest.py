@@ -18,7 +18,7 @@ import lightgbm as lgb
 import numpy as np
 import pandas as pd
 
-from pipeline.forecast.baseline import naive_24, seasonal_naive
+from pipeline.forecast.baseline import naive_24, seasonal_naive, weekday_naive
 from pipeline.forecast.features import build_features, complete_hourly
 
 
@@ -107,7 +107,9 @@ class LgbmRegressor:
         return self.booster.predict(X, num_iteration=self.best_iteration)
 
 
-RESULT_COLUMNS: tuple[str, ...] = ("fold", "actual_mw", "forecast_mw", "baseline_mw", "naive24_mw", "is_scored")
+RESULT_COLUMNS: tuple[str, ...] = (
+    "fold", "actual_mw", "forecast_mw", "baseline_mw", "naive24_mw", "weekday_naive_mw", "is_scored",
+)  # fmt: skip
 
 
 def run_backtest(
@@ -129,7 +131,7 @@ def run_backtest(
 
     Returns a DataFrame indexed by `ts_local` (sorted, every hour of every test window) with
     columns `RESULT_COLUMNS`: the fold name, the actual (NaN in a gap), the model forecast, the
-    seasonal-naive baseline, the naive t - 24 h value, and `is_scored` (bool: actual, forecast
+    seasonal-naive baseline, the naive t - 24 h and weekday-aware naive values, and `is_scored` (bool: actual, forecast
     and baseline all present).
 
     Raises ValueError if `folds` is empty, unsorted or overlapping, or if the actuals end before
@@ -150,7 +152,7 @@ def run_backtest(
         raise ValueError(f"the actuals end at {actual.index[-1]}, before the last test hour {last_end}")
     actual = actual.loc[:last_end]
     features = build_features(actual, holidays)
-    reference = pd.concat([seasonal_naive(actual), naive_24(actual)], axis=1)
+    reference = pd.concat([seasonal_naive(actual), naive_24(actual), weekday_naive(actual)], axis=1)
     index = actual.index
     present = actual.notna().to_numpy()
 
@@ -170,6 +172,7 @@ def run_backtest(
                 "forecast_mw": np.asarray(model.predict(features[test]), dtype=float),
                 "baseline_mw": reference.loc[test, "baseline_mw"],
                 "naive24_mw": reference.loc[test, "naive24_mw"],
+                "weekday_naive_mw": reference.loc[test, "weekday_naive_mw"],
             },
             index=index[test],
         )
