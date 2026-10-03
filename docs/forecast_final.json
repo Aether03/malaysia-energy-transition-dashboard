@@ -1,4 +1,74 @@
 {
+  "SG_EMA": {
+    "fingerprint": {
+      "demand_hours": 17688,
+      "demand_sha256": "7d401d469d544240850085efa1a9fc333f5efdd50f10b2a028597f887147a65c",
+      "holidays_sha256": "4d512aab273c61506febb166e7f7a614616b47e23ca91028eb21669dd609c0ce",
+      "versions": {
+        "holidays": "0.105",
+        "lightgbm": "4.7.0",
+        "numpy": "2.5.3",
+        "pandas": "3.0.6",
+        "python": "3.13"
+      }
+    },
+    "forecast_sha256": "f3c34cab9fda83ab857062bfd80976e64b0e8e0531f8219eb9f7e1c35b464c5f",
+    "git_commit": "d73808f09d7c41b22aa86586343f057ed1f69f6e",
+    "metrics": {
+      "excluded_hours": "0",
+      "improvement_ci_high": "41.692",
+      "improvement_ci_low": "26.226",
+      "improvement_pct": "34.537",
+      "mae_baseline": "169.055",
+      "mae_model": "111.369",
+      "mape_baseline": "2.501",
+      "mape_model": "1.638",
+      "scored_hours": "8784"
+    },
+    "protocol": {
+      "bootstrap": {
+        "block_days": 7,
+        "level": 0.95,
+        "n_boot": 2000
+      },
+      "data_start": "2023-01-08",
+      "dev": {
+        "first_month": "2023-10",
+        "last_month": "2023-12"
+      },
+      "es_days": 28,
+      "features": [
+        "hour",
+        "iso_weekday",
+        "month",
+        "is_weekend",
+        "is_holiday",
+        "is_day_off",
+        "lag_24",
+        "lag_48",
+        "lag_168",
+        "lag_336",
+        "roll_mean_24"
+      ],
+      "final": {
+        "first_month": "2024-01",
+        "last_month": "2024-12"
+      },
+      "lightgbm": {
+        "early_stopping_rounds": 100,
+        "feature_fraction": 0.9,
+        "learning_rate": 0.05,
+        "min_data_in_leaf": 20,
+        "n_estimators": 2000,
+        "num_leaves": 15,
+        "objective": "l2"
+      },
+      "num_threads": 1,
+      "seed": 20231008
+    },
+    "protocol_commit": "d7a03e26bb9adce1e0b57abd2cd7444cec4173cb",
+    "recorded_at": "2026-10-03T06:03:47Z"
+  },
   "TH_EGAT": {
     "fingerprint": {
       "demand_hours": 17540,
