@@ -1,0 +1,68 @@
+table load_forecast_current
+
+	column model_run_id
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: model_run_id
+
+	column grid_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: grid_key
+
+	column ts_local
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: ts_local
+
+	column date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: date_key
+
+	column hour
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: hour
+
+	column actual_mw
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: actual_mw
+
+	column forecast_mw
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: forecast_mw
+
+	column baseline_mw
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: baseline_mw
+
+	column is_scored
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_scored
+
+	partition load_forecast_current = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    load_forecast_current = Source{[Schema="mart",Item="load_forecast_current"]}[Data]
+				in
+				    load_forecast_current
+

@@ -1,0 +1,23 @@
+table dim_hour
+
+	column hour
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: hour
+
+	column label
+		dataType: string
+		summarizeBy: none
+		sourceColumn: label
+		sortByColumn: hour
+
+	partition dim_hour = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    dim_hour = Source{[Schema="mart",Item="dim_hour"]}[Data]
+				in
+				    dim_hour
+

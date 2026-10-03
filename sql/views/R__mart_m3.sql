@@ -29,11 +29,24 @@ SELECT
              ELSE N'System demand'
          END AS NVARCHAR(60)) AS demand_label,
     CAST(CASE WHEN g.grid_code = 'MY_PEN_GSO' THEN 0 ELSE 1 END AS BIT) AS is_open_data_proxy,
+    CAST(CASE g.grid_code
+             WHEN 'TH_EGAT' THEN N'Open-data stand-in for Peninsular Malaysia until TNB consents to GSO data use'
+             WHEN 'SG_EMA'  THEN N'ASEAN peer grid (open data)'
+             ELSE N''
+         END AS NVARCHAR(100)) AS banner_note,
     CAST(CASE g.grid_code WHEN 'TH_EGAT' THEN 1 WHEN 'SG_EMA' THEN 2 ELSE 9 END AS TINYINT) AS display_order
 FROM dw.dim_grid AS g
 JOIN dw.dim_country AS c
     ON c.country_key = g.country_key
 WHERE g.is_published = 1;
+GO
+
+-- The forecast panel's date picker (P4). Deliberately not related to any fact: it filters only
+-- the forecast measures (via TREATAS on date_key), never the load or flow charts. It spans every
+-- calendar date, so a day outside the backtest window can be picked and shows the empty state.
+CREATE OR ALTER VIEW mart.forecast_date AS
+SELECT date_key, date
+FROM dw.dim_date;
 GO
 
 -- Published hours only: a missing hour has no row, so charts show a gap, never a filled value.

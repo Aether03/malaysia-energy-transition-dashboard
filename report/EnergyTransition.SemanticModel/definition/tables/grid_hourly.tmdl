@@ -1,0 +1,77 @@
+table grid_hourly
+
+	column grid_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: grid_key
+
+	column ts_local
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: ts_local
+
+	column date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: date_key
+
+	column hour
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: hour
+
+	column year
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column month
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: month
+
+	column demand_mw
+		dataType: double
+		formatString: 0.0
+		summarizeBy: none
+		sourceColumn: demand_mw
+
+	column season
+		dataType: string
+		summarizeBy: none
+		sourceColumn: season
+		sortByColumn: season_order
+
+	column season_order
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: season_order
+
+	column day_type
+		dataType: string
+		summarizeBy: none
+		sourceColumn: day_type
+
+	partition grid_hourly = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    grid_hourly = Source{[Schema="mart",Item="grid_hourly"]}[Data]
+				in
+				    grid_hourly
+

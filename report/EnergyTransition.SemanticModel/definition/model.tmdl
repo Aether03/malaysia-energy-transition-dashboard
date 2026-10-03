@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase","re_capacity_official"]
+annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase","re_capacity_official","dim_date","dim_hour","dim_grid","grid_hourly","grid_flow_daily","forecast_date","forecast_run_current","load_forecast_current","forecast_status"]
 
 ref table country_annual
 ref table data_source
@@ -29,6 +29,15 @@ ref table 'Mix Unit'
 ref table 'ASEAN Metric'
 ref table 'Target Axis'
 ref table 'Compare Country'
+ref table dim_date
+ref table dim_hour
+ref table dim_grid
+ref table grid_hourly
+ref table grid_flow_daily
+ref table forecast_date
+ref table forecast_run_current
+ref table load_forecast_current
+ref table forecast_status
 
 ref cultureInfo en-US
 

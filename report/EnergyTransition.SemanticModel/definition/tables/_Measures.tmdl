@@ -701,6 +701,246 @@ table _Measures
 		displayFolder: Tooltips
 		lineageTag: e27ec29b-52b3-4bf5-9df2-e7c530c8bc88
 
+	measure 'Grid Selected' = HASONEVALUE ( dim_grid[grid_key] )
+		displayFolder: Grid load
+		lineageTag: c950274b-0ee6-4bac-96e8-8fe21efd895e
+
+	measure 'Grid Banner' =
+			IF (
+			    [Grid Selected],
+			    "Showing: " & SELECTEDVALUE ( dim_grid[name] ) & " · " & SELECTEDVALUE ( dim_grid[banner_note] ),
+			    "Select one grid"
+			)
+		displayFolder: Grid load
+		lineageTag: d114ff41-415f-4d48-b09d-26ba02a888b7
+
+	measure 'Demand Label' = SELECTEDVALUE ( dim_grid[demand_label] )
+		displayFolder: Grid load
+		lineageTag: 7f1c1321-5a79-4b54-96e7-f910c6b1fb51
+
+	measure 'Avg Load (MW)' = IF ( [Grid Selected], AVERAGE ( grid_hourly[demand_mw] ) )
+		formatString: #,0
+		displayFolder: Grid load
+		lineageTag: 1b1e5082-e473-4ba1-b32b-7c0b53073f99
+
+	measure 'Peak Load (MW)' = IF ( [Grid Selected], MAX ( grid_hourly[demand_mw] ) )
+		formatString: #,0
+		displayFolder: Grid load
+		lineageTag: 3bd46a93-a8af-4318-969c-0197a30211b7
+
+	measure 'Load Factor (%)' = IF ( [Grid Selected], 100 * DIVIDE ( AVERAGE ( grid_hourly[demand_mw] ), MAX ( grid_hourly[demand_mw] ) ) )
+		formatString: 0.0
+		displayFolder: Grid load
+		lineageTag: 619cd321-7ffc-475e-ae60-19f935ac1a2f
+
+	measure 'Peak Text' =
+			VAR pk = [Peak Load (MW)]
+			VAR at = CALCULATE ( MIN ( grid_hourly[ts_local] ), FILTER ( grid_hourly, grid_hourly[demand_mw] = pk ) )
+			RETURN IF ( NOT ISBLANK ( pk ), "Peak " & FORMAT ( pk, "#,0" ) & " MW on " & FORMAT ( at, "d mmm yyyy, h:00" ) )
+		displayFolder: Grid load
+		lineageTag: e4810b1f-77b7-4cf1-bb55-1edc94f463ff
+
+	measure 'Forecast Default Day' =
+			VAR peakAt =
+			    CALCULATE (
+			        MAXX (
+			            TOPN ( 1, load_forecast_current, load_forecast_current[actual_mw], DESC, load_forecast_current[ts_local], ASC ),
+			            load_forecast_current[ts_local]
+			        ),
+			        REMOVEFILTERS ( dim_date ), REMOVEFILTERS ( dim_hour )
+			    )
+			RETURN IF ( NOT ISBLANK ( peakAt ), DATE ( YEAR ( peakAt ), MONTH ( peakAt ), DAY ( peakAt ) ) )
+		formatString: d mmm yyyy
+		displayFolder: Forecast
+		lineageTag: 55ee3bed-5314-4fda-9a75-4c7f415d55e0
+
+	measure 'Forecast Day' =
+			VAR picked = IF ( ISFILTERED ( forecast_date[date] ), MAX ( forecast_date[date] ) )
+			RETURN IF ( ISBLANK ( picked ), [Forecast Default Day], picked )
+		formatString: d mmm yyyy
+		displayFolder: Forecast
+		lineageTag: ba94dfce-10ca-4a2c-a38e-a18f5b45875a
+
+	measure 'Forecast Day Key' =
+			VAR d = [Forecast Day]
+			RETURN IF ( NOT ISBLANK ( d ), YEAR ( d ) * 10000 + MONTH ( d ) * 100 + DAY ( d ) )
+		formatString: 0
+		displayFolder: Forecast
+		lineageTag: 9c351f41-7098-45d9-8ba5-290ec91e4239
+
+	measure 'Forecast Day Title' =
+			VAR d = [Forecast Day]
+			RETURN IF ( [Grid Selected] && NOT ISBLANK ( d ), "Day-ahead forecast vs actual, " & FORMAT ( d, "ddd d mmm yyyy" ) & IF ( NOT ISFILTERED ( forecast_date[date] ), " (the 2024 peak day; pick another)" ) )
+		displayFolder: Forecast
+		lineageTag: 6620a7e7-6ff1-407c-926a-460245ce581a
+
+	measure 'Day Actual (MW)' =
+			VAR k = [Forecast Day Key]
+			RETURN CALCULATE ( SUM ( load_forecast_current[actual_mw] ), REMOVEFILTERS ( dim_date ), load_forecast_current[date_key] = k )
+		formatString: #,0
+		displayFolder: Forecast
+		lineageTag: bed28915-64ef-4ac5-85ef-b9b2601fc074
+
+	measure 'Day Model (MW)' =
+			VAR k = [Forecast Day Key]
+			RETURN CALCULATE ( SUM ( load_forecast_current[forecast_mw] ), REMOVEFILTERS ( dim_date ), load_forecast_current[date_key] = k )
+		formatString: #,0
+		displayFolder: Forecast
+		lineageTag: 7fc65141-d3e5-45c5-b99e-19b49e274f88
+
+	measure 'Day Baseline (MW)' =
+			VAR k = [Forecast Day Key]
+			RETURN CALCULATE ( SUM ( load_forecast_current[baseline_mw] ), REMOVEFILTERS ( dim_date ), load_forecast_current[date_key] = k )
+		formatString: #,0
+		displayFolder: Forecast
+		lineageTag: a39b032a-c626-46a8-986e-a41d33185a97
+
+	measure 'Day MAPE Model (%)' =
+			VAR k = [Forecast Day Key]
+			RETURN
+			    CALCULATE (
+			        100 * AVERAGEX (
+			            FILTER ( load_forecast_current, load_forecast_current[is_scored] ),
+			            DIVIDE ( ABS ( load_forecast_current[actual_mw] - load_forecast_current[forecast_mw] ), load_forecast_current[actual_mw] )
+			        ),
+			        REMOVEFILTERS ( dim_date ), REMOVEFILTERS ( dim_hour ), load_forecast_current[date_key] = k
+			    )
+		formatString: 0.00
+		displayFolder: Forecast
+		lineageTag: a6e3d408-721f-4bac-86c3-f90d0cae665f
+
+	measure 'Day MAPE Baseline (%)' =
+			VAR k = [Forecast Day Key]
+			RETURN
+			    CALCULATE (
+			        100 * AVERAGEX (
+			            FILTER ( load_forecast_current, load_forecast_current[is_scored] ),
+			            DIVIDE ( ABS ( load_forecast_current[actual_mw] - load_forecast_current[baseline_mw] ), load_forecast_current[actual_mw] )
+			        ),
+			        REMOVEFILTERS ( dim_date ), REMOVEFILTERS ( dim_hour ), load_forecast_current[date_key] = k
+			    )
+		formatString: 0.00
+		displayFolder: Forecast
+		lineageTag: 317fd46c-a2b0-4d8f-9028-661e147860b0
+
+	measure 'Backtest MAPE Model (%)' = IF ( [Grid Selected], SELECTEDVALUE ( forecast_run_current[mape_model] ) )
+		formatString: 0.00
+		displayFolder: Forecast
+		lineageTag: 2f241529-4025-45b0-a19d-31ca71475dc9
+
+	measure 'Backtest MAPE Baseline (%)' = IF ( [Grid Selected], SELECTEDVALUE ( forecast_run_current[mape_baseline] ) )
+		formatString: 0.00
+		displayFolder: Forecast
+		lineageTag: 17812954-c3d9-4c5e-9db7-50f8036f665c
+
+	measure 'Backtest MAE Model (MW)' = IF ( [Grid Selected], SELECTEDVALUE ( forecast_run_current[mae_model] ) )
+		formatString: #,0
+		displayFolder: Forecast
+		lineageTag: ea2e0ab3-27a0-4028-9730-c994794ede90
+
+	measure 'Backtest MAE Baseline (MW)' = IF ( [Grid Selected], SELECTEDVALUE ( forecast_run_current[mae_baseline] ) )
+		formatString: #,0
+		displayFolder: Forecast
+		lineageTag: 0d174195-fcb8-4d51-9c9c-5451e928e46a
+
+	measure 'Backtest Improvement (%)' = IF ( [Grid Selected], SELECTEDVALUE ( forecast_run_current[improvement_pct] ) )
+		formatString: 0.0
+		displayFolder: Forecast
+		lineageTag: 9e59549f-5b80-4f6e-b996-d2d0cb3e0cc0
+
+	measure 'Backtest Improvement CI' =
+			VAR lo = SELECTEDVALUE ( forecast_run_current[improvement_ci_low] )
+			VAR hi = SELECTEDVALUE ( forecast_run_current[improvement_ci_high] )
+			RETURN IF ( [Grid Selected] && NOT ISBLANK ( lo ), "95% CI " & FORMAT ( lo, "0.0" ) & " to " & FORMAT ( hi, "0.0" ) )
+		displayFolder: Forecast
+		lineageTag: f174866f-5b88-4c62-87dc-f8e3834df6c0
+
+	measure 'Backtest Window' =
+			IF (
+			    [Grid Selected] && NOT ISBLANK ( SELECTEDVALUE ( forecast_run_current[model_run_id] ) ),
+			    "Backtest " & FORMAT ( SELECTEDVALUE ( forecast_run_current[test_start] ), "d mmm yyyy" ) & " – "
+			        & FORMAT ( SELECTEDVALUE ( forecast_run_current[test_end] ), "d mmm yyyy" ) & " · "
+			        & FORMAT ( SELECTEDVALUE ( forecast_run_current[scored_hours] ), "#,0" ) & " hours scored, "
+			        & FORMAT ( SELECTEDVALUE ( forecast_run_current[excluded_hours] ), "#,0" ) & " excluded"
+			)
+		displayFolder: Forecast
+		lineageTag: 90bd199e-53d9-4756-8eb3-6b78dca9f974
+
+	measure 'Forecast Empty State' =
+			VAR d = [Forecast Day]
+			VAR s = SELECTEDVALUE ( forecast_run_current[test_start] )
+			VAR e = SELECTEDVALUE ( forecast_run_current[test_end] )
+			RETURN
+			    IF (
+			        [Grid Selected] && NOT ISBLANK ( s ) && ( d < s || d > e ),
+			        "Forecast available for " & FORMAT ( s, "d mmm yyyy" ) & " – " & FORMAT ( e, "d mmm yyyy" )
+			    )
+		displayFolder: Forecast
+		lineageTag: 7820bf27-3083-46a7-b4af-2b114cf0e01f
+
+	measure 'Forecast Error State' = IF ( [Grid Selected] && SELECTEDVALUE ( forecast_status[status] ) <> "SUCCESS", "Forecast not generated in latest run — see About page" )
+		displayFolder: Forecast
+		lineageTag: 49aba79e-11a1-4a7b-9bad-9c61d8765f51
+
+	measure 'Forecast Verdict' =
+			VAR beats = SELECTEDVALUE ( forecast_run_current[beats_baseline] )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        NOT [Grid Selected] || ISBLANK ( beats ), BLANK (),
+			        beats, "Beats the seasonal-naive baseline: " & FORMAT ( [Backtest Improvement (%)], "0.0" ) & "% lower MAPE (" & [Backtest Improvement CI] & ")",
+			        "WARN: does not beat the seasonal-naive baseline (the 95% CI includes 0); results kept as recorded"
+			    )
+		displayFolder: Forecast
+		lineageTag: 826de0bd-c4e3-491c-b0b9-791a24d8174a
+
+	measure 'Forecast Secondary' =
+			VAR im = SELECTEDVALUE ( forecast_run_current[improvement_weekday_pct] )
+			VAR lo = SELECTEDVALUE ( forecast_run_current[improvement_weekday_ci_low] )
+			VAR hi = SELECTEDVALUE ( forecast_run_current[improvement_weekday_ci_high] )
+			VAR ci = "95% CI " & FORMAT ( lo, "0.0" ) & " to " & FORMAT ( hi, "0.0" )
+			RETURN
+			    IF (
+			        [Grid Selected] && NOT ISBLANK ( lo ),
+			        IF (
+			            lo > 0,
+			            "Also beats a weekday-aware naive rule: " & FORMAT ( im, "0.0" ) & "% lower MAPE (" & ci & ")",
+			            "Its edge over a simple weekday-aware naive rule is not established (" & ci & " includes 0)"
+			        )
+			    )
+		displayFolder: Forecast
+		lineageTag: 3ee62ae6-2281-49c7-a610-612a4285ddd2
+
+	measure 'Daily Net Flow (MW)' = CALCULATE ( AVERAGE ( grid_flow_daily[net_flow_mw] ), KEEPFILTERS ( grid_flow_daily[counterparty] = "MY" ) )
+		formatString: #,0
+		displayFolder: Flows
+		lineageTag: 219fb7ee-924f-4fc0-9f27-209bd1c8a9f5
+
+	measure 'Flow Export (GWh)' = DIVIDE ( CALCULATE ( SUM ( grid_flow_daily[export_mwh] ), KEEPFILTERS ( grid_flow_daily[counterparty] = "MY" ) ), 1000 )
+		formatString: #,0.0
+		displayFolder: Flows
+		lineageTag: 5b041f3b-32b6-49b8-884a-f8cb7f173ed6
+
+	measure 'Flow Import (GWh)' = DIVIDE ( CALCULATE ( SUM ( grid_flow_daily[import_mwh] ), KEEPFILTERS ( grid_flow_daily[counterparty] = "MY" ) ), 1000 )
+		formatString: #,0.0
+		displayFolder: Flows
+		lineageTag: 12cedda2-bb8a-4506-be7b-fee125df4bd7
+
+	measure 'Flow Subtitle' =
+			VAR e23 = CALCULATE ( [Flow Export (GWh)], dim_date[year] = 2023 )
+			VAR i23 = CALCULATE ( [Flow Import (GWh)], dim_date[year] = 2023 )
+			VAR e24 = CALCULATE ( [Flow Export (GWh)], dim_date[year] = 2024 )
+			VAR i24 = CALCULATE ( [Flow Import (GWh)], dim_date[year] = 2024 )
+			RETURN
+			    IF (
+			        ISBLANK ( e23 ) && ISBLANK ( e24 ),
+			        "No Malaysia interconnector flows are published for this grid",
+			        "Exported " & FORMAT ( e23, "#,0" ) & " GWh to Malaysia and imported " & FORMAT ( i23, "#,0" ) & " GWh in 2023; "
+			            & FORMAT ( e24, "#,0" ) & " and " & FORMAT ( i24, "#,0" ) & " GWh in 2024. Above 0 = Thailand exports"
+			    )
+		displayFolder: Flows
+		lineageTag: ae8290b9-8adb-4768-a430-cf8969a88d2f
+
 	column Value
 		dataType: int64
 		isHidden

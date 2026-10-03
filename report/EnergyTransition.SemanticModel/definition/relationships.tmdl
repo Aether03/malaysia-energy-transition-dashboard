@@ -18,3 +18,42 @@ relationship 6f1b2c3d-0005-4a1e-9b01-000000000005
 	fromColumn: country_annual.year
 	toColumn: dim_year.year
 
+relationship 6f1b2c3d-0006-4a1e-9b01-000000000006
+	fromColumn: grid_hourly.grid_key
+	toColumn: dim_grid.grid_key
+
+relationship 6f1b2c3d-0007-4a1e-9b01-000000000007
+	fromColumn: grid_hourly.date_key
+	toColumn: dim_date.date_key
+
+relationship 6f1b2c3d-0008-4a1e-9b01-000000000008
+	fromColumn: grid_hourly.hour
+	toColumn: dim_hour.hour
+
+relationship 6f1b2c3d-0009-4a1e-9b01-000000000009
+	fromColumn: grid_flow_daily.grid_key
+	toColumn: dim_grid.grid_key
+
+relationship 6f1b2c3d-0010-4a1e-9b01-000000000010
+	fromColumn: grid_flow_daily.date_key
+	toColumn: dim_date.date_key
+
+relationship 6f1b2c3d-0011-4a1e-9b01-000000000011
+	fromColumn: forecast_run_current.grid_key
+	toColumn: dim_grid.grid_key
+
+relationship 6f1b2c3d-0012-4a1e-9b01-000000000012
+	fromColumn: load_forecast_current.grid_key
+	toColumn: dim_grid.grid_key
+
+relationship 6f1b2c3d-0013-4a1e-9b01-000000000013
+	fromColumn: load_forecast_current.date_key
+	toColumn: dim_date.date_key
+
+relationship 6f1b2c3d-0014-4a1e-9b01-000000000014
+	fromColumn: load_forecast_current.hour
+	toColumn: dim_hour.hour
+
+relationship 6f1b2c3d-0015-4a1e-9b01-000000000015
+	fromColumn: forecast_status.grid_key
+	toColumn: dim_grid.grid_key

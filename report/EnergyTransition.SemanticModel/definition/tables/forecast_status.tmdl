@@ -1,0 +1,40 @@
+table forecast_status
+
+	column grid_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: grid_key
+
+	column run_id
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: run_id
+
+	column status
+		dataType: string
+		summarizeBy: none
+		sourceColumn: status
+
+	column message
+		dataType: string
+		summarizeBy: none
+		sourceColumn: message
+
+	column finished_at
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: finished_at
+
+	partition forecast_status = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    forecast_status = Source{[Schema="mart",Item="forecast_status"]}[Data]
+				in
+				    forecast_status
+

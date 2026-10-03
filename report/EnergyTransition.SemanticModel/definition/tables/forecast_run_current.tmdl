@@ -1,0 +1,158 @@
+table forecast_run_current
+
+	column model_run_id
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: model_run_id
+
+	column grid_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: grid_key
+
+	column run_kind
+		dataType: string
+		summarizeBy: none
+		sourceColumn: run_kind
+
+	column model_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: model_name
+
+	column trained_at
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: trained_at
+
+	column train_start
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: train_start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column test_start
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: test_start
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column test_end
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: test_end
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column mape_model
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: mape_model
+
+	column mape_baseline
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: mape_baseline
+
+	column mae_model
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: mae_model
+
+	column mae_baseline
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: mae_baseline
+
+	column improvement_pct
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: improvement_pct
+
+	column improvement_ci_low
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: improvement_ci_low
+
+	column improvement_ci_high
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: improvement_ci_high
+
+	column scored_hours
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: scored_hours
+
+	column excluded_hours
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: excluded_hours
+
+	column beats_baseline
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: beats_baseline
+
+	column mape_weekday_naive
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: mape_weekday_naive
+
+	column improvement_weekday_pct
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: improvement_weekday_pct
+
+	column improvement_weekday_ci_low
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: improvement_weekday_ci_low
+
+	column improvement_weekday_ci_high
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: improvement_weekday_ci_high
+
+	column mape_naive24
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: mape_naive24
+
+	column protocol_commit
+		dataType: string
+		summarizeBy: none
+		sourceColumn: protocol_commit
+
+	partition forecast_run_current = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    forecast_run_current = Source{[Schema="mart",Item="forecast_run_current"]}[Data]
+				in
+				    forecast_run_current
+

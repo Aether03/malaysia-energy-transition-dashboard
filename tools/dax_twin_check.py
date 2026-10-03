@@ -184,6 +184,80 @@ TWINS = (
 )
 
 
+# ---------- P4 Grid load & forecast (M3 step 11) ----------
+TH, YEARS = 'TREATAS ( { "TH_EGAT" }, dim_grid[grid_code] )', "TREATAS ( { 2023, 2024 }, dim_date[year] )"
+
+
+def _pick(rename: dict[str, str], keep: Callable[[dict], bool]) -> Callable[[list[dict]], list[dict]]:
+    """Filter a CTE showcase query's rows in Python (a CTE can't be a derived table) and rename columns."""
+    return lambda rows: [{rename.get(k, k): v for k, v in r.items()} for r in rows if keep(r)]
+
+
+def _day_sql(grid: str, date_key: int) -> str:
+    return f"""SELECT f.hour, f.actual_mw AS actual, f.forecast_mw AS model, f.baseline_mw AS baseline, f.date_key AS day
+               FROM mart.load_forecast_current AS f JOIN mart.dim_grid AS g ON g.grid_key = f.grid_key
+               WHERE g.grid_code = '{grid}' AND f.date_key = {date_key}"""
+
+
+DAY_COLS = '"actual", [Day Actual (MW)], "model", [Day Model (MW)], "baseline", [Day Baseline (MW)], "day", [Forecast Day Key]'
+
+P4_TWINS = (
+    Twin(
+        "P4 peak and load factor by month, Thailand 2023-24",
+        f'EVALUATE SUMMARIZECOLUMNS ( dim_date[year], dim_date[month], {TH}, {YEARS}, "peak", [Peak Load (MW)], "lf", [Load Factor (%)] )',
+        _body("08_grid_load"), ("year", "month"), ("peak", "lf"),
+        reshape=_pick({"peak_mw": "peak", "load_factor_pct": "lf"}, lambda r: r["grid_code"] == "TH_EGAT" and r["month"] is not None),
+    ),
+    Twin(
+        "P4 annual peak and load factor, both grids",
+        f'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], dim_date[year], {YEARS}, "peak", [Peak Load (MW)], "lf", [Load Factor (%)] )',
+        _body("08_grid_load"), ("grid_code", "year"), ("peak", "lf"),
+        reshape=_pick({"peak_mw": "peak", "load_factor_pct": "lf"}, lambda r: r["month"] is None),
+    ),
+    Twin(
+        "P4 load curves, both grids, every season x day type x hour (288 points)",
+        f'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], grid_hourly[season], grid_hourly[day_type], dim_hour[hour], {YEARS}, "mw", [Avg Load (MW)] )',
+        _derived("10_load_curves", "SELECT grid_code, season, day_type, hour, mean_mw AS mw FROM {q}"),
+        ("grid_code", "season", "day_type", "hour"), ("mw",),
+    ),
+    Twin(
+        "P4 backtest metric cards, both grids (SQL recomputes MAPE/MAE from the facts)",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], "mape_model", [Backtest MAPE Model (%)], "mape_baseline", [Backtest MAPE Baseline (%)], '
+        '"mae_model", [Backtest MAE Model (MW)], "mae_baseline", [Backtest MAE Baseline (MW)], "improvement", [Backtest Improvement (%)] )',
+        _body("09_forecast_metrics"), ("grid_code",), ("mape_model", "mape_baseline", "mae_model", "mae_baseline", "improvement"),
+        reshape=_pick({"improvement_pct": "improvement"}, lambda r: r["month"] is None),
+    ),
+    Twin(
+        "P4 forecast day, Thailand, no pick (defaults to the 2024 peak day, 29 Apr)",
+        f"EVALUATE SUMMARIZECOLUMNS ( dim_hour[hour], {TH}, {DAY_COLS} )",
+        _day_sql("TH_EGAT", 20240429), ("hour",), ("actual", "model", "baseline"), exact=("day",),
+    ),
+    Twin(
+        "P4 forecast day, Singapore, 10 Feb 2024 picked (Chinese New Year)",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_hour[hour], TREATAS ( { "SG_EMA" }, dim_grid[grid_code] ), '
+        f"TREATAS ( {{ DATE ( 2024, 2, 10 ) }}, forecast_date[date] ), {DAY_COLS} )",
+        _day_sql("SG_EMA", 20240210), ("hour",), ("actual", "model", "baseline"), exact=("day",),
+    ),
+    Twin(
+        "P4 day MAPE, Thailand 7 Dec 2024 (a published gap hour is left out)",
+        f'EVALUATE SUMMARIZECOLUMNS ( {TH}, TREATAS ( {{ DATE ( 2024, 12, 7 ) }}, forecast_date[date] ), '
+        '"model", [Day MAPE Model (%)], "baseline", [Day MAPE Baseline (%)] )',
+        """SELECT 100.0 * AVG(ABS(CAST(f.actual_mw AS FLOAT) - CAST(f.forecast_mw AS FLOAT)) / CAST(f.actual_mw AS FLOAT)) AS model,
+                  100.0 * AVG(ABS(CAST(f.actual_mw AS FLOAT) - CAST(f.baseline_mw AS FLOAT)) / CAST(f.actual_mw AS FLOAT)) AS baseline
+           FROM mart.load_forecast_current AS f JOIN mart.dim_grid AS g ON g.grid_key = f.grid_key
+           WHERE g.grid_code = 'TH_EGAT' AND f.date_key = 20241207 AND f.is_scored = 1""",
+        (), ("model", "baseline"),
+    ),
+    Twin(
+        "P4 Thailand-Malaysia flows by year (export and import GWh)",
+        f'EVALUATE SUMMARIZECOLUMNS ( dim_date[year], {TH}, {YEARS}, "exp", [Flow Export (GWh)], "imp", [Flow Import (GWh)] )',
+        _derived("11_interconnector_flows", "SELECT year, export_gwh AS exp, import_gwh AS imp FROM {q}"),
+        ("year",), ("exp", "imp"),
+    ),
+)
+TWINS = TWINS + P4_TWINS
+
+
 # ---------- running and comparing ----------
 def run_dax(query: str) -> list[dict]:
     with tempfile.NamedTemporaryFile("w", suffix=".dax", delete=False, encoding="utf-8") as fh:

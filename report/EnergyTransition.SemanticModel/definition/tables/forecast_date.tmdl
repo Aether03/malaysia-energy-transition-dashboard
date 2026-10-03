@@ -1,0 +1,26 @@
+table forecast_date
+
+	column date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: date_key
+
+	column date
+		dataType: dateTime
+		formatString: Long Date
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition forecast_date = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    forecast_date = Source{[Schema="mart",Item="forecast_date"]}[Data]
+				in
+				    forecast_date
+

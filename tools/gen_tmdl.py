@@ -22,6 +22,9 @@ TABLES_DIR = config.ROOT / "report" / "EnergyTransition.SemanticModel" / "defini
 MART_VIEWS = (
     "dim_country", "dim_source", "dim_year", "data_source", "kpi", "netr_target",
     "generation_annual", "country_annual", "run_latest", "dq_latest", "re_capacity_official",
+    # M3 P4
+    "dim_date", "dim_hour", "dim_grid", "grid_hourly", "grid_flow_daily", "forecast_date",
+    "forecast_run_current", "load_forecast_current", "forecast_status",
 )  # fmt: skip
 
 TYPE_MAP = {
@@ -32,10 +35,22 @@ TYPE_MAP = {
     "datetime2": "dateTime", "datetime": "dateTime", "date": "dateTime",
 }  # fmt: skip
 
-SORT_BY = {("dim_source", "display_name"): "sort_order"}
+SORT_BY = {
+    ("dim_source", "display_name"): "sort_order",
+    ("dim_date", "month_name"): "month",
+    ("dim_hour", "label"): "hour",
+    ("dim_grid", "name"): "display_order",
+    ("grid_hourly", "season"): "season_order",
+}
 
 # Fact-table years are hidden so every year filter goes through dim_year (DAX review, LOW).
-HIDDEN = {("generation_annual", "year"), ("country_annual", "year")}
+HIDDEN = {
+    ("generation_annual", "year"), ("country_annual", "year"),
+    # M3: hourly facts filter through dim_date / dim_hour (doc 05 §3), never their own copies.
+    ("grid_hourly", "year"), ("grid_hourly", "month"), ("grid_hourly", "hour"), ("grid_hourly", "ts_local"),
+    ("grid_hourly", "season_order"), ("grid_flow_daily", "year"), ("grid_flow_daily", "date"),
+    ("load_forecast_current", "hour"), ("load_forecast_current", "ts_local"), ("forecast_date", "date_key"),
+}  # fmt: skip
 
 
 def _columns(cursor, view: str) -> list[tuple[str, str, int]]:
@@ -79,6 +94,8 @@ def _column_tmdl(view: str, name: str, sql_type: str, scale: int, tag: str | Non
         lines.append(f"\t\tformatString: {'0.' + '0' * min(scale, 3) if scale else '0'}")
     elif data_type == "int64":
         lines.append("\t\tformatString: 0")
+    elif sql_type == "date":
+        lines.append("\t\tformatString: Long Date")  # what Desktop writes for a date-only column
     elif data_type == "dateTime":
         lines.append("\t\tformatString: General Date")
     if tag:
@@ -87,6 +104,8 @@ def _column_tmdl(view: str, name: str, sql_type: str, scale: int, tag: str | Non
     lines.append(f"\t\tsourceColumn: {name}")
     if (view, name) in SORT_BY:
         lines.append(f"\t\tsortByColumn: {SORT_BY[(view, name)]}")
+    if sql_type == "date":
+        lines.append("\n\t\tannotation UnderlyingDateTimeDataType = Date")
     return "\n".join(lines)
 
 
