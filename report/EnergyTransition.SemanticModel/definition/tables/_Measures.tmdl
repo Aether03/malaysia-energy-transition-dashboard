@@ -735,8 +735,8 @@ table _Measures
 
 	measure 'Peak Text' =
 			VAR pk = [Peak Load (MW)]
-			VAR at = CALCULATE ( MIN ( grid_hourly[ts_local] ), FILTER ( grid_hourly, grid_hourly[demand_mw] = pk ) )
-			RETURN IF ( NOT ISBLANK ( pk ), "Peak " & FORMAT ( pk, "#,0" ) & " MW on " & FORMAT ( at, "d mmm yyyy, h:00" ) )
+			VAR peakAt = CALCULATE ( MIN ( grid_hourly[ts_local] ), FILTER ( grid_hourly, grid_hourly[demand_mw] = pk ) )
+			RETURN IF ( NOT ISBLANK ( pk ), "Peak " & FORMAT ( pk, "#,0" ) & " MW on " & FORMAT ( peakAt, "d mmm yyyy, h:00" ) )
 		displayFolder: Grid load
 		lineageTag: e4810b1f-77b7-4cf1-bb55-1edc94f463ff
 
@@ -935,8 +935,8 @@ table _Measures
 			    IF (
 			        ISBLANK ( e23 ) && ISBLANK ( e24 ),
 			        "No Malaysia interconnector flows are published for this grid",
-			        "Exported " & FORMAT ( e23, "#,0" ) & " GWh to Malaysia and imported " & FORMAT ( i23, "#,0" ) & " GWh in 2023; "
-			            & FORMAT ( e24, "#,0" ) & " and " & FORMAT ( i24, "#,0" ) & " GWh in 2024. Above 0 = Thailand exports"
+			        "Exported " & FORMAT ( e23, "#,0.0" ) & " GWh to Malaysia and imported " & FORMAT ( i23, "#,0.0" ) & " GWh in 2023; "
+			            & FORMAT ( e24, "#,0.0" ) & " and " & FORMAT ( i24, "#,0.0" ) & " GWh in 2024. Above 0 = Thailand exports"
 			    )
 		displayFolder: Flows
 		lineageTag: ae8290b9-8adb-4768-a430-cf8969a88d2f

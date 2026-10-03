@@ -5,6 +5,9 @@
 #   powershell -NoProfile -File tools\dax_query.ps1 -QueryFile query.dax
 param([Parameter(Mandatory = $true)][string]$QueryFile)
 $ErrorActionPreference = 'Stop'
+# UTF-8 out: the console code page would turn non-ASCII text (e.g. the en dash in P4's season
+# labels) into look-alikes, and the twin keys would no longer match.
+[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false
 
 $pkg = Get-AppxPackage -Name 'Microsoft.MicrosoftPowerBIDesktop' | Select-Object -First 1
 if (-not $pkg) { throw 'Power BI Desktop (Store edition) is not installed.' }
