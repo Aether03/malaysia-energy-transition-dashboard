@@ -1,31 +1,37 @@
 table forecast_status
+	lineageTag: b30b02d2-5ce1-422f-a61c-2fc7e52a490d
 
 	column grid_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 0fac267a-c76e-4640-9a81-b6ea1fb8c627
 		summarizeBy: none
 		sourceColumn: grid_key
 
 	column run_id
 		dataType: int64
 		formatString: 0
+		lineageTag: 195f0030-244d-4e90-bd89-104e7af35c22
 		summarizeBy: none
 		sourceColumn: run_id
 
 	column status
 		dataType: string
+		lineageTag: 29c04426-b206-44e4-a079-db6ac1027f6e
 		summarizeBy: none
 		sourceColumn: status
 
 	column message
 		dataType: string
+		lineageTag: decd7073-94ae-4223-bca1-c14aae32083d
 		summarizeBy: none
 		sourceColumn: message
 
 	column finished_at
 		dataType: dateTime
 		formatString: General Date
+		lineageTag: e2741099-5944-48b5-b6a5-6a6b638d2cd5
 		summarizeBy: none
 		sourceColumn: finished_at
 

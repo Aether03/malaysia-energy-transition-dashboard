@@ -1,15 +1,18 @@
 table dim_date
+	lineageTag: 0b1cce81-6d19-4a74-84b5-75c83f1de4fb
 
 	column date_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: cffa9a5b-ff75-4879-b255-70b6bfe84fa1
 		summarizeBy: none
 		sourceColumn: date_key
 
 	column date
 		dataType: dateTime
 		formatString: Long Date
+		lineageTag: 7b00a29b-3e54-4612-b15d-ec9723749aaa
 		summarizeBy: none
 		sourceColumn: date
 
@@ -18,17 +21,20 @@ table dim_date
 	column year
 		dataType: int64
 		formatString: 0
+		lineageTag: fe3b54c4-ba93-48b3-ad8c-e4252512a8a7
 		summarizeBy: none
 		sourceColumn: year
 
 	column month
 		dataType: int64
 		formatString: 0
+		lineageTag: c4d25641-f676-4bd7-9649-bc95dd55f97d
 		summarizeBy: none
 		sourceColumn: month
 
 	column month_name
 		dataType: string
+		lineageTag: 49d842fc-6cf9-4ad9-ba8d-c5ab29e60574
 		summarizeBy: none
 		sourceColumn: month_name
 		sortByColumn: month
@@ -36,36 +42,43 @@ table dim_date
 	column iso_weekday
 		dataType: int64
 		formatString: 0
+		lineageTag: 4c05b059-e9a2-4ab4-8c21-7ff8c7dc6d29
 		summarizeBy: none
 		sourceColumn: iso_weekday
 
 	column is_weekend
 		dataType: boolean
+		lineageTag: 364bfeff-0b93-4302-8c7f-72d7ec4aeb32
 		summarizeBy: none
 		sourceColumn: is_weekend
 
 	column season_th
 		dataType: string
+		lineageTag: a6b0e49f-6f92-4c94-a139-18cb14c9fd7e
 		summarizeBy: none
 		sourceColumn: season_th
 
 	column season_my
 		dataType: string
+		lineageTag: 3223d816-5421-4150-9235-afc1baf464ae
 		summarizeBy: none
 		sourceColumn: season_my
 
 	column is_holiday_th
 		dataType: boolean
+		lineageTag: 3ab67061-c88d-4d1b-9bbd-e0fa9af5a0b2
 		summarizeBy: none
 		sourceColumn: is_holiday_th
 
 	column is_holiday_my
 		dataType: boolean
+		lineageTag: d1755784-a813-433e-a541-38872a526d75
 		summarizeBy: none
 		sourceColumn: is_holiday_my
 
 	column is_holiday_sg
 		dataType: boolean
+		lineageTag: 3fdd91ef-e032-423b-bd47-35cb4c2e0ca0
 		summarizeBy: none
 		sourceColumn: is_holiday_sg
 

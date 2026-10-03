@@ -1,9 +1,11 @@
 table grid_hourly
+	lineageTag: 6912f697-990c-4e01-b75b-951821c8fca1
 
 	column grid_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: fb5298d8-95a5-41ea-958b-4018a81911a3
 		summarizeBy: none
 		sourceColumn: grid_key
 
@@ -11,6 +13,7 @@ table grid_hourly
 		dataType: dateTime
 		isHidden
 		formatString: General Date
+		lineageTag: aeb90007-a8cc-4733-aa2e-c59847b5b0a3
 		summarizeBy: none
 		sourceColumn: ts_local
 
@@ -18,6 +21,7 @@ table grid_hourly
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 33963f57-804d-4fca-8840-48c81753bbb0
 		summarizeBy: none
 		sourceColumn: date_key
 
@@ -25,6 +29,7 @@ table grid_hourly
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: a6ef5e3f-3a94-41f6-b76f-6c8e12cc071c
 		summarizeBy: none
 		sourceColumn: hour
 
@@ -32,6 +37,7 @@ table grid_hourly
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 94267653-071e-49ef-a7eb-4473cb8003ce
 		summarizeBy: none
 		sourceColumn: year
 
@@ -39,17 +45,20 @@ table grid_hourly
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: b32e4d96-968a-4973-a3ac-83d7a9d85127
 		summarizeBy: none
 		sourceColumn: month
 
 	column demand_mw
 		dataType: double
 		formatString: 0.0
+		lineageTag: 1d89efec-fb96-4bc6-b173-6be410702861
 		summarizeBy: none
 		sourceColumn: demand_mw
 
 	column season
 		dataType: string
+		lineageTag: 5b3c5b1e-0e3c-4ca7-ab04-6001515428d8
 		summarizeBy: none
 		sourceColumn: season
 		sortByColumn: season_order
@@ -58,11 +67,13 @@ table grid_hourly
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 0444a067-6903-4ac2-b485-99c6c73ef835
 		summarizeBy: none
 		sourceColumn: season_order
 
 	column day_type
 		dataType: string
+		lineageTag: 63b49294-d5d3-4a78-b96d-ec0cb0ef8041
 		summarizeBy: none
 		sourceColumn: day_type
 

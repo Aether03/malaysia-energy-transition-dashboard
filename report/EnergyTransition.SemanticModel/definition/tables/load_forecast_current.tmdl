@@ -1,8 +1,10 @@
 table load_forecast_current
+	lineageTag: d00adb7d-48e8-4d2d-a1ba-fbc1a43904db
 
 	column model_run_id
 		dataType: int64
 		formatString: 0
+		lineageTag: 5b09a9ce-969a-4755-9b34-f35d09c09d88
 		summarizeBy: none
 		sourceColumn: model_run_id
 
@@ -10,6 +12,7 @@ table load_forecast_current
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 3b0a0415-b506-4835-a4ec-e2b406ac443f
 		summarizeBy: none
 		sourceColumn: grid_key
 
@@ -17,6 +20,7 @@ table load_forecast_current
 		dataType: dateTime
 		isHidden
 		formatString: General Date
+		lineageTag: f0925198-71ec-4c36-a6bc-8bbaa5c3c144
 		summarizeBy: none
 		sourceColumn: ts_local
 
@@ -24,6 +28,7 @@ table load_forecast_current
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 9b02a563-9c68-43f2-add9-760b7ad44abd
 		summarizeBy: none
 		sourceColumn: date_key
 
@@ -31,29 +36,34 @@ table load_forecast_current
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 7a3a207b-1105-4764-9590-bef1d7e0dc85
 		summarizeBy: none
 		sourceColumn: hour
 
 	column actual_mw
 		dataType: double
 		formatString: 0.0
+		lineageTag: 7bea53f2-9833-4202-b455-7489e4b80f28
 		summarizeBy: none
 		sourceColumn: actual_mw
 
 	column forecast_mw
 		dataType: double
 		formatString: 0.0
+		lineageTag: 6a86bc33-e9c0-4a5e-a1c5-793fac953def
 		summarizeBy: none
 		sourceColumn: forecast_mw
 
 	column baseline_mw
 		dataType: double
 		formatString: 0.0
+		lineageTag: 50be6ad0-1e7f-4c7d-861f-94b764797282
 		summarizeBy: none
 		sourceColumn: baseline_mw
 
 	column is_scored
 		dataType: boolean
+		lineageTag: 91547434-2339-4b93-b34e-fb25e7d9583d
 		summarizeBy: none
 		sourceColumn: is_scored
 

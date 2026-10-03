@@ -1,15 +1,18 @@
 table forecast_date
+	lineageTag: e3f59224-0901-4cd9-979e-82f2ab2d667d
 
 	column date_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 37a2eaf7-3473-4c7b-b4d2-6d9a85156060
 		summarizeBy: none
 		sourceColumn: date_key
 
 	column date
 		dataType: dateTime
 		formatString: Long Date
+		lineageTag: 94b8452c-0933-458d-87d6-691e0b9186cb
 		summarizeBy: none
 		sourceColumn: date
 

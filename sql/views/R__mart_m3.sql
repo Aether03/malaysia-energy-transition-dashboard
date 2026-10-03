@@ -41,12 +41,20 @@ JOIN dw.dim_country AS c
 WHERE g.is_published = 1;
 GO
 
--- The forecast panel's date picker (P4). Deliberately not related to any fact: it filters only
--- the forecast measures (via TREATAS on date_key), never the load or flow charts. It spans every
--- calendar date, so a day outside the backtest window can be picked and shows the empty state.
+-- The forecast page's day list (P4b). Deliberately not related to any fact: it filters only the
+-- forecast measures (via the picked date), never the load or flow charts. Backtest days only (doc 03:
+-- "backtest days only"; Amirul, GUI round 1), i.e. the dates of any current published run's window.
+-- [Forecast Empty State] still guards a date outside the window if the window ever changes.
 CREATE OR ALTER VIEW mart.forecast_date AS
-SELECT date_key, date
-FROM dw.dim_date;
+SELECT d.date_key, d.date
+FROM dw.dim_date AS d
+WHERE EXISTS (
+    SELECT 1
+    FROM dw.forecast_run AS r
+    JOIN dw.dim_grid AS g ON g.grid_key = r.grid_key
+    WHERE r.is_current = 1 AND g.is_published = 1
+      AND d.date BETWEEN r.test_start AND r.test_end
+);
 GO
 
 -- Published hours only: a missing hour has no row, so charts show a gap, never a filled value.

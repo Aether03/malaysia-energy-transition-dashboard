@@ -1,8 +1,10 @@
 table forecast_run_current
+	lineageTag: a1c6dcf5-eb30-4a99-ac8f-1b3c0dfb59c8
 
 	column model_run_id
 		dataType: int64
 		formatString: 0
+		lineageTag: 222731f6-2a2d-4def-beef-170292b54853
 		summarizeBy: none
 		sourceColumn: model_run_id
 
@@ -10,28 +12,33 @@ table forecast_run_current
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 50c24f2a-1d92-46af-8a13-5ce5ae76a879
 		summarizeBy: none
 		sourceColumn: grid_key
 
 	column run_kind
 		dataType: string
+		lineageTag: 228e2e3b-d0b0-42eb-85c5-96a9c458513c
 		summarizeBy: none
 		sourceColumn: run_kind
 
 	column model_name
 		dataType: string
+		lineageTag: 21abf18c-d66c-492d-ae5e-3224f4e94c33
 		summarizeBy: none
 		sourceColumn: model_name
 
 	column trained_at
 		dataType: dateTime
 		formatString: General Date
+		lineageTag: 13e184d3-0913-45a4-a9ff-d5a24bdde55e
 		summarizeBy: none
 		sourceColumn: trained_at
 
 	column train_start
 		dataType: dateTime
 		formatString: Long Date
+		lineageTag: 79d908a3-3e3e-4b08-b8a5-c8fb8748ae87
 		summarizeBy: none
 		sourceColumn: train_start
 
@@ -40,6 +47,7 @@ table forecast_run_current
 	column test_start
 		dataType: dateTime
 		formatString: Long Date
+		lineageTag: 6a758d50-f45a-4c2c-8579-dcbd9cfe9ed3
 		summarizeBy: none
 		sourceColumn: test_start
 
@@ -48,6 +56,7 @@ table forecast_run_current
 	column test_end
 		dataType: dateTime
 		formatString: Long Date
+		lineageTag: 64f69764-79ae-433b-91b9-87e69e313efe
 		summarizeBy: none
 		sourceColumn: test_end
 
@@ -56,94 +65,110 @@ table forecast_run_current
 	column mape_model
 		dataType: double
 		formatString: 0.000
+		lineageTag: 5e8a3a2e-e46d-415c-b7c6-f1c78f9b339e
 		summarizeBy: none
 		sourceColumn: mape_model
 
 	column mape_baseline
 		dataType: double
 		formatString: 0.000
+		lineageTag: 2962e791-6345-4069-86d5-9643c532fbd0
 		summarizeBy: none
 		sourceColumn: mape_baseline
 
 	column mae_model
 		dataType: double
 		formatString: 0.000
+		lineageTag: 423f0bb3-f29c-420f-942c-65f43264e451
 		summarizeBy: none
 		sourceColumn: mae_model
 
 	column mae_baseline
 		dataType: double
 		formatString: 0.000
+		lineageTag: 21bb7401-ca0e-43c8-b34f-672825fdef3d
 		summarizeBy: none
 		sourceColumn: mae_baseline
 
 	column improvement_pct
 		dataType: double
 		formatString: 0.000
+		lineageTag: f223a785-279f-4474-a97e-8c9f5648cee6
 		summarizeBy: none
 		sourceColumn: improvement_pct
 
 	column improvement_ci_low
 		dataType: double
 		formatString: 0.000
+		lineageTag: 67901434-c31a-49ce-89b5-6728282dbe40
 		summarizeBy: none
 		sourceColumn: improvement_ci_low
 
 	column improvement_ci_high
 		dataType: double
 		formatString: 0.000
+		lineageTag: 9ce73ec5-0b2d-4495-a5e9-b9645ca721f2
 		summarizeBy: none
 		sourceColumn: improvement_ci_high
 
 	column scored_hours
 		dataType: int64
 		formatString: 0
+		lineageTag: ea60e26e-e5c8-46e7-a227-dcd93c6ce71f
 		summarizeBy: none
 		sourceColumn: scored_hours
 
 	column excluded_hours
 		dataType: int64
 		formatString: 0
+		lineageTag: 3007debc-e6a7-4a30-8408-32e21e36732c
 		summarizeBy: none
 		sourceColumn: excluded_hours
 
 	column beats_baseline
 		dataType: boolean
+		lineageTag: cd414789-530e-4ca3-8af7-96c82c04477c
 		summarizeBy: none
 		sourceColumn: beats_baseline
 
 	column mape_weekday_naive
 		dataType: double
 		formatString: 0.000
+		lineageTag: bc4e3d1e-8158-4a3c-8e6c-e288709e7406
 		summarizeBy: none
 		sourceColumn: mape_weekday_naive
 
 	column improvement_weekday_pct
 		dataType: double
 		formatString: 0.000
+		lineageTag: c149708d-b411-4a8b-8e70-9d242d0ba4e5
 		summarizeBy: none
 		sourceColumn: improvement_weekday_pct
 
 	column improvement_weekday_ci_low
 		dataType: double
 		formatString: 0.000
+		lineageTag: 7403d352-19d2-4637-b031-8b47d0b64b18
 		summarizeBy: none
 		sourceColumn: improvement_weekday_ci_low
 
 	column improvement_weekday_ci_high
 		dataType: double
 		formatString: 0.000
+		lineageTag: 622b6431-0a32-4eac-b57f-c129f3e91e3e
 		summarizeBy: none
 		sourceColumn: improvement_weekday_ci_high
 
 	column mape_naive24
 		dataType: double
 		formatString: 0.000
+		lineageTag: 7cec3e00-585b-4f49-8cd2-223ee0fb5ff9
 		summarizeBy: none
 		sourceColumn: mape_naive24
 
 	column protocol_commit
 		dataType: string
+		lineageTag: 961d1d53-d03a-4ba4-bb39-c026a223797f
 		summarizeBy: none
 		sourceColumn: protocol_commit
 

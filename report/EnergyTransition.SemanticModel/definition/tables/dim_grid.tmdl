@@ -1,57 +1,68 @@
 table dim_grid
+	lineageTag: 8f9331c9-7eeb-4509-b0e4-e2875eb8d92b
 
 	column grid_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 78bc248d-a2ae-4ce8-ab46-084e4f897fa8
 		summarizeBy: none
 		sourceColumn: grid_key
 
 	column grid_code
 		dataType: string
+		lineageTag: 727a2321-ceda-46c0-81b7-5884a5ab6f02
 		summarizeBy: none
 		sourceColumn: grid_code
 
 	column name
 		dataType: string
+		lineageTag: dbc3b117-d342-4149-9286-e0dcb287dea1
 		summarizeBy: none
 		sourceColumn: name
 		sortByColumn: display_order
 
 	column country_name
 		dataType: string
+		lineageTag: 589550f7-5f2c-4e79-8f0a-170a3d7b5661
 		summarizeBy: none
 		sourceColumn: country_name
 
 	column utc_offset_min
 		dataType: int64
 		formatString: 0
+		lineageTag: 8295580e-6fc7-4066-afc9-5de87ec5e5c9
 		summarizeBy: none
 		sourceColumn: utc_offset_min
 
 	column data_source_code
 		dataType: string
+		lineageTag: e8bcacb7-b558-4c40-be6e-3e3d3573b918
 		summarizeBy: none
 		sourceColumn: data_source_code
 
 	column demand_label
 		dataType: string
+		lineageTag: 2bb48cef-227f-4d4a-a836-7d153382703b
 		summarizeBy: none
 		sourceColumn: demand_label
 
 	column is_open_data_proxy
 		dataType: boolean
+		lineageTag: 0b88b448-ff9a-40c3-8b38-ec9789843beb
 		summarizeBy: none
 		sourceColumn: is_open_data_proxy
 
 	column banner_note
 		dataType: string
+		lineageTag: 51b69dce-cdf7-45b7-a8bd-62d0909ec289
 		summarizeBy: none
 		sourceColumn: banner_note
 
 	column display_order
 		dataType: int64
 		formatString: 0
+		lineageTag: fb225431-c021-40eb-8f24-58f169f99c09
 		summarizeBy: none
 		sourceColumn: display_order
 

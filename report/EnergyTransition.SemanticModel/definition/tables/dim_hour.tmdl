@@ -1,13 +1,16 @@
 table dim_hour
+	lineageTag: d78f3ed6-00b2-4495-8923-2a18f25a66ee
 
 	column hour
 		dataType: int64
 		formatString: 0
+		lineageTag: 802cca0e-9f97-431a-9741-9cf10ee07c22
 		summarizeBy: none
 		sourceColumn: hour
 
 	column label
 		dataType: string
+		lineageTag: cf08af60-a751-4278-91bb-d51c74397999
 		summarizeBy: none
 		sourceColumn: label
 		sortByColumn: hour

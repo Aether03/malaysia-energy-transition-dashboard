@@ -1,14 +1,17 @@
 table grid_flow_daily
+	lineageTag: de3d10d0-a9db-4ee5-98d7-32f101c99bb6
 
 	column grid_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 00a8ba4e-4e71-47a5-b6a5-3130bbba78b6
 		summarizeBy: none
 		sourceColumn: grid_key
 
 	column counterparty
 		dataType: string
+		lineageTag: 67c9aab9-d856-4361-8568-3ddf3ed697f8
 		summarizeBy: none
 		sourceColumn: counterparty
 
@@ -16,6 +19,7 @@ table grid_flow_daily
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 9d566bbd-36dc-4f15-9279-9f94cccc9e90
 		summarizeBy: none
 		sourceColumn: date_key
 
@@ -23,6 +27,7 @@ table grid_flow_daily
 		dataType: dateTime
 		isHidden
 		formatString: Long Date
+		lineageTag: 505f9ac5-ed4f-415e-a565-bbf75b96f2d2
 		summarizeBy: none
 		sourceColumn: date
 
@@ -32,30 +37,35 @@ table grid_flow_daily
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 145c6941-aa6e-47ce-a17c-da9c5d016c00
 		summarizeBy: none
 		sourceColumn: year
 
 	column hours_present
 		dataType: int64
 		formatString: 0
+		lineageTag: 25133d79-097a-4c96-a153-42628c0dde9f
 		summarizeBy: none
 		sourceColumn: hours_present
 
 	column export_mwh
 		dataType: double
 		formatString: 0.0
+		lineageTag: 1edd42aa-2e26-47cf-96f6-2907301e6e01
 		summarizeBy: none
 		sourceColumn: export_mwh
 
 	column import_mwh
 		dataType: double
 		formatString: 0.0
+		lineageTag: e411470a-5b3a-4f7d-9cd6-5b4836a45bb5
 		summarizeBy: none
 		sourceColumn: import_mwh
 
 	column net_flow_mw
 		dataType: double
 		formatString: 0.0
+		lineageTag: 4d7dd8b4-c6c7-4c1c-8627-35057220c818
 		summarizeBy: none
 		sourceColumn: net_flow_mw
 

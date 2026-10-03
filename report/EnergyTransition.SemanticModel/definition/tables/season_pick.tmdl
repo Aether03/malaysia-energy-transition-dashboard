@@ -1,14 +1,17 @@
 table season_pick
+	lineageTag: f88f0312-98ec-4b6d-b2f3-81452e12772f
 
 	column grid_key
 		dataType: int64
 		isHidden
 		formatString: 0
+		lineageTag: 4cb7a862-a831-4689-84a6-2f809223a98e
 		summarizeBy: none
 		sourceColumn: grid_key
 
 	column season
 		dataType: string
+		lineageTag: b3d7cec4-955c-471f-a202-ca09464e822f
 		summarizeBy: none
 		sourceColumn: season
 		sortByColumn: season_order
@@ -16,6 +19,7 @@ table season_pick
 	column season_order
 		dataType: int64
 		formatString: 0
+		lineageTag: b7586ce1-e41f-411e-9194-253ff9bbd105
 		summarizeBy: none
 		sourceColumn: season_order
 
