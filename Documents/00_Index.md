@@ -19,10 +19,38 @@
   - The P4 Thailand label is **"Sum of regional demand (EGAT)"**, with a footnote: hourly mean; published system peaks are 2–4% higher (`docs/reconciliation.md`).
   - The FR-22 sample week matches pandas vs SQL for both grids.
 - **Step 1 done (2026-10-03):** 7 Desktop-made templates in `tools/templates/` (`36c0667`, `5db6303`). The tile style is stored as mode Basic + orientation 1D; Date Picker as RelativeDatePicker. **Clean-up done (2026-10-03):** Scratch page and table deleted in Desktop. That save also renumbered z-order and tabOrder on every visual, so the report files were restored to the committed, M2-verified state (`git checkout -- report/`); validator 0 problems. **Close Desktop WITHOUT saving** before the next pipeline run.
-- **Step 7 in progress (2026-10-03, session 2):**
-  - Forecast contract written as stubs in `pipeline/forecast/`: `features`, `baseline`, `metrics`, `backtest`, `protocol`, `store`. Every body raises NotImplementedError, and the docstrings are the spec. `metrics` and `protocol` are additions to the plan's file list.
-  - The protocol's settings live in a ```json block in `docs/forecast.md` §Protocol. `committed_protocol()` gates `--final` on both the protocol and `pipeline/forecast/` being committed and clean.
-  - A Sonnet agent is writing `tests/test_forecast.py` + `tests/test_forecast_protocol.py` (26 test groups). They get a Deep read before commit.
+- **Step 7 done (`bad6e31`):** the forecast contract as stubs (docstrings are the spec), plus 201 tests by a Sonnet agent, Deep-read before commit. `metrics.py` and `protocol.py` are additions to the plan's file list.
+- **Step 8 code + protocol draft done (`be9203f`). 2023 only; no 2024 hour was ever read.**
+  - **Code:** `pipeline/forecast/` is implemented and all 470 tests pass.
+  - **Modes:** `pipeline forecast --dev` (DEV) / `--final` (FINAL) / no flag (replay). `pipeline run` gets a FORECAST step, which replays the recorded FINAL run and is a no-op until one exists.
+  - **V014:** the date check now fits a rolling backtest (`train_end < test_end`).
+  - **`docs/forecast.md`:** method, the §Protocol JSON (l2, 15 leaves, chosen from 6 configs on the Oct–Dec 2023 holdout), development results and limits. Singapore's NEM forecast is settled as **not** a benchmark.
+  - **2023 holdout:** TH 4.56% vs 6.70% baseline (improvement CI 24.9 to 37.7); SG 1.47% vs 1.98% (CI 15.4 to 34.5). Seeds are stable. Weak spot: TH 22–31 Dec 2023, a real cold spell plus year-end, listed under Limits.
+  - **Dry run:** the FINAL/replay path ran on 2023 with a stand-in protocol and was rolled back, 9/9 checks pass. 2 DEV runs are stored (model_run_id 1–2).
+  - **The gate:** `docs/forecast_final.json` will hold the FINAL record. `committed_protocol()` refuses `--final` unless `docs/forecast.md` and `pipeline/forecast/` are committed and clean (verified on the real repo).
+- **`ecc:mle-reviewer` done; fixes in `efb4af6`, 505 tests pass.**
+  - The review found 0 CRITICAL, 3 HIGH, 7 MEDIUM and some LOW. All are fixed:
+    - FINAL/replay tests on fakes;
+    - input fingerprints and a forecast hash;
+    - a wider gate, which also guards the record;
+    - the weekday-aware naive as a secondary reference;
+    - DEV capped at 2023; `--final` takes one `--grid`;
+    - 7-day block bootstrap.
+  - DEV runs 5–6 use the final method.
+  - **Thailand finding, dev only:** the model beats the seasonal naive (CI 21.8 to 39.3) but **not** the weekday-aware naive (+8.4%, CI −15.3 to 24.6). SG beats every reference.
+  - **Re-verification: APPROVE WITH WARNINGS.** Its 3 remaining items are fixed in `d7a03e2` (509 tests):
+    - a second grid must match the first grid's recorded settings and code;
+    - Python major.minor only in the fingerprint;
+    - atomic record write.
+  - The gate is clean at `d7a03e2`.
+- **Step 9 needs Amirul's go:** the run is irreversible, and H3's banner policy is his call.
+  - **Runbook:**
+    1. `pipeline forecast --final --grid TH_EGAT`
+    2. Commit `docs/forecast_final.json`.
+    3. `pipeline forecast --final --grid SG_EMA`
+    4. Commit the record again.
+    5. Write the results into `docs/forecast.md`.
+    6. `pipeline forecast` (replay), which must be identical.
 - **Original plan for this session, from step 7:** forecast tests first, then step 8 (development on 2023 only, protocol committed, `ecc:mle-reviewer` BEFORE any 2024 run), then step 9 (the single FINAL 2024 run per grid).
   - Use a fresh session, per the plan.
   - Both grids use the same locked protocol. V013 enforces one FINAL run per grid.
