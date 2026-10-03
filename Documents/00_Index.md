@@ -43,7 +43,14 @@
     - Python major.minor only in the fingerprint;
     - atomic record write.
   - The gate is clean at `d7a03e2`.
-- **Step 9 needs Amirul's go:** the run is irreversible, and H3's banner policy is his call.
+- **Step 9 DONE (2026-10-03), run once per grid with Amirul's go.** The H3 policy is report-only: the banner follows the seasonal naive.
+  - **TH_EGAT** (FINAL run 7): 3.31% vs 6.23%, improvement 46.9% (CI 39.3 to 52.8).
+  - **SG_EMA** (FINAL run 8): 1.64% vs 2.50%, improvement 34.5% (CI 26.2 to 41.7).
+  - Both beat the baseline, so **no WARN banner**. Both also beat the weekday-aware naive (TH 33.9%, CI 26.0 to 40.1; SG 24.4%, CI 15.7 to 32.4).
+  - Weak months: TH April (Songkran) and January. Records: `d73808f`, `4198eb1`. `pipeline forecast` replay: identical.
+  - **Never run `--final` again.** A change means a labelled POST_HOC run.
+- **Next: step 10** (`R__mart_m3` + showcase `08`/`09`), then 11 (model + twins), 12 (P4 page + GUI rounds), 13 (acceptance). DEV runs 1–6 stay in `dw.forecast_run` and are never shown.
+- **Old step 9 note:** it needed Amirul's go because the run is irreversible and H3's banner policy was his call.
   - **Runbook:**
     1. `pipeline forecast --final --grid TH_EGAT`
     2. Commit `docs/forecast_final.json`.

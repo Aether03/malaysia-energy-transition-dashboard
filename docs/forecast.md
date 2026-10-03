@@ -115,7 +115,57 @@ These are development numbers, used to choose the settings above. They are not t
 The development runs are stored as DEV rows in `dw.forecast_run`; the report never shows them.
 
 ## Results (2024 backtest)
-Not run yet. It will be filled in from the single FINAL run per grid, weak months included.
+The single FINAL run per grid, 2026-10-03, under the protocol committed at `d7a03e2`: FINAL run 7 (TH_EGAT) and run 8 (SG_EMA). The records are in `docs/forecast_final.json` (`d73808f`, `4198eb1`), and the replay reproduced both runs bit-for-bit.
+
+**Decision rule: both grids beat the seasonal-naive baseline.** The lower bound of the 95% CI is far above 0, so P4 shows no WARN banner.
+
+| Grid | Model MAPE | Baseline MAPE | Model MAE | Baseline MAE | Improvement (95% CI) | Scored / excluded hours |
+|---|---|---|---|---|---|---|
+| Thailand | 3.31% | 6.23% | 810 MW | 1,485 MW | **46.9%** (39.3 to 52.8) | 8,778 / 6 |
+| Singapore | 1.64% | 2.50% | 111 MW | 169 MW | **34.5%** (26.2 to 41.7) | 8,784 / 0 |
+
+- **Excluded hours (Thailand):** the 6 come from the 3 published gaps in December 2024. Each gap hour has no actual, and the hour a week later has no baseline.
+
+**Secondary references** (reported; they don't set the banner):
+
+| Grid | Reference | Reference MAPE | Improvement (95% CI) |
+|---|---|---|---|
+| Thailand | Naive *t* − 24 h | 5.48% | 39.6% (32.5 to 45.4) |
+| Thailand | Weekday-aware naive | 5.01% | 33.9% (26.0 to 40.1) |
+| Singapore | Naive *t* − 24 h | 3.32% | 50.6% (46.9 to 54.1) |
+| Singapore | Weekday-aware naive | 2.17% | 24.4% (15.7 to 32.4) |
+
+On 2024, the model's advantage over the weekday-aware rule **is** established for both grids. That differs from the 2023 development holdout, where Thailand's edge over that rule was not established (CI −15.3 to 24.6). The 2023 holdout was three months and was dominated by the year-end cold spell; 2024 covers a full year.
+
+**Per month** (MAPE %, model vs baseline):
+
+| Month | TH model | TH baseline | SG model | SG baseline |
+|---|---|---|---|---|
+| Jan | 4.79 | 9.61 | 1.78 | 2.07 |
+| Feb | 3.29 | 7.38 | 1.80 | 4.49 |
+| Mar | 2.54 | 3.88 | 1.41 | 1.60 |
+| Apr | **5.50** | 12.07 | 1.83 | 2.53 |
+| May | 4.49 | 7.33 | **1.96** | 2.87 |
+| Jun | 3.07 | 4.56 | 1.56 | 2.34 |
+| Jul | 2.50 | 3.44 | 1.72 | 1.96 |
+| Aug | 2.63 | 4.86 | 1.41 | 2.46 |
+| Sep | 2.21 | 2.83 | 1.75 | 2.34 |
+| Oct | 2.27 | 3.99 | 1.61 | 2.76 |
+| Nov | 2.59 | 5.02 | 1.20 | 2.23 |
+| Dec | 3.82 | 9.85 | 1.62 | 2.46 |
+
+**Weak months.** The model beats the baseline in every month for both grids. The margin is smallest where the baseline is already good: Thailand in September, Singapore in March and July.
+- **Thailand, April (5.50%):** Songkran (12–16 April 2024, with the bridge holiday) and the hot-season peak. The model has seen one Songkran (2023) in training.
+- **Thailand, January (4.79%):** the New Year holidays, and a fold that trains on about one year with the atypical year-end as its early-stopping window (see Limits).
+- **Singapore, May (1.96%)** has its highest MAPE. Singapore's **February** is where the baseline fails most (4.49%), because of Chinese New Year (10–12 February); the model holds at 1.80%.
+
+**Holidays.** Holiday hours are harder for the model too, but far harder for the baseline:
+- **Thailand:** model 5.31% vs baseline 12.79% on 672 holiday hours, against 3.14% vs 5.68% on other hours.
+- **Singapore:** model 2.27% vs baseline 7.98% on 288 holiday hours, against 1.62% vs 2.32% on other hours.
+
+**Bias** (mean forecast − actual on the scored hours): the model under-forecasts slightly. Thailand −170 MW (about 0.7% of mean demand); Singapore −31 MW (about 0.5%). The baseline's bias is near 0: −12 MW and −4 MW.
+
+**Early stopping** chose 51–543 trees per fold for Thailand and 80–1,069 for Singapore. No fold reached the 2,000-tree cap.
 
 ## Limits
 - **Only two years of data:** each season is seen once before it is tested. January 2024 trains on about one year, and its early-stopping window is the atypical year-end period.
