@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are month-based. Forecast: LightGBM issued at local midnight, backtested once on 2024 (docs/forecast.md); baseline = same hour last week. Gaps shown, never filled. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0).",
+                    "value": "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are month-based. Gaps shown, never filled. Flows: Thailand's malaysia_EXP/IMP, daily means, above 0 = Thailand exports. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0).",
                     "textStyle": {
                       "fontSize": "9pt",
                       "color": "#6b6a66"

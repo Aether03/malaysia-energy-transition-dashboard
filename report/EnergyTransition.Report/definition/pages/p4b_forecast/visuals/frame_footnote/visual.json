@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "frame_footnote",
+  "position": {
+    "x": 200,
+    "y": 672,
+    "z": 99,
+    "width": 1056,
+    "height": 44,
+    "tabOrder": 99
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Forecast: LightGBM issued at local midnight for the next 24 h, monthly rolling-origin backtest over 2024, run once under a locked protocol (docs/forecast.md). Baseline = the same hour last week; improvement = 1 − MAPE model ÷ MAPE baseline, 95% CI from a 7-day block bootstrap. Pick a day; none picked = the grid's 2024 peak day.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#6b6a66"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -39,6 +39,7 @@ NAV = (
     ("Generation", "p2_generation"),
     ("Regions", "p3_regions"),
     ("Grid load", "p4_grid_load"),
+    ("Forecast", "p4b_forecast"),
     ("ASEAN", "p5_asean"),
     ("About", "p6_about"),
 )

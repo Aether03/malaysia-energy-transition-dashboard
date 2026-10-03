@@ -3,10 +3,10 @@
   "name": "p4_heatmap",
   "position": {
     "x": 672,
-    "y": 134,
+    "y": 136,
     "z": 52,
     "width": 584,
-    "height": 176,
+    "height": 228,
     "tabOrder": 52
   },
   "visual": {
@@ -152,7 +152,21 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "7D"
+                  "Value": "8D"
+                }
+              }
+            },
+            "columnAdjustment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'fixedWidth'"
+                }
+              }
+            },
+            "defaultColumnWidth": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
                 }
               }
             }
@@ -165,7 +179,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "7D"
+                  "Value": "8D"
                 }
               }
             }

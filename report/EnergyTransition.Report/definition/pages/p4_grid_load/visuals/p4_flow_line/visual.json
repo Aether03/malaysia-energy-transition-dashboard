@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_flow_line",
   "position": {
-    "x": 840,
-    "y": 442,
-    "z": 65,
-    "width": 416,
-    "height": 160,
-    "tabOrder": 65
+    "x": 200,
+    "y": 520,
+    "z": 56,
+    "width": 1056,
+    "height": 120,
+    "tabOrder": 56
   },
   "visual": {
     "visualType": "lineChart",

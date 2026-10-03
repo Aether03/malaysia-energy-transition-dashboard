@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_flow_note",
   "position": {
-    "x": 840,
-    "y": 606,
-    "z": 66,
-    "width": 416,
-    "height": 58,
-    "tabOrder": 66
+    "x": 200,
+    "y": 642,
+    "z": 57,
+    "width": 1056,
+    "height": 22,
+    "tabOrder": 57
   },
   "visual": {
     "visualType": "shape",

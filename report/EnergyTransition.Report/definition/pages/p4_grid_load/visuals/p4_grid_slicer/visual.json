@@ -136,6 +136,11 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "syncGroup": {
+      "groupName": "p4_grid",
+      "fieldChanges": true,
+      "filterChanges": true
+    }
   }
 }

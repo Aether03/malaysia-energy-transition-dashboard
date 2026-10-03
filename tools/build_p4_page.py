@@ -1,14 +1,16 @@
 """Build the P4 Grid load page as PBIR visual definitions (M3 step 12, doc 03 P4).
 
+P4 is split in two pages (GUI round 1 decision): this one holds the load shapes and flows; the
+day-ahead forecast lives on `p4b_forecast` (build_p4b_page.py, which reuses the helpers below).
+
 Layout (1280x720 frame, doc 04 §4): header (title, subtitle, grid slicer); info banner; row 1 =
 typical-day load curve with the season tiles (left) and the month x hour heatmap (right); row 2 = two
 aligned single-axis charts on the same month axis (peak demand | load factor, doc 04 F1); row 3 = the
-forecast panel (backtest-day picker, actual / model / baseline lines, MAPE cards, verdict) on the left
-and the Thailand-Malaysia interconnector flows on the right. Re-running rebuilds the page.
+Thailand-Malaysia interconnector flows with its subtitle. Re-running rebuilds the page.
 
-The page filter keeps 2023-24 (the forecast measures ignore dim_date by design). The grid slicer saves
-its default selection so [Grid Selected] is true on open; season_pick and forecast_date are disconnected
-slicers that reach only their own measures (no visualInteractions needed).
+The page filter keeps 2023-24. The grid slicer saves its default selection so [Grid Selected] is true
+on open, and is synced with the Forecast page's grid slicer (syncGroup); season_pick is a disconnected
+slicer that reaches only the load-curve measure (no visualInteractions needed).
 
     .venv/Scripts/python tools/build_p4_page.py
 """
@@ -20,6 +22,7 @@ from report_builder import column_ref, lit, measure_ref, projection, solid, text
 
 PAGE = "p4_grid_load"
 DEFAULT_GRID = "Thailand national grid (EGAT)"
+GRID_SYNC_GROUP = "p4_grid"  # keeps the grid slicer in step across P4 and P4b
 YEARS = (2023, 2024)
 # Light sequential-blue step (doc 04 §3.4) for the older year, navy for the newer one.
 YEAR_COLOURS = {2023: "#86b6ef", 2024: rb.NAVY}
@@ -27,12 +30,13 @@ BANNER_FILL = "#cde2fb"  # doc 04 §3.4 theme minimum: the light end of the info
 
 # Vertical rhythm (everything sits between the header at y 88 and the footnote at y 672).
 BANNER_Y, BANNER_H = 104, 26
-ROW1_Y, ROW1_H = 134, 176  # the heatmap needs title + header + 12 rows of ~11 px
-ROW2_Y, ROW2_H = 316, 120  # charts under ~120 px render as a placeholder icon (M2 GUI round 4)
-ROW3_Y = 442
-ROW3_END = 664
+ROW1_Y, ROW1_H = 136, 228  # heatmap: title + header + 12 rows at 8 pt headers
+ROW2_Y, ROW2_H = 372, 140
+ROW3_Y, ROW3_H = 520, 120
+NOTE_Y, NOTE_H = 642, 22
 
-# Row 1: the left block (curve + season tiles) is narrower than the heatmap, which needs 24 columns.
+# Row 1: the left block (curve + season tiles) is narrower than the heatmap, which needs 24 columns
+# of 20 px plus the row header.
 SEASON_W = 136
 LEFT1_W = 456
 CURVE_W = LEFT1_W - rb.GAP / 2 - SEASON_W  # 312
@@ -44,32 +48,11 @@ HEAT_W = rb.CONTENT_X + rb.CONTENT_W - HEAT_X  # 584
 HALF_W = (rb.CONTENT_W - rb.GAP) / 2  # 520
 RIGHT_X = rb.CONTENT_X + HALF_W + rb.GAP  # 736
 
-# Row 3: forecast panel on the left (~60%), flows on the right.
-FC_W = 624
-FC_RIGHT = rb.CONTENT_X + FC_W  # 824
-FLOW_X = FC_RIGHT + rb.GAP  # 840
-FLOW_W = rb.CONTENT_X + rb.CONTENT_W - FLOW_X  # 416
-CTRL_W = 184  # left column: date picker, verdict, secondary result
-CHART_X = rb.CONTENT_X + CTRL_W + rb.GAP  # 400
-CHART_W = FC_RIGHT - CHART_X  # 424
-CHART_H = 160  # under ~160 px the forecast chart rendered as a placeholder icon (GUI round 1)
-CARD_H = 60  # classic cards clip the value below ~60 px at 16 pt (GUI round 1)
-CARD_GAP = 8
-DATE_H = 96
-
 FOOTNOTE = (
     "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are "
-    "month-based. Forecast: LightGBM issued at local midnight, backtested once on 2024 (docs/forecast.md); "
-    "baseline = same hour last week. Gaps shown, never filled. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0)."
+    "month-based. Gaps shown, never filled. Flows: Thailand's malaysia_EXP/IMP, daily means, above 0 = "
+    "Thailand exports. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0)."
 )
-
-# doc 03 P4: hovering a metric card shows the MAPE/MAE definition and the backtest window.
-CARD_TOOLTIPS = [
-    "Backtest Window",
-    "Backtest Improvement CI",
-    "Backtest MAE Model (MW)",
-    "Backtest MAE Baseline (MW)",
-]
 
 
 # ---------- int-valued year helpers (rb.series_selector / rb.in_filter assume string columns) ----------
@@ -129,10 +112,29 @@ def year_page_filter() -> dict:
     }
 
 
-# ---------- visual bodies ----------
+# ---------- shared visuals (also used by the Forecast page) ----------
 def note(measure: str, size: int = 9, colour: str = rb.TEXT_SECONDARY, align: str = "left") -> dict:
     """Measure-bound text shape (blank when the measure is blank)."""
     return rb.shape(None, {"expr": measure_ref(measure)}, size, colour, v_align="top", align=align)
+
+
+def grid_slicer() -> dict:
+    """Header grid slicer: single select, saved default, synced across P4 and P4b."""
+    return rb.slicer(
+        "dim_grid", "name", "Grid", mode="Dropdown", single=True, default=[DEFAULT_GRID], sync_group=GRID_SYNC_GROUP
+    )
+
+
+def header_visuals(slicer_name: str) -> list[dict]:
+    """The grid slicer in the header, right of the title (x 1048, as on every page)."""
+    return [visual(slicer_name, 1048, rb.HEADER_Y, 208, 64, 40, grid_slicer())]
+
+
+def banner(name: str) -> dict:
+    return visual(
+        name, rb.CONTENT_X, BANNER_Y, rb.CONTENT_W, BANNER_H, 41,
+        rb.shape(BANNER_FILL, {"expr": measure_ref("Grid Banner")}, 11, rb.NAVY, left_margin=12),
+    )
 
 
 def line_style(width: str, style: str = "solid", metadata: str | None = None) -> dict:
@@ -142,6 +144,7 @@ def line_style(width: str, style: str = "solid", metadata: str | None = None) ->
     return entry
 
 
+# ---------- P4 visual bodies ----------
 def load_curve() -> dict:
     """Typical day: average load by local hour, weekday vs weekend & holiday; the season tiles narrow it."""
     return {
@@ -164,8 +167,11 @@ def load_curve() -> dict:
 
 
 def heatmap() -> dict:
-    """Month x hour matrix of average load with the theme-driven sequential-blue background rule
-    (template: matrix_heatmap.json; 'minColor'/'maxColor' resolve to the theme minimum/maximum)."""
+    """Month x hour matrix of average load (GW) with the theme-driven sequential-blue background rule.
+
+    Shape = tools/templates/matrix_heatmap_fixed_width.json (saved by Desktop in GUI round 1):
+    fixed 20 px columns, 8 pt headers (Desktop's minimum), 6 pt values, row padding 0, no subtotals.
+    """
     value = measure_ref("Avg Load (GW)")
     rule = {
         "FillRule": {
@@ -197,11 +203,18 @@ def heatmap() -> dict:
                         "metadata": "_Measures.Avg Load (GW)",
                     },
                 },
-                # Not in the template (GUI round checks): small type so 24 hours x 12 months fit.
                 {"properties": {"fontSize": lit("6D")}},
             ],
-            "columnHeaders": [{"properties": {"fontSize": lit("7D")}}],
-            "rowHeaders": [{"properties": {"fontSize": lit("7D")}}],
+            "columnHeaders": [
+                {
+                    "properties": {
+                        "fontSize": lit("8D"),
+                        "columnAdjustment": text("fixedWidth"),
+                        "defaultColumnWidth": lit("20D"),
+                    }
+                }
+            ],
+            "rowHeaders": [{"properties": {"fontSize": lit("8D")}}],
             "grid": [{"properties": {"rowPadding": lit("0D")}}],
             "subTotals": [{"properties": {"rowSubtotals": lit("false"), "columnSubtotals": lit("false")}}],
         },
@@ -231,55 +244,6 @@ def month_chart(visual_type: str, measure: str, title: str) -> dict:
     }
 
 
-def date_picker() -> dict:
-    """Backtest-day picker (template: slicer_date_picker.json) on the disconnected forecast_date table."""
-    field = column_ref("forecast_date", "date")
-    return {
-        "visualType": "slicer",
-        "query": {
-            "queryState": {"Values": {"projections": [projection(field, True)]}},
-            "sortDefinition": {"sort": [{"field": field, "direction": "Ascending"}], "isDefaultSort": True},
-        },
-        "objects": {
-            "data": [{"properties": {"mode": text("RelativeDatePicker")}}],
-            # Not in the template: the same header block the other slicers use (rb.slicer).
-            "header": [{"properties": {"show": lit("true"), "text": text("Backtest day"), "fontSize": lit("9D")}}],
-        },
-        "drillFilterOtherVisuals": True,
-    }
-
-
-def forecast_chart() -> dict:
-    """One 24 h day: actual (text.primary), model (navy), baseline (dashed text.secondary), doc 04 §5."""
-    series = [  # (measure, colour, width, line style)
-        ("Day Actual (MW)", rb.TEXT_PRIMARY, "2D", "solid"),
-        ("Day Model (MW)", rb.NAVY, "2D", "solid"),
-        ("Day Baseline (MW)", rb.TEXT_SECONDARY, "1.5D", "dashed"),
-    ]
-    return {
-        "visualType": "lineChart",
-        "query": {
-            "queryState": {
-                "Category": {"projections": [projection(column_ref("dim_hour", "hour"), True)]},
-                "Y": {"projections": [projection(measure_ref(m)) for m, *_ in series]},
-            }
-        },
-        "objects": {
-            "legend": [{"properties": {"show": lit("true"), "position": text("Top")}}],
-            "dataPoint": rb.measure_colours({m: c for m, c, *_ in series}),
-            "lineStyles": [line_style(width, style, m) for m, _, width, style in series],
-        },
-        "visualContainerObjects": rb.container(None, "Forecast Day Title"),
-        "drillFilterOtherVisuals": True,
-    }
-
-
-def metric_card(measure: str, label: str) -> dict:
-    body = rb.card(measure, 16, solid(rb.TEXT_PRIMARY), True)
-    body["query"]["queryState"]["Values"]["projections"][0]["displayName"] = label
-    return rb.tooltip_fields(body, CARD_TOOLTIPS)
-
-
 def flow_chart() -> dict:
     return {
         "visualType": "lineChart",
@@ -300,21 +264,9 @@ def flow_chart() -> dict:
 
 
 def build() -> list[dict]:
-    visuals = rb.frame(PAGE, "P4 Title", "P4 Subtitle", FOOTNOTE)
-
-    # --- header grid slicer (single select, saved default), then the info banner
-    visuals.append(
-        visual(
-            "p4_grid_slicer", 1048, rb.HEADER_Y, 208, 64, 40,
-            rb.slicer("dim_grid", "name", "Grid", mode="Dropdown", single=True, default=[DEFAULT_GRID]),
-        )
-    )
-    visuals.append(
-        visual(
-            "p4_banner", rb.CONTENT_X, BANNER_Y, rb.CONTENT_W, BANNER_H, 41,
-            rb.shape(BANNER_FILL, {"expr": measure_ref("Grid Banner")}, 11, rb.NAVY, left_margin=12),
-        )
-    )
+    visuals = rb.frame(PAGE, "P4 Load Title", "P4 Subtitle", FOOTNOTE)
+    visuals += header_visuals("p4_grid_slicer")
+    visuals.append(banner("p4_banner"))
 
     # --- row 1: typical-day curve + season tiles | month x hour heatmap
     visuals.append(visual("p4_load_curve", rb.CONTENT_X, ROW1_Y, CURVE_W, ROW1_H, 50, load_curve()))
@@ -346,53 +298,9 @@ def build() -> list[dict]:
         )
     )
 
-    # --- row 3 left: controls column (picker, verdict, secondary) | forecast chart with the cards under it
-    visuals.append(visual("p4_date_slicer", rb.CONTENT_X, ROW3_Y, CTRL_W, DATE_H, 56, date_picker()))
-    text_y = ROW3_Y + DATE_H + 4
-    text_h = (ROW3_END - text_y - 4) / 2
-    visuals.append(
-        visual("p4_verdict", rb.CONTENT_X, text_y, CTRL_W, text_h, 63, note("Forecast Verdict", 9, rb.TEXT_PRIMARY))
-    )
-    visuals.append(
-        visual("p4_secondary", rb.CONTENT_X, text_y + text_h + 4, CTRL_W, text_h, 64, note("Forecast Secondary"))
-    )
-
-    visuals.append(visual("p4_fc_line", CHART_X, ROW3_Y, CHART_W, CHART_H, 60, forecast_chart()))
-    # Empty / error messages sit over the plot area, transparent; both measures are blank normally.
-    mid = ROW3_Y + CHART_H / 2
-    visuals.append(
-        visual(
-            "p4_fc_empty", CHART_X + 12, mid - 22, CHART_W - 24, 22, 61,
-            rb.shape(None, {"expr": measure_ref("Forecast Empty State")}, 11, rb.TEXT_SECONDARY, align="center"),
-        )
-    )
-    visuals.append(
-        visual(
-            "p4_fc_error", CHART_X + 12, mid, CHART_W - 24, 22, 62,
-            rb.shape(None, {"expr": measure_ref("Forecast Error State")}, 11, rb.STATUS_FAIL, align="center"),
-        )
-    )
-    cards = [
-        ("p4_card_model", "Backtest MAPE Model (%)", "Model MAPE (%)"),
-        ("p4_card_baseline", "Backtest MAPE Baseline (%)", "Baseline MAPE (%)"),
-        ("p4_card_improvement", "Backtest Improvement (%)", "Improvement (%)"),
-    ]
-    card_w = (CHART_W - 2 * CARD_GAP) / 3
-    card_y = ROW3_END - CARD_H
-    for i, (name, measure, label) in enumerate(cards):
-        visuals.append(
-            visual(name, CHART_X + i * (card_w + CARD_GAP), card_y, card_w, CARD_H, 57 + i, metric_card(measure, label))
-        )
-
-    # --- row 3 right: interconnector flows, subtitle under the chart
-    flow_h = CHART_H
-    visuals.append(visual("p4_flow_line", FLOW_X, ROW3_Y, FLOW_W, flow_h, 65, flow_chart()))
-    visuals.append(
-        visual(
-            "p4_flow_note", FLOW_X, ROW3_Y + flow_h + 4, FLOW_W, ROW3_END - ROW3_Y - flow_h - 4, 66,
-            note("Flow Subtitle"),
-        )
-    )
+    # --- row 3: interconnector flows, full width, subtitle under the chart
+    visuals.append(visual("p4_flow_line", rb.CONTENT_X, ROW3_Y, rb.CONTENT_W, ROW3_H, 56, flow_chart()))
+    visuals.append(visual("p4_flow_note", rb.CONTENT_X, NOTE_Y, rb.CONTENT_W, NOTE_H, 57, note("Flow Subtitle")))
     return visuals
 
 
