@@ -1,0 +1,72 @@
+{
+  "TH_EGAT": {
+    "fingerprint": {
+      "demand_hours": 17540,
+      "demand_sha256": "b89171adfa6a0573547563ed1ba52ef4fd9b7148d7b3f3513a9e6faedf40639c",
+      "holidays_sha256": "303dfdef841d29b6650fd7c80f508d1afb9bf8deb2ed6e242b689d136cb5da0b",
+      "versions": {
+        "holidays": "0.105",
+        "lightgbm": "4.7.0",
+        "numpy": "2.5.3",
+        "pandas": "3.0.6",
+        "python": "3.13"
+      }
+    },
+    "forecast_sha256": "b2b0c5f409afcec22990eb981926cf397d148a4d6c2baae7cb9878a2b186b8a4",
+    "git_commit": "b82b36567c2ca2771a583032143258eb62a879c8",
+    "metrics": {
+      "excluded_hours": "6",
+      "improvement_ci_high": "52.849",
+      "improvement_ci_low": "39.324",
+      "improvement_pct": "46.864",
+      "mae_baseline": "1485.304",
+      "mae_model": "809.989",
+      "mape_baseline": "6.227",
+      "mape_model": "3.309",
+      "scored_hours": "8778"
+    },
+    "protocol": {
+      "bootstrap": {
+        "block_days": 7,
+        "level": 0.95,
+        "n_boot": 2000
+      },
+      "data_start": "2023-01-08",
+      "dev": {
+        "first_month": "2023-10",
+        "last_month": "2023-12"
+      },
+      "es_days": 28,
+      "features": [
+        "hour",
+        "iso_weekday",
+        "month",
+        "is_weekend",
+        "is_holiday",
+        "is_day_off",
+        "lag_24",
+        "lag_48",
+        "lag_168",
+        "lag_336",
+        "roll_mean_24"
+      ],
+      "final": {
+        "first_month": "2024-01",
+        "last_month": "2024-12"
+      },
+      "lightgbm": {
+        "early_stopping_rounds": 100,
+        "feature_fraction": 0.9,
+        "learning_rate": 0.05,
+        "min_data_in_leaf": 20,
+        "n_estimators": 2000,
+        "num_leaves": 15,
+        "objective": "l2"
+      },
+      "num_threads": 1,
+      "seed": 20231008
+    },
+    "protocol_commit": "d7a03e26bb9adce1e0b57abd2cd7444cec4173cb",
+    "recorded_at": "2026-10-03T06:03:32Z"
+  }
+}
