@@ -719,6 +719,23 @@ table _Measures
 		displayFolder: Grid load
 		lineageTag: 59dfb90e-c88c-4481-ae37-0885b07e594a
 
+	measure 'P4 Load Title' =
+			VAR country = SELECTEDVALUE ( dim_grid[country_name] )
+			VAR pk = CALCULATE ( [Peak Load (MW)], REMOVEFILTERS ( dim_date ), dim_date[year] = 2024 )
+			VAR lf = CALCULATE ( [Load Factor (%)], REMOVEFILTERS ( dim_date ), dim_date[year] = 2024 )
+			RETURN
+			    IF (
+			        [Grid Selected] && NOT ISBLANK ( pk ),
+			        country & ": demand peaked at " & FORMAT ( pk, "#,0" ) & " MW in 2024; load factor " & FORMAT ( lf, "0" ) & "%",
+			        "Grid load"
+			    )
+		displayFolder: Grid load
+		lineageTag: a3d807d1-5870-4330-98af-a42d0accba32
+
+	measure 'P4 Forecast Subtitle' = IF ( [Grid Selected], [Demand Label] & " · day-ahead backtest, 2024 · local time · " & [Data As Of] )
+		displayFolder: Forecast
+		lineageTag: 0222d2cd-c2da-47f7-ac5e-42aa7f0a1443
+
 	measure 'Grid Selected' = HASONEVALUE ( dim_grid[grid_key] )
 		displayFolder: Grid load
 		lineageTag: c950274b-0ee6-4bac-96e8-8fe21efd895e
