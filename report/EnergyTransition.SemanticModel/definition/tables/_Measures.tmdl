@@ -701,6 +701,24 @@ table _Measures
 		displayFolder: Tooltips
 		lineageTag: e27ec29b-52b3-4bf5-9df2-e7c530c8bc88
 
+	measure 'P4 Title' =
+			VAR country = SELECTEDVALUE ( dim_grid[country_name] )
+			VAR impr = SELECTEDVALUE ( forecast_run_current[improvement_pct] )
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        NOT [Grid Selected], "Grid load and day-ahead forecast",
+			        ISBLANK ( impr ), country & ": hourly grid load",
+			        impr > 0, country & ": a day-ahead forecast cuts hourly error by " & FORMAT ( impr, "0" ) & "% against last week's same hour",
+			        country & ": the day-ahead forecast does not beat last week's same hour"
+			    )
+		displayFolder: Grid load
+		lineageTag: ebc95026-4556-4e42-8a38-d98d8927966c
+
+	measure 'P4 Subtitle' = IF ( [Grid Selected], [Demand Label] & " · hourly, 2023–24 · local time · " & [Data As Of] )
+		displayFolder: Grid load
+		lineageTag: 59dfb90e-c88c-4481-ae37-0885b07e594a
+
 	measure 'Grid Selected' = HASONEVALUE ( dim_grid[grid_key] )
 		displayFolder: Grid load
 		lineageTag: c950274b-0ee6-4bac-96e8-8fe21efd895e
