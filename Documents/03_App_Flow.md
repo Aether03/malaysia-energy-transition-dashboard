@@ -16,7 +16,8 @@
 | P1 | **Overview** | Answer the headline question in 10 seconds: latest KPIs, trend and NETR progress | Report opens here; "Home" button on every page | FR-06, FR-10 |
 | P2 | **Malaysia: Generation & Targets** | How the mix changed; RE capacity vs NETR; capacity factor; demand growth | Nav rail; P1 KPI cards | FR-07, FR-10, FR-11 |
 | P3 | **Regions & State Reliability** | Peninsular vs Sabah vs Sarawak; SAIFI/SAIDI by state | Nav rail | FR-23, FR-24 |
-| P4 | **Grid Load & Forecast** | Daily load shapes, peaks, load factor; day-ahead forecast vs actual | Nav rail | FR-22, FR-13 |
+| P4 | **Grid Load** | Daily load shapes, heatmap, peaks, load factor; Thailand ↔ Malaysia flows | Nav rail | FR-22, S2 |
+| P4b | **Forecast** | Day-ahead forecast vs actual for a picked backtest day; backtest metrics and verdict | Nav rail | FR-13 |
 | P5 | **ASEAN Comparison** | Malaysia vs peers on RE share, carbon intensity, per-capita demand; Malaysia's rank | Nav rail; P1 "vs ASEAN" card | FR-08, FR-09 |
 | P6 | **About the Data** | Sources and licences, last refresh, data-quality results, KPI definitions, method notes | Nav rail; "ⓘ" icon on every page | FR-14, FR-05 |
 | D1 | **Country Deep Dive** (hidden, drill-through) | The P2 view for any ASEAN country | Right-click a country on P5 → Drill through | FR-08 (**Recommended**, shows drill-through skill) |
@@ -97,6 +98,8 @@ Common to every page (**Recommended**): a header with the page title as a takeaw
 - Sabah and Sarawak shapes show "not reported" styling, since SAIFI by state covers Peninsular states only.
 
 ### P4 — Grid Load & Forecast
+**Split into two pages (Amirul, M3 GUI round 1, 2026-10-04):** the six blocks below don't fit 1280×720 legibly. **P4 Grid load** holds the banner, load curve, heatmap, peak and load factor, and flows. **P4b Forecast** holds the banner, the backtest-day dropdown (2024 days only, nothing forced: no pick = the grid's 2024 peak day), the forecast chart, metric cards and verdict. Both pages have the grid selector, kept in step by slicer sync. The element table and states below apply across the pair.
+
 **Layout:** header → **data-source banner** ("Showing: Thailand national grid (EGAT) · Open-data stand-in for Peninsular Malaysia…", or Singapore's "ASEAN peer grid", or "Peninsular Malaysia, GSO" once consented) → row: typical daily load curve (weekday vs weekend, by season) · hour × month **heatmap** → monthly peak demand (MW) and load factor (%) as **two aligned single-axis charts** (per doc 04 F1, 2026-09-30) → **forecast panel**: date picker for a backtest day → actual vs model vs baseline (line, 24 h) → metric cards: model MAPE, baseline MAPE, improvement % → **Thailand ↔ Malaysia interconnector flows** (the **daily mean net flow** in MW, signed so above 0 = Thailand exports, 2023–24, with the annual export and import GWh in the subtitle; from the Thailand dataset's `malaysia_IMP`/`malaysia_EXP`; one single-axis chart; hover shows the day and average MW; added per doc 05 review, 2026-09-30; daily per M3 Q3, because 17,544 hourly points exceed Power BI's line sampling) → method and limitations text.
 
 | Element | User action | Result |

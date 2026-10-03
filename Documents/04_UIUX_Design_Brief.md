@@ -94,7 +94,7 @@ YoY deltas on KPI cards use the text-safe variants with ▲/▼ plus sign. **Dir
 `dataColors` = the 7 light slots in order · `background` `#fcfcfb` · `foreground` `#0b0b0b` · `tableAccent` `#104281` · `good` `#0ca30c`, `neutral` `#fab219`, `bad` `#d03b3b` · `minimum` `#cde2fb`, `center` `#3987e5`, `maximum` `#0d366b` · text classes mapped to §2. Colours are also bound per source in the model (a source dimension column `color_hex`, doc 05), so colour follows the entity even when a filter removes series.
 
 ## 4. Spacing, layout and grid
-- **Canvas:** 1280 × 720 px (16:9, Power BI default), which is also the PNG export size (**Decided**).
+- **Canvas:** 1280 × 720 px (16:9, Power BI default), which is also the PNG export size (**Decided**). A page that can't fit legibly is split rather than made taller: P4 became Grid load + Forecast (M3, 2026-10-04).
 - **Spacing scale:** 4 · 8 · 12 · 16 · 24 · 32 px. Visual padding 12. Gap between visuals 16.
 - **Regions:**
   - **Nav rail:** x 0–176, navy.
