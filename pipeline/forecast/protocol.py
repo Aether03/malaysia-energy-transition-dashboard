@@ -185,6 +185,18 @@ def committed_protocol(repo: Path = config.ROOT) -> tuple[str, str]:
     return protocol_commit, head_commit
 
 
+def changed_since(commit: str, repo: Path = config.ROOT) -> list[str]:
+    """Guarded files (except the record) that differ between `commit` and HEAD.
+
+    A second grid's FINAL run must use exactly the settings and code of the first grid's run, so
+    nothing may be edited after looking at the first result (MLE re-verification, item 1).
+    """
+    if not _HEX40.fullmatch(commit):
+        raise ProtocolError(f"not a commit hash: {commit!r}")
+    paths = [p for p in GUARDED_REL if p != RECORD_REL]
+    return _git(repo, "diff", "--name-only", commit, "HEAD", "--", *paths).splitlines()
+
+
 def protocol_at_commit(commit: str, repo: Path = config.ROOT) -> Protocol:
     """The protocol as committed in `commit` (replay checks its record against it)."""
     if not _HEX40.fullmatch(commit):

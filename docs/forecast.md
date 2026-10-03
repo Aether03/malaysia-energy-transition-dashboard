@@ -38,12 +38,13 @@ Locked before any 2024 data is forecast. Every modelling choice was made on 2023
   - the SQL that builds hourly demand.
   - A file hidden from `git status` (assume-unchanged or skip-worktree) also stops it.
 - **Once only:** the commit hash of this file is stored with the run. The database allows one FINAL run per grid, and the record must be committed before the next grid runs.
+- **Same settings for both grids:** the second grid's run is refused if its settings, or any guarded file other than the record, differ from the first grid's recorded run. Nothing can be tweaked after seeing a result.
 - **Decision rule, per grid:** the model beats the baseline only if the lower bound of the 95% CI on the improvement over the **seasonal-naive baseline** is above 0. Otherwise P4 shows the WARN banner.
 - **Secondary references:** both are reported on P4 and here, each with its own CI. They don't change the banner. If the CI against the weekday-aware naive includes 0, P4's method text says so in plain words: the model's advantage over a simple weekday-aware rule is not established.
 - **Not used as a benchmark:** EMA's published NEM forecast for Singapore. It forecasts NEM demand, not system demand, and its issue time and horizon are not documented.
 - **Sanity bound:** a run that can't score at least 98% of its test hours stops.
 - **After the run:** any change is a new, labelled POST_HOC run, and the FINAL run stays on record.
-  - Re-running `pipeline run` replays each recorded FINAL run. The replay checks the record against this file at its commit, and the inputs against the recorded SHA-256 fingerprints (demand, holidays, library versions).
+  - Re-running `pipeline run` replays each recorded FINAL run. The replay checks the record against this file at its commit, and the inputs against the recorded SHA-256 fingerprints (demand, holidays, library versions, and Python major.minor).
   - The forecast and metrics must then be bit-identical.
   - A mismatch is an environment failure, not a result. Its message names the fields that differ, never the new values.
 

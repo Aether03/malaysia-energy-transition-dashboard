@@ -508,3 +508,18 @@ def test_protocol_at_commit_reads_the_protocol_as_committed_then(repo):
     assert protocol.protocol_at_commit(_head(repo), repo).seed == 99
     with pytest.raises(ProtocolError):
         protocol.protocol_at_commit("not-a-hash", repo)
+
+
+@needs_git
+def test_changed_since_lists_guarded_files_changed_after_a_commit_but_not_the_record(repo):
+    first = _head(repo)
+    assert protocol.changed_since(first, repo) == []
+    _write(repo, "docs/forecast_final.json", "{}\n")  # the record itself may change
+    _write(repo, "README.md", "readme, edited\n")  # unguarded
+    _commit(repo, "record + readme")
+    assert protocol.changed_since(first, repo) == []
+    _write(repo, "pipeline/forecast/x.py", "X = 2\n")
+    _commit(repo, "code")
+    assert protocol.changed_since(first, repo) == ["pipeline/forecast/x.py"]
+    with pytest.raises(ProtocolError):
+        protocol.changed_since("HEAD", repo)

@@ -5,8 +5,9 @@ Three modes:
   come from the working-tree protocol, and demand is read from SQL only up to the last
   development hour, so 2024 is never loaded. Stored as a DEV run, which is never current.
 - FINAL (`--final --grid X`): the single 2024 backtest of one grid. Refused unless every guarded
-  file is committed and clean (`protocol.committed_protocol`, which covers the record too), and
-  refused for a grid that already has a FINAL run in the database or the record. The record
+  file is committed and clean (`protocol.committed_protocol`, which covers the record too),
+  refused for a grid that already has a FINAL run in the database or the record, and refused if
+  the settings or any guarded file differ from an earlier grid's recorded run. The record
   entry, `docs/forecast_final.json`, is written BEFORE the database commit; commit the record
   before running the next grid (the gate enforces it).
 - Replay (no flag; also the FORECAST step of `pipeline run`): for every grid in the record, check
@@ -24,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import platform
 import subprocess
 from dataclasses import asdict, dataclass
@@ -40,6 +42,7 @@ from pipeline.forecast.backtest import Fold, LgbmRegressor, monthly_folds, run_b
 from pipeline.forecast.protocol import (
     RECORD_REL,
     Protocol,
+    changed_since,
     committed_protocol,
     load_protocol,
     protocol_at_commit,
@@ -148,7 +151,11 @@ def input_fingerprint(demand: pd.Series, holidays: set[date]) -> dict[str, Any]:
         "demand_sha256": hashlib.sha256(demand_lines.encode()).hexdigest(),
         "demand_hours": len(demand),
         "holidays_sha256": hashlib.sha256(holiday_lines.encode()).hexdigest(),
-        "versions": {"python": platform.python_version(), **{p: version(p) for p in VERSIONED_PACKAGES}},
+        # Python major.minor only: a patch upgrade must not break every later replay (item 2).
+        "versions": {
+            "python": ".".join(platform.python_version_tuple()[:2]),
+            **{p: version(p) for p in VERSIONED_PACKAGES},
+        },
     }
 
 
@@ -273,7 +280,11 @@ def read_record(path: Path | None = None) -> dict[str, Any]:
 
 
 def write_record(record: dict[str, Any], path: Path | None = None) -> None:
-    (path or RECORD_PATH).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    """Write atomically (temp file, then rename), so a crash never leaves half a record (item 3)."""
+    path = path or RECORD_PATH
+    temp = path.with_name(path.name + ".tmp")
+    temp.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    os.replace(temp, path)
 
 
 def _head_commit() -> str | None:
@@ -332,6 +343,13 @@ def run_final(grid_code: str, load_run_id: int | None) -> Outcome:
     record = read_record()
     if grid_code in record:
         raise ForecastError(f"{grid_code} already has a recorded FINAL run ({RECORD_REL}); runs are once only")
+    for other, entry in record.items():
+        # Every grid runs the same locked settings and code: no edit after seeing a result.
+        if entry["protocol"] != protocol.raw:
+            raise ForecastError(f"the protocol settings differ from {other}'s recorded FINAL run")
+        changed = changed_since(entry["git_commit"])
+        if changed:
+            raise ForecastError(f"guarded files changed since {other}'s FINAL run: {changed}")
     conn = db.connect()
     try:
         grid = load_grid(conn, grid_code)

@@ -56,6 +56,7 @@ def env(monkeypatch, tmp_path):
         "db_final": None,
         "fail_save": False,
         "protocol": protocol.protocol_from_dict(_raw()),
+        "changed": [],
     }
 
     def load_demand(conn, grid, until):
@@ -77,6 +78,7 @@ def env(monkeypatch, tmp_path):
     monkeypatch.setattr(run, "committed_protocol", lambda: (HASH_P, HASH_H))
     monkeypatch.setattr(run, "load_protocol", lambda: state["protocol"])
     monkeypatch.setattr(run, "protocol_at_commit", lambda commit: protocol.protocol_from_dict(_raw()))
+    monkeypatch.setattr(run, "changed_since", lambda commit: list(state["changed"]))
     monkeypatch.setattr(run, "RECORD_PATH", tmp_path / "forecast_final.json")
     return state
 
@@ -141,6 +143,34 @@ def test_run_final_stops_at_the_gate(env, monkeypatch):
     with pytest.raises(protocol.ProtocolError):
         run.run_final("TH_EGAT", None)
     assert env["untils"] == [] and not run.RECORD_PATH.exists()
+
+
+def test_a_second_grid_runs_under_the_same_settings_and_code(env, monkeypatch):
+    run.run_final("TH_EGAT", None)
+    monkeypatch.setattr(run, "load_grid", lambda conn, code: run.Grid(3, "SG_EMA", 480, "DSG", "SG"))
+    run.run_final("SG_EMA", None)
+    assert set(run.read_record()) == {"TH_EGAT", "SG_EMA"}
+    assert not run.RECORD_PATH.with_name(run.RECORD_PATH.name + ".tmp").exists()  # written atomically
+
+
+def test_a_second_grid_with_edited_settings_is_refused(env):
+    run.run_final("TH_EGAT", None)
+    env["untils"].clear()
+    raw = _raw()
+    raw["lightgbm"]["num_leaves"] = 31  # tweaked after seeing the first grid's result
+    env["protocol"] = protocol.protocol_from_dict(raw)
+    with pytest.raises(run.ForecastError, match="settings differ"):
+        run.run_final("SG_EMA", None)
+    assert env["untils"] == []
+
+
+def test_a_second_grid_after_a_code_change_is_refused(env):
+    run.run_final("TH_EGAT", None)
+    env["untils"].clear()
+    env["changed"] = ["pipeline/forecast/features.py"]
+    with pytest.raises(run.ForecastError, match="changed since"):
+        run.run_final("SG_EMA", None)
+    assert env["untils"] == []
 
 
 # --- replay --------------------------------------------------------------------------------
