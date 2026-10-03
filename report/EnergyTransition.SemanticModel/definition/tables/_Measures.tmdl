@@ -709,8 +709,8 @@ table _Measures
 			        TRUE (),
 			        NOT [Grid Selected], "Grid load and day-ahead forecast",
 			        ISBLANK ( impr ), country & ": hourly grid load",
-			        impr > 0, country & ": a day-ahead forecast cuts hourly error by " & FORMAT ( impr, "0" ) & "% against last week's same hour",
-			        country & ": the day-ahead forecast does not beat last week's same hour"
+			        impr > 0, country & ": day-ahead forecast cuts hourly error by " & FORMAT ( impr, "0" ) & "%",
+			        country & ": day-ahead forecast does not beat the baseline"
 			    )
 		displayFolder: Grid load
 		lineageTag: ebc95026-4556-4e42-8a38-d98d8927966c
@@ -745,6 +745,11 @@ table _Measures
 		formatString: #,0
 		displayFolder: Grid load
 		lineageTag: af898564-e398-4e37-aa7f-d2fdcf56858f
+
+	measure 'Avg Load (GW)' = DIVIDE ( [Avg Load (MW)], 1000 )
+		formatString: 0.0
+		displayFolder: Grid load
+		lineageTag: 12e3dce3-1ac7-46f5-bd7e-86fcdf407118
 
 	measure 'Peak Load (MW)' = IF ( [Grid Selected], MAX ( grid_hourly[demand_mw] ) )
 		formatString: #,0
@@ -793,7 +798,7 @@ table _Measures
 
 	measure 'Forecast Day Title' =
 			VAR d = [Forecast Day]
-			RETURN IF ( [Grid Selected] && NOT ISBLANK ( d ), "Day-ahead forecast vs actual, " & FORMAT ( d, "ddd d mmm yyyy" ) & IF ( NOT ISFILTERED ( forecast_date[date] ), " (the 2024 peak day; pick another)" ) )
+			RETURN IF ( [Grid Selected] && NOT ISBLANK ( d ), "Forecast vs actual, " & FORMAT ( d, "ddd d mmm yyyy" ) & IF ( NOT ISFILTERED ( forecast_date[date] ), " (2024 peak day)" ) )
 		displayFolder: Forecast
 		lineageTag: 6620a7e7-6ff1-407c-926a-460245ce581a
 
