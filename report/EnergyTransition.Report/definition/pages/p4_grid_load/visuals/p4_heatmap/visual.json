@@ -3,10 +3,10 @@
   "name": "p4_heatmap",
   "position": {
     "x": 672,
-    "y": 140,
+    "y": 134,
     "z": 52,
     "width": 584,
-    "height": 170,
+    "height": 176,
     "tabOrder": 52
   },
   "visual": {
@@ -28,7 +28,8 @@
               },
               "queryRef": "dim_hour.hour",
               "nativeQueryRef": "hour",
-              "active": true
+              "active": true,
+              "displayName": "Hour"
             }
           ]
         },
@@ -47,7 +48,8 @@
               },
               "queryRef": "dim_date.month_name",
               "nativeQueryRef": "month_name",
-              "active": true
+              "active": true,
+              "displayName": "Month"
             }
           ]
         },
@@ -61,11 +63,11 @@
                       "Entity": "_Measures"
                     }
                   },
-                  "Property": "Avg Load (MW)"
+                  "Property": "Avg Load (GW)"
                 }
               },
-              "queryRef": "_Measures.Avg Load (MW)",
-              "nativeQueryRef": "Avg Load (MW)"
+              "queryRef": "_Measures.Avg Load (GW)",
+              "nativeQueryRef": "Avg Load (GW)"
             }
           ]
         }
@@ -87,7 +89,7 @@
                               "Entity": "_Measures"
                             }
                           },
-                          "Property": "Avg Load (MW)"
+                          "Property": "Avg Load (GW)"
                         }
                       },
                       "FillRule": {
@@ -129,7 +131,7 @@
                 }
               }
             ],
-            "metadata": "_Measures.Avg Load (MW)"
+            "metadata": "_Measures.Avg Load (GW)"
           }
         },
         {
@@ -137,7 +139,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "7D"
+                  "Value": "6D"
                 }
               }
             }
@@ -150,7 +152,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "7D"
                 }
               }
             }
@@ -163,7 +165,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "8D"
+                  "Value": "7D"
                 }
               }
             }
@@ -218,7 +220,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Average load by month and hour (MW)'"
+                  "Value": "'Average load by month and hour (GW)'"
                 }
               }
             },

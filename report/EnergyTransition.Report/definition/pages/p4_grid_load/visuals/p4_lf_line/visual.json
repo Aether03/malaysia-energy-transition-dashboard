@@ -3,10 +3,10 @@
   "name": "p4_lf_line",
   "position": {
     "x": 736.0,
-    "y": 320,
+    "y": 316,
     "z": 55,
     "width": 520.0,
-    "height": 130,
+    "height": 120,
     "tabOrder": 55
   },
   "visual": {

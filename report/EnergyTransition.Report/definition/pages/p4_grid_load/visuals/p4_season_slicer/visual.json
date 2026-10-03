@@ -3,10 +3,10 @@
   "name": "p4_season_slicer",
   "position": {
     "x": 520,
-    "y": 140,
+    "y": 134,
     "z": 51,
     "width": 136,
-    "height": 170,
+    "height": 176,
     "tabOrder": 51
   },
   "visual": {
@@ -61,7 +61,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Season (none = all year)'"
+                  "Value": "'Season'"
                 }
               }
             },

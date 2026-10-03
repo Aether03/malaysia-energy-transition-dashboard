@@ -26,10 +26,10 @@ YEAR_COLOURS = {2023: "#86b6ef", 2024: rb.NAVY}
 BANNER_FILL = "#cde2fb"  # doc 04 §3.4 theme minimum: the light end of the info tint
 
 # Vertical rhythm (everything sits between the header at y 88 and the footnote at y 672).
-BANNER_Y, BANNER_H = 104, 28
-ROW1_Y, ROW1_H = 140, 170
-ROW2_Y, ROW2_H = 320, 130  # charts under ~120 px render as a placeholder icon (M2 GUI round 4)
-ROW3_Y = 460
+BANNER_Y, BANNER_H = 104, 26
+ROW1_Y, ROW1_H = 134, 176  # the heatmap needs title + header + 12 rows of ~11 px
+ROW2_Y, ROW2_H = 316, 120  # charts under ~120 px render as a placeholder icon (M2 GUI round 4)
+ROW3_Y = 442
 ROW3_END = 664
 
 # Row 1: the left block (curve + season tiles) is narrower than the heatmap, which needs 24 columns.
@@ -49,17 +49,18 @@ FC_W = 624
 FC_RIGHT = rb.CONTENT_X + FC_W  # 824
 FLOW_X = FC_RIGHT + rb.GAP  # 840
 FLOW_W = rb.CONTENT_X + rb.CONTENT_W - FLOW_X  # 416
-CTRL_W = 168  # date picker and the three MAPE cards
-CHART_X = rb.CONTENT_X + CTRL_W + rb.GAP  # 384
-CHART_W = FC_RIGHT - CHART_X  # 440
-CARD_H = 44
-DATE_H = 56
+CTRL_W = 184  # left column: date picker, verdict, secondary result
+CHART_X = rb.CONTENT_X + CTRL_W + rb.GAP  # 400
+CHART_W = FC_RIGHT - CHART_X  # 424
+CHART_H = 160  # under ~160 px the forecast chart rendered as a placeholder icon (GUI round 1)
+CARD_H = 60  # classic cards clip the value below ~60 px at 16 pt (GUI round 1)
+CARD_GAP = 8
+DATE_H = 96
 
 FOOTNOTE = (
-    "Thailand: sum of the 5 regional demands, hourly means (EGAT's published system peaks are 2–4% higher). "
-    "Seasons are month-based approximations. Forecast: LightGBM issued at local midnight for the next 24 h, "
-    "backtested once on 2024 under a locked protocol (docs/forecast.md); baseline = same hour last week. "
-    "Gaps are shown, never filled. Data: EGAT via Zenodo (CC BY 4.0); EMA (Singapore Open Data Licence v1.0)."
+    "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are "
+    "month-based. Forecast: LightGBM issued at local midnight, backtested once on 2024 (docs/forecast.md); "
+    "baseline = same hour last week. Gaps shown, never filled. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0)."
 )
 
 # doc 03 P4: hovering a metric card shows the MAPE/MAE definition and the backtest window.
@@ -165,7 +166,7 @@ def load_curve() -> dict:
 def heatmap() -> dict:
     """Month x hour matrix of average load with the theme-driven sequential-blue background rule
     (template: matrix_heatmap.json; 'minColor'/'maxColor' resolve to the theme minimum/maximum)."""
-    value = measure_ref("Avg Load (MW)")
+    value = measure_ref("Avg Load (GW)")
     rule = {
         "FillRule": {
             "Input": value,
@@ -182,8 +183,8 @@ def heatmap() -> dict:
         "visualType": "pivotTable",
         "query": {
             "queryState": {
-                "Columns": {"projections": [projection(column_ref("dim_hour", "hour"), True)]},
-                "Rows": {"projections": [projection(column_ref("dim_date", "month_name"), True)]},
+                "Columns": {"projections": [{**projection(column_ref("dim_hour", "hour"), True), "displayName": "Hour"}]},
+                "Rows": {"projections": [{**projection(column_ref("dim_date", "month_name"), True), "displayName": "Month"}]},
                 "Values": {"projections": [projection(value)]},
             }
         },
@@ -193,18 +194,18 @@ def heatmap() -> dict:
                     "properties": {"backColor": {"solid": {"color": {"expr": rule}}}},
                     "selector": {
                         "data": [{"dataViewWildcard": {"matchingOption": 1}}],
-                        "metadata": "_Measures.Avg Load (MW)",
+                        "metadata": "_Measures.Avg Load (GW)",
                     },
                 },
                 # Not in the template (GUI round checks): small type so 24 hours x 12 months fit.
-                {"properties": {"fontSize": lit("7D")}},
+                {"properties": {"fontSize": lit("6D")}},
             ],
-            "columnHeaders": [{"properties": {"fontSize": lit("8D")}}],
-            "rowHeaders": [{"properties": {"fontSize": lit("8D")}}],
+            "columnHeaders": [{"properties": {"fontSize": lit("7D")}}],
+            "rowHeaders": [{"properties": {"fontSize": lit("7D")}}],
             "grid": [{"properties": {"rowPadding": lit("0D")}}],
             "subTotals": [{"properties": {"rowSubtotals": lit("false"), "columnSubtotals": lit("false")}}],
         },
-        "visualContainerObjects": rb.container("Average load by month and hour (MW)"),
+        "visualContainerObjects": rb.container("Average load by month and hour (GW)"),
         "drillFilterOtherVisuals": True,
     }
 
@@ -320,7 +321,7 @@ def build() -> list[dict]:
     visuals.append(
         visual(
             "p4_season_slicer", SEASON_X, ROW1_Y, SEASON_W, ROW1_H, 51,
-            rb.slicer("season_pick", "season", "Season (none = all year)", mode="Basic"),
+            rb.slicer("season_pick", "season", "Season", mode="Basic"),
         )
     )
     visuals.append(visual("p4_heatmap", HEAT_X, ROW1_Y, HEAT_W, ROW1_H, 52, heatmap()))
@@ -345,21 +346,20 @@ def build() -> list[dict]:
         )
     )
 
-    # --- row 3 left: forecast panel (controls column | chart, verdict and secondary result)
+    # --- row 3 left: controls column (picker, verdict, secondary) | forecast chart with the cards under it
     visuals.append(visual("p4_date_slicer", rb.CONTENT_X, ROW3_Y, CTRL_W, DATE_H, 56, date_picker()))
-    cards = [
-        ("p4_card_model", "Backtest MAPE Model (%)", "Model MAPE (%)"),
-        ("p4_card_baseline", "Backtest MAPE Baseline (%)", "Baseline MAPE (%)"),
-        ("p4_card_improvement", "Backtest Improvement (%)", "Improvement (%)"),
-    ]
-    for i, (name, measure, label) in enumerate(cards):
-        y = ROW3_Y + DATE_H + 4 + i * (CARD_H + 4)
-        visuals.append(visual(name, rb.CONTENT_X, y, CTRL_W, CARD_H, 57 + i, metric_card(measure, label)))
+    text_y = ROW3_Y + DATE_H + 4
+    text_h = (ROW3_END - text_y - 4) / 2
+    visuals.append(
+        visual("p4_verdict", rb.CONTENT_X, text_y, CTRL_W, text_h, 63, note("Forecast Verdict", 9, rb.TEXT_PRIMARY))
+    )
+    visuals.append(
+        visual("p4_secondary", rb.CONTENT_X, text_y + text_h + 4, CTRL_W, text_h, 64, note("Forecast Secondary"))
+    )
 
-    chart_h = 140
-    visuals.append(visual("p4_fc_line", CHART_X, ROW3_Y, CHART_W, chart_h, 60, forecast_chart()))
+    visuals.append(visual("p4_fc_line", CHART_X, ROW3_Y, CHART_W, CHART_H, 60, forecast_chart()))
     # Empty / error messages sit over the plot area, transparent; both measures are blank normally.
-    mid = ROW3_Y + chart_h / 2
+    mid = ROW3_Y + CHART_H / 2
     visuals.append(
         visual(
             "p4_fc_empty", CHART_X + 12, mid - 22, CHART_W - 24, 22, 61,
@@ -372,16 +372,20 @@ def build() -> list[dict]:
             rb.shape(None, {"expr": measure_ref("Forecast Error State")}, 11, rb.STATUS_FAIL, align="center"),
         )
     )
-    verdict_y = ROW3_Y + chart_h + 4
-    visuals.append(
-        visual("p4_verdict", CHART_X, verdict_y, CHART_W, 30, 63, note("Forecast Verdict", 9, rb.TEXT_PRIMARY))
-    )
-    visuals.append(
-        visual("p4_secondary", CHART_X, verdict_y + 30, CHART_W, ROW3_END - verdict_y - 30, 64, note("Forecast Secondary"))
-    )
+    cards = [
+        ("p4_card_model", "Backtest MAPE Model (%)", "Model MAPE (%)"),
+        ("p4_card_baseline", "Backtest MAPE Baseline (%)", "Baseline MAPE (%)"),
+        ("p4_card_improvement", "Backtest Improvement (%)", "Improvement (%)"),
+    ]
+    card_w = (CHART_W - 2 * CARD_GAP) / 3
+    card_y = ROW3_END - CARD_H
+    for i, (name, measure, label) in enumerate(cards):
+        visuals.append(
+            visual(name, CHART_X + i * (card_w + CARD_GAP), card_y, card_w, CARD_H, 57 + i, metric_card(measure, label))
+        )
 
     # --- row 3 right: interconnector flows, subtitle under the chart
-    flow_h = 152
+    flow_h = CHART_H
     visuals.append(visual("p4_flow_line", FLOW_X, ROW3_Y, FLOW_W, flow_h, 65, flow_chart()))
     visuals.append(
         visual(

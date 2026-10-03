@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Thailand: sum of the 5 regional demands, hourly means (EGAT's published system peaks are 2–4% higher). Seasons are month-based approximations. Forecast: LightGBM issued at local midnight for the next 24 h, backtested once on 2024 under a locked protocol (docs/forecast.md); baseline = same hour last week. Gaps are shown, never filled. Data: EGAT via Zenodo (CC BY 4.0); EMA (Singapore Open Data Licence v1.0).",
+                    "value": "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are month-based. Forecast: LightGBM issued at local midnight, backtested once on 2024 (docs/forecast.md); baseline = same hour last week. Gaps shown, never filled. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0).",
                     "textStyle": {
                       "fontSize": "9pt",
                       "color": "#6b6a66"

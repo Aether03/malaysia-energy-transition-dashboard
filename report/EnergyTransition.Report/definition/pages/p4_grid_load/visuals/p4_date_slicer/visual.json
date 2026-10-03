@@ -3,10 +3,10 @@
   "name": "p4_date_slicer",
   "position": {
     "x": 200,
-    "y": 460,
+    "y": 442,
     "z": 56,
-    "width": 168,
-    "height": 56,
+    "width": 184,
+    "height": 96,
     "tabOrder": 56
   },
   "visual": {

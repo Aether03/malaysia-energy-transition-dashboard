@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_card_model",
   "position": {
-    "x": 200,
-    "y": 520,
+    "x": 400.0,
+    "y": 604,
     "z": 57,
-    "width": 168,
-    "height": 44,
+    "width": 136.0,
+    "height": 60,
     "tabOrder": 57
   },
   "visual": {

@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_fc_error",
   "position": {
-    "x": 396,
-    "y": 530.0,
+    "x": 412,
+    "y": 522.0,
     "z": 62,
-    "width": 416,
+    "width": 400,
     "height": 22,
     "tabOrder": 62
   },
