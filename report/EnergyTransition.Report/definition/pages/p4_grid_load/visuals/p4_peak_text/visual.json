@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_peak_text",
   "position": {
-    "x": 428.0,
-    "y": 376,
-    "z": 54,
-    "width": 284,
+    "x": 956,
+    "y": 142,
+    "z": 51,
+    "width": 292,
     "height": 18,
-    "tabOrder": 54
+    "tabOrder": 51
   },
   "visual": {
     "visualType": "shape",

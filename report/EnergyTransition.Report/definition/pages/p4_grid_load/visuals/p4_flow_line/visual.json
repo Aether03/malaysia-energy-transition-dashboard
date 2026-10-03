@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_flow_line",
   "position": {
-    "x": 200,
-    "y": 520,
+    "x": 1042.0,
+    "y": 404,
     "z": 56,
-    "width": 1056,
-    "height": 120,
+    "width": 214.0,
+    "height": 180,
     "tabOrder": 56
   },
   "visual": {
@@ -124,7 +124,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Thailand ↔ Malaysia interconnector: daily net flow (MW)'"
+                  "Value": "'TH ↔ MY daily net flow (MW)'"
                 }
               }
             },

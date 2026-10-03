@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_peak_cols",
   "position": {
-    "x": 200,
-    "y": 372,
-    "z": 53,
-    "width": 520.0,
-    "height": 140,
-    "tabOrder": 53
+    "x": 582.0,
+    "y": 404,
+    "z": 54,
+    "width": 214.0,
+    "height": 180,
+    "tabOrder": 54
   },
   "visual": {
     "visualType": "clusteredColumnChart",
@@ -190,7 +190,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Monthly peak demand (MW)'"
+                  "Value": "'Monthly peak (MW)'"
                 }
               }
             },

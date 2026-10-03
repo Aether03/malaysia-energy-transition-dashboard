@@ -3,11 +3,11 @@
   "name": "p4_load_curve",
   "position": {
     "x": 200,
-    "y": 136,
-    "z": 50,
-    "width": 312.0,
-    "height": 228,
-    "tabOrder": 50
+    "y": 404,
+    "z": 52,
+    "width": 214.0,
+    "height": 180,
+    "tabOrder": 52
   },
   "visual": {
     "visualType": "lineChart",
@@ -203,7 +203,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'A typical day: weekday vs weekend & holiday (MW)'"
+                  "Value": "'Typical day (MW)'"
                 }
               }
             },

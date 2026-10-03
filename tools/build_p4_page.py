@@ -1,4 +1,4 @@
-"""Build the P4 Grid load page as PBIR visual definitions (M3 step 12, doc 03 P4).
+﻿"""Build the P4 Grid load page as PBIR visual definitions (M3 step 12, doc 03 P4).
 
 P4 is split in two pages (GUI round 1 decision): this one holds the load shapes and flows; the
 day-ahead forecast lives on `p4b_forecast` (build_p4b_page.py, which reuses the helpers below).
@@ -30,23 +30,21 @@ BANNER_FILL = "#cde2fb"  # doc 04 §3.4 theme minimum: the light end of the info
 
 # Vertical rhythm (everything sits between the header at y 88 and the footnote at y 672).
 BANNER_Y, BANNER_H = 104, 26
-ROW1_Y, ROW1_H = 136, 228  # heatmap: title + header + 12 rows at 8 pt headers
-ROW2_Y, ROW2_H = 372, 140
-ROW3_Y, ROW3_H = 520, 120
-NOTE_Y, NOTE_H = 642, 22
+ROW1_Y, ROW1_H = 136, 260  # full-width heatmap: title + header + 12 rows at 8 pt (GUI round 2)
+ROW2_Y, ROW2_H = 404, 180
+NOTE_Y, NOTE_H = ROW2_Y + ROW2_H + 4, 64
 
-# Row 1: the left block (curve + season tiles) is narrower than the heatmap, which needs 24 columns
-# of 20 px plus the row header.
+# Row 1 (GUI round 2): the heatmap takes the full width. One-decimal GW values at 8 pt need about
+# 34 px per column (at 20-28 px they wrapped onto two lines), so 24 hours + the month header at 40 px.
+HEAT_COL_W = 40
+# Row 2: typical-day curve, season list, monthly peak, load factor (F1: same month axis) and the
+# interconnector flows, side by side; the flows note sits under the flows chart.
 SEASON_W = 136
-LEFT1_W = 456
-CURVE_W = LEFT1_W - rb.GAP / 2 - SEASON_W  # 312
-SEASON_X = rb.CONTENT_X + LEFT1_W - SEASON_W
-HEAT_X = rb.CONTENT_X + LEFT1_W + rb.GAP  # 672
-HEAT_W = rb.CONTENT_X + rb.CONTENT_W - HEAT_X  # 584
-
-# Row 2: two halves on the same x grid as P2.
-HALF_W = (rb.CONTENT_W - rb.GAP) / 2  # 520
-RIGHT_X = rb.CONTENT_X + HALF_W + rb.GAP  # 736
+CHART_W = (rb.CONTENT_W - 4 * rb.GAP - SEASON_W) / 4  # 222
+SEASON_X = rb.CONTENT_X + CHART_W + rb.GAP
+PEAK_X = SEASON_X + SEASON_W + rb.GAP
+LF_X = PEAK_X + CHART_W + rb.GAP
+FLOW_X = LF_X + CHART_W + rb.GAP
 
 FOOTNOTE = (
     "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are "
@@ -161,7 +159,7 @@ def load_curve() -> dict:
             "dataPoint": rb.series_colours("grid_hourly", "day_type", {"Weekday": rb.NAVY, "Weekend & holiday": rb.ACCENT_BLUE}),
             "lineStyles": [{"properties": {"strokeWidth": lit("2D")}}],
         },
-        "visualContainerObjects": rb.container("A typical day: weekday vs weekend & holiday (MW)"),
+        "visualContainerObjects": rb.container("Typical day (MW)"),
         "drillFilterOtherVisuals": True,
     }
 
@@ -170,7 +168,8 @@ def heatmap() -> dict:
     """Month x hour matrix of average load (GW) with the theme-driven sequential-blue background rule.
 
     Shape = tools/templates/matrix_heatmap_fixed_width.json (saved by Desktop in GUI round 1):
-    fixed 20 px columns, 8 pt headers (Desktop's minimum), 6 pt values, row padding 0, no subtotals.
+    fixed-width columns (HEAT_COL_W), 8 pt headers and values (Desktop's header minimum), row padding 0,
+    no subtotals.
     """
     value = measure_ref("Avg Load (GW)")
     rule = {
@@ -190,7 +189,7 @@ def heatmap() -> dict:
         "query": {
             "queryState": {
                 "Columns": {"projections": [{**projection(column_ref("dim_hour", "hour"), True), "displayName": "Hour"}]},
-                "Rows": {"projections": [{**projection(column_ref("dim_date", "month_name"), True), "displayName": "Month"}]},
+                "Rows": {"projections": [{**projection(column_ref("dim_date", "month_name"), True), "displayName": " "}]},
                 "Values": {"projections": [projection(value)]},
             }
         },
@@ -203,14 +202,14 @@ def heatmap() -> dict:
                         "metadata": "_Measures.Avg Load (GW)",
                     },
                 },
-                {"properties": {"fontSize": lit("6D")}},
+                {"properties": {"fontSize": lit("8D")}},
             ],
             "columnHeaders": [
                 {
                     "properties": {
                         "fontSize": lit("8D"),
                         "columnAdjustment": text("fixedWidth"),
-                        "defaultColumnWidth": lit("20D"),
+                        "defaultColumnWidth": lit(f"{HEAT_COL_W}D"),
                     }
                 }
             ],
@@ -258,7 +257,7 @@ def flow_chart() -> dict:
             "dataPoint": rb.measure_colours({"Daily Net Flow (MW)": rb.NAVY}),
             "lineStyles": [line_style("1.5D", "solid", "Daily Net Flow (MW)")],
         },
-        "visualContainerObjects": rb.container("Thailand ↔ Malaysia interconnector: daily net flow (MW)"),
+        "visualContainerObjects": rb.container("TH ↔ MY daily net flow (MW)"),
         "drillFilterOtherVisuals": True,
     }
 
@@ -268,39 +267,37 @@ def build() -> list[dict]:
     visuals += header_visuals("p4_grid_slicer")
     visuals.append(banner("p4_banner"))
 
-    # --- row 1: typical-day curve + season tiles | month x hour heatmap
-    visuals.append(visual("p4_load_curve", rb.CONTENT_X, ROW1_Y, CURVE_W, ROW1_H, 50, load_curve()))
+    # --- row 1: month x hour heatmap, full width; the year's peak at the right of its title row
+    visuals.append(visual("p4_heatmap", rb.CONTENT_X, ROW1_Y, rb.CONTENT_W, ROW1_H, 50, heatmap()))
     visuals.append(
         visual(
-            "p4_season_slicer", SEASON_X, ROW1_Y, SEASON_W, ROW1_H, 51,
-            rb.slicer("season_pick", "season", "Season", mode="Basic"),
-        )
-    )
-    visuals.append(visual("p4_heatmap", HEAT_X, ROW1_Y, HEAT_W, ROW1_H, 52, heatmap()))
-
-    # --- row 2: monthly peak and load factor on the same month axis (doc 04 F1: no dual axis)
-    visuals.append(
-        visual(
-            "p4_peak_cols", rb.CONTENT_X, ROW2_Y, HALF_W, ROW2_H, 53,
-            month_chart("clusteredColumnChart", "Peak Load (MW)", "Monthly peak demand (MW)"),
-        )
-    )
-    visuals.append(
-        visual(
-            "p4_peak_text", rb.CONTENT_X + HALF_W - 292, ROW2_Y + 4, 284, 18, 54,
+            "p4_peak_text", rb.CONTENT_X + rb.CONTENT_W - 300, ROW1_Y + 6, 292, 18, 51,
             note("Peak Text", align="right"),
         )
     )
+
+    # --- row 2: typical day + season | monthly peak | load factor (doc 04 F1: no dual axis) | flows + note
+    visuals.append(visual("p4_load_curve", rb.CONTENT_X, ROW2_Y, CHART_W, ROW2_H, 52, load_curve()))
     visuals.append(
         visual(
-            "p4_lf_line", RIGHT_X, ROW2_Y, HALF_W, ROW2_H, 55,
-            month_chart("lineChart", "Load Factor (%)", "Monthly load factor (%)"),
+            "p4_season_slicer", SEASON_X, ROW2_Y, SEASON_W, ROW2_H, 53,
+            rb.slicer("season_pick", "season", "Season", mode="Basic"),
         )
     )
-
-    # --- row 3: interconnector flows, full width, subtitle under the chart
-    visuals.append(visual("p4_flow_line", rb.CONTENT_X, ROW3_Y, rb.CONTENT_W, ROW3_H, 56, flow_chart()))
-    visuals.append(visual("p4_flow_note", rb.CONTENT_X, NOTE_Y, rb.CONTENT_W, NOTE_H, 57, note("Flow Subtitle")))
+    visuals.append(
+        visual(
+            "p4_peak_cols", PEAK_X, ROW2_Y, CHART_W, ROW2_H, 54,
+            month_chart("clusteredColumnChart", "Peak Load (MW)", "Monthly peak (MW)"),
+        )
+    )
+    visuals.append(
+        visual(
+            "p4_lf_line", LF_X, ROW2_Y, CHART_W, ROW2_H, 55,
+            month_chart("lineChart", "Load Factor (%)", "Load factor (%)"),
+        )
+    )
+    visuals.append(visual("p4_flow_line", FLOW_X, ROW2_Y, CHART_W, ROW2_H, 56, flow_chart()))
+    visuals.append(visual("p4_flow_note", FLOW_X, NOTE_Y, CHART_W, NOTE_H, 57, note("Flow Subtitle")))
     return visuals
 
 

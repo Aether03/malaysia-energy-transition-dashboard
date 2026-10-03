@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_heatmap",
   "position": {
-    "x": 672,
+    "x": 200,
     "y": 136,
-    "z": 52,
-    "width": 584,
-    "height": 228,
-    "tabOrder": 52
+    "z": 50,
+    "width": 1056,
+    "height": 260,
+    "tabOrder": 50
   },
   "visual": {
     "visualType": "pivotTable",
@@ -49,7 +49,7 @@
               "queryRef": "dim_date.month_name",
               "nativeQueryRef": "month_name",
               "active": true,
-              "displayName": "Month"
+              "displayName": " "
             }
           ]
         },
@@ -139,7 +139,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "6D"
+                  "Value": "8D"
                 }
               }
             }
@@ -166,7 +166,7 @@
             "defaultColumnWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "20D"
+                  "Value": "40D"
                 }
               }
             }
