@@ -30,26 +30,26 @@ BANNER_FILL = "#cde2fb"  # doc 04 §3.4 theme minimum: the light end of the info
 
 # Vertical rhythm (everything sits between the header at y 88 and the footnote at y 672).
 BANNER_Y, BANNER_H = 104, 26
-ROW1_Y, ROW1_H = 136, 260  # full-width heatmap: title + header + 12 rows at 8 pt (GUI round 2)
-ROW2_Y, ROW2_H = 404, 180
-NOTE_Y, NOTE_H = ROW2_Y + ROW2_H + 4, 64
+ROW1_Y, ROW1_H = 132, 260  # full-width heatmap: title + header + 12 rows at 8 pt (GUI round 2)
+ROW2_Y, ROW2_H = 398, 140  # below ~140 px Desktop hides the legends (GUI round 3)
+ROW3_Y, ROW3_H = 544, 120  # the flows chart turns into a placeholder below 120 px
 
 # Row 1 (GUI round 2): the heatmap takes the full width. One-decimal GW values at 8 pt need about
 # 34 px per column (at 20-28 px they wrapped onto two lines), so 24 hours + the month header at 40 px.
 HEAT_COL_W = 40
-# Row 2: typical-day curve, season list, monthly peak, load factor (F1: same month axis) and the
-# interconnector flows, side by side; the flows note sits under the flows chart.
-SEASON_W = 136
-CHART_W = (rb.CONTENT_W - 4 * rb.GAP - SEASON_W) / 4  # 222
-SEASON_X = rb.CONTENT_X + CHART_W + rb.GAP
+# Row 2: typical-day curve, season list, monthly peak and load factor (F1: same month axis). The
+# monthly charts need ~300 px: Desktop's minimum category width is 20 px, so 12 months at 222 px
+# scrolled (GUI round 3). Row 3: the interconnector flows, full width, its note in the title row.
+SEASON_W, CURVE_W = 170, 196  # 170: Singapore's monsoon labels fit
+PAIR_W = (rb.CONTENT_W - 3 * rb.GAP - SEASON_W - CURVE_W) / 2  # 333
+SEASON_X = rb.CONTENT_X + CURVE_W + rb.GAP
 PEAK_X = SEASON_X + SEASON_W + rb.GAP
-LF_X = PEAK_X + CHART_W + rb.GAP
-FLOW_X = LF_X + CHART_W + rb.GAP
+LF_X = PEAK_X + PAIR_W + rb.GAP
 
 FOOTNOTE = (
-    "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Seasons are "
-    "month-based. Gaps shown, never filled. Flows: Thailand's malaysia_EXP/IMP, daily means, above 0 = "
-    "Thailand exports. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0)."
+    "Thailand: sum of 5 regional demands, hourly means (published peaks are 2–4% higher). Singapore: EMA "
+    "system demand, hourly mean of half-hours. Seasons are month-based. Gaps shown, never filled. Flows: "
+    "Thailand's malaysia_EXP/IMP, daily means. Data: EGAT via Zenodo (CC BY 4.0); EMA (SODL v1.0)."
 )
 
 
@@ -257,7 +257,7 @@ def flow_chart() -> dict:
             "dataPoint": rb.measure_colours({"Daily Net Flow (MW)": rb.NAVY}),
             "lineStyles": [line_style("1.5D", "solid", "Daily Net Flow (MW)")],
         },
-        "visualContainerObjects": rb.container("TH ↔ MY daily net flow (MW)"),
+        "visualContainerObjects": rb.container("Thailand ↔ Malaysia daily net flow (MW)"),
         "drillFilterOtherVisuals": True,
     }
 
@@ -276,8 +276,8 @@ def build() -> list[dict]:
         )
     )
 
-    # --- row 2: typical day + season | monthly peak | load factor (doc 04 F1: no dual axis) | flows + note
-    visuals.append(visual("p4_load_curve", rb.CONTENT_X, ROW2_Y, CHART_W, ROW2_H, 52, load_curve()))
+    # --- row 2: typical day + season | monthly peak | load factor (doc 04 F1: no dual axis)
+    visuals.append(visual("p4_load_curve", rb.CONTENT_X, ROW2_Y, CURVE_W, ROW2_H, 52, load_curve()))
     visuals.append(
         visual(
             "p4_season_slicer", SEASON_X, ROW2_Y, SEASON_W, ROW2_H, 53,
@@ -286,18 +286,25 @@ def build() -> list[dict]:
     )
     visuals.append(
         visual(
-            "p4_peak_cols", PEAK_X, ROW2_Y, CHART_W, ROW2_H, 54,
+            "p4_peak_cols", PEAK_X, ROW2_Y, PAIR_W, ROW2_H, 54,
             month_chart("clusteredColumnChart", "Peak Load (MW)", "Monthly peak (MW)"),
         )
     )
     visuals.append(
         visual(
-            "p4_lf_line", LF_X, ROW2_Y, CHART_W, ROW2_H, 55,
+            "p4_lf_line", LF_X, ROW2_Y, PAIR_W, ROW2_H, 55,
             month_chart("lineChart", "Load Factor (%)", "Load factor (%)"),
         )
     )
-    visuals.append(visual("p4_flow_line", FLOW_X, ROW2_Y, CHART_W, ROW2_H, 56, flow_chart()))
-    visuals.append(visual("p4_flow_note", FLOW_X, NOTE_Y, CHART_W, NOTE_H, 57, note("Flow Subtitle")))
+
+    # --- row 3: interconnector flows, full width; the export/import note at the right of its title row
+    visuals.append(visual("p4_flow_line", rb.CONTENT_X, ROW3_Y, rb.CONTENT_W, ROW3_H, 56, flow_chart()))
+    visuals.append(
+        visual(
+            "p4_flow_note", rb.CONTENT_X + 320, ROW3_Y + 6, rb.CONTENT_W - 328, 22, 57,
+            note("Flow Subtitle", align="right"),
+        )
+    )
     return visuals
 
 

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_peak_cols",
   "position": {
-    "x": 582.0,
-    "y": 404,
+    "x": 598,
+    "y": 398,
     "z": 54,
-    "width": 214.0,
-    "height": 180,
+    "width": 321.0,
+    "height": 140,
     "tabOrder": 54
   },
   "visual": {

@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
   "name": "p4_flow_note",
   "position": {
-    "x": 1042.0,
-    "y": 588,
+    "x": 520,
+    "y": 550,
     "z": 57,
-    "width": 214.0,
-    "height": 64,
+    "width": 728,
+    "height": 22,
     "tabOrder": 57
   },
   "visual": {
@@ -143,7 +143,7 @@
             "horizontalAlignment": {
               "expr": {
                 "Literal": {
-                  "Value": "'left'"
+                  "Value": "'right'"
                 }
               }
             },

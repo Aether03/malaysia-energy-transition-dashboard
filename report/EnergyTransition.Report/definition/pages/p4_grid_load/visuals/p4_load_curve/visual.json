@@ -3,10 +3,10 @@
   "name": "p4_load_curve",
   "position": {
     "x": 200,
-    "y": 404,
+    "y": 398,
     "z": 52,
-    "width": 214.0,
-    "height": 180,
+    "width": 196,
+    "height": 140,
     "tabOrder": 52
   },
   "visual": {
