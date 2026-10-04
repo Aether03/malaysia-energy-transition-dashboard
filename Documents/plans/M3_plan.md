@@ -180,13 +180,31 @@ Model tiers per doc 06 §4: **D** = Opus 5.5 (this session) · **S** = Sonnet 5.
 | Forecast doesn't beat the baseline | Low | The honest WARN banner (doc 03 P4); still a valid result |
 
 ## Acceptance (the doc 06 M3 check, plus)
-- [ ] The forecast beats the baseline on the 2024 backtest under the pre-committed rule (CI above 0), or P4 shows the honest WARN banner
-- [ ] `ecc:mle-reviewer` findings (code + protocol) resolved **before** the 2024 run; the python and database review findings on task 3.2 resolved
-- [ ] On an empty DB: `migrate && seed && run` exits 0; a second run merges 0 rows and reproduces the forecast metrics exactly
-- [ ] Hourly BLOCKING rules PASS; raw is a full copy of both files; 17,564 warehouse hours, 0 imputed, 4 known gaps
-- [ ] `docs/forecast.md` §Protocol committed before the 2024 run (its hash in `forecast_run`); the 2024 backtest run once
-- [ ] `docs/grid_sources.md` lists a verdict for each ASEAN grid lead; the selector exists only if a grid qualified and you approved it
-- [ ] Step 5 result documented, with the P4 label set; FR-22 sample-week peak and load factor match the hand calculation
-- [ ] All twins PASS (old 14 + new P4 ones)
-- [ ] P4 element-table click-through passes in Desktop, including the empty and error states
-- [ ] Docs 03/05/06 edits (Q2–Q4), index and skill-test memory updated; commits pushed
+- [x] The forecast beats the baseline on the 2024 backtest under the pre-committed rule: TH +46.9% (CI 39.3 to 52.8), SG +34.5% (CI 26.2 to 41.7). Both also beat the weekday-aware naive
+- [x] `ecc:mle-reviewer` findings resolved before the 2024 run (`efb4af6`, `d7a03e2`; re-verification APPROVE WITH WARNINGS, warnings fixed); task 3.2 reviews resolved (`30adf17`, `90f30b9`)
+- [x] On an empty DB (`EnergyDW_M3Test`, 2026-10-05): `migrate && seed && run` exits 0 (20 scripts; 4 known WARNs). The replay rebuilt both FINAL runs from the record, identical. A second run merged 0 rows for D1, D2, D3, DTH and DSG; replay identical; still 2 runs
+- [x] Hourly BLOCKING rules PASS. Raw: 281,424 TH + 106,848 SG rows. TH 17,564 hours, 0 imputed, 4 known gaps; SG 17,808, complete (rebuilt DB)
+- [x] §Protocol committed at `d7a03e2` before the run; the hash is in `forecast_run.protocol_commit`; one FINAL run per grid (records `d73808f`, `4198eb1`)
+- [x] `docs/grid_sources.md` lists a verdict per lead. Singapore qualified and was approved by Amirul; the grid selector exists
+- [x] Step 6 result in `docs/reconciliation.md`; label "Sum of regional demand (EGAT)"; FR-22 sample week: pandas = SQL for both grids
+- [x] Twins 23/23 PASS (14 old + 9 P4), latest run 2026-10-05
+- [x] P4 click-through passed in Desktop (GUI round 3, run by Claude via computer use, 2026-10-05): grid switch, sync both ways, season toggle, day pick and clear, nav. Caveats:
+  - The empty and error states are verified by DAX query. The date list holds backtest days only, so the empty state can't be reached from the UI.
+  - Hover tooltips aren't verifiable by automated hover. The card tooltip content is shown on the page anyway
+- [x] Docs 01/03/04/05/06 edits, index and skill-test memory updated; pushed
+
+## Outcome (2026-10-05)
+**M3 complete.**
+- **Forecast:** both grids beat the seasonal-naive baseline in a locked, once-only 2024 backtest. TH 3.31% vs 6.23% MAPE (improvement 46.9%, CI 39.3 to 52.8); SG 1.64% vs 2.50% (34.5%, CI 26.2 to 41.7). Both also beat the weekday-aware naive. The replay is bit-identical, including on an empty DB.
+- **P4 is two pages**, Grid load and Forecast (Amirul, GUI round 1), with synced grid slicers.
+
+**Lessons**
+- **Freeze before the test:** stubs + tests first, then development on 2023 only, then an independent pre-test review. The review found 3 HIGH machinery gaps and a benchmark-honesty issue, all fixed before the one-shot run.
+- **Rehearse in committed tests:** rehearsals that guard a one-shot step belong in committed tests. The reviewer could not see a scratch-only dry run.
+- **Desktop 2.158 limits:**
+  - minimum category width 20 px; legends hide below ~140 px; charts become placeholders below ~120 px; matrix header font minimum 8 pt;
+  - `at` is not a usable DAX variable name;
+  - card tooltips don't render.
+- **Refreshing without a click:** `tools/model_refresh.ps1` refreshes Desktop's model via TMSL.
+- **Launching Desktop:** under computer use, `open_application` started a second empty Desktop. Launch with `Start-Process` and focus the window by process ID.
+- **A limit found after the test** is recorded, not tuned (record peaks are under-forecast; `docs/forecast.md`).

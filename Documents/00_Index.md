@@ -1,6 +1,24 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-03 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0, M1 and **M2 are done**. **Now: M3**, grid load and forecast. Step plan `Documents/plans/M3_plan.md`, **APPROVED 2026-10-03** (Q1–Q6). Read its decisions and the 12-row backtest protocol first.
+**Updated:** 2026-10-05 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M3 are done.
+
+**M3 COMPLETE (2026-10-05):**
+- **Forecast:** both grids beat the baseline in the locked, once-only 2024 backtest (TH +46.9%, SG +34.5%).
+- **P4 is two pages**, Grid load and Forecast.
+- **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
+- **Details:** `plans/M3_plan.md` (Outcome).
+
+**Next: M4** (Regions and state reliability, doc 06 Phase 4). Start it in a fresh session with `/plan`.
+- **Carry-overs:**
+  - Singapore's season labels truncate slightly (cosmetic).
+  - Hover tooltips are unverified by automation.
+  - A record-peak extrapolation model is a v2 item, run as POST_HOC.
+- **Rules still standing:**
+  - Close Desktop before `pipeline run`.
+  - Never rebuild pages while Desktop is open.
+  - Launch Desktop with `Start-Process`, not computer-use `open_application`.
+
+**M3 history (kept for reference):** step plan `Documents/plans/M3_plan.md`, approved 2026-10-03 (Q1–Q6).
 
 **M3 resume point (2026-10-03, end of session 1). Steps 2–6 are done and pushed:**
 - **Step 2:** of the other ASEAN grids, only **Singapore (EMA)** qualifies (SODL v1.0, read from the primary terms page; `docs/grid_sources.md`). **Amirul: add it.** So P4 has two grids, TH_EGAT (default) and SG_EMA, with a selector.
