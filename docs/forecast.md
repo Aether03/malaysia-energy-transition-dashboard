@@ -170,6 +170,12 @@ On 2024, the model's advantage over the weekday-aware rule **is** established fo
 ## Limits
 - **Only two years of data:** each season is seen once before it is tested. January 2024 trains on about one year, and its early-stopping window is the atypical year-end period.
 - **No weather inputs:** cold spells and heat waves show up only through the lags.
+- **Record peaks are under-forecast** (found in the P4 review, 2026-10-05; not tuned for, since the test is spent).
+  - **Why:** a tree model predicts averages of values it has seen, so it can't forecast above the highest demand in its training data.
+  - **How often:** in 2024, 36 Thailand hours and 28 Singapore hours (both under 0.5%) were above the highest demand of their fold's training window. The model under-forecast those hours by 12.1% and 4.7% on average.
+  - **The worst case:** Thailand's record hour, 29 Apr 2024 21:00. Actual 35,560 MW, model 29,538 MW (a 6,022 MW miss), seasonal naive 34,685 MW. The highest Thailand forecast all year was 31,794 MW.
+  - **Effect on P4:** the Forecast page opens on that peak day, so this limit is the first thing a viewer sees.
+  - **The fix is a v2 item, a labelled POST_HOC run:** a model that can extrapolate, e.g. a trend term or temperature inputs.
 - **No refit on the latest 28 days:** within a test month the model is 28–59 days old.
 - **Holidays:** the baseline's *t* − 168 h can fall on a holiday. That is how seasonal naive works, so holiday-hour error is reported separately.
 - **The CI is narrow in scope:** it covers test-period sampling only (see Method).
