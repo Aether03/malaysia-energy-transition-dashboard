@@ -57,7 +57,21 @@
   - `dax_query.ps1` now writes UTF-8 (en-dash season labels).
   - Desktop quirk: `at` can't be a DAX variable name (it parses as SYNTAXERROR).
 - **Docs 01/03/05 as-built edits done (`1bf4b34`).**
-- **Step 12 in progress:** a Sonnet agent is building `tools/build_p4_page.py`, which will be continued across GUI rounds. Then step 13: acceptance (empty-DB rebuild, twins, doc 06, push). DEV runs 1–6 stay in `dw.forecast_run` and are never shown.
+- **Step 12: GUI rounds 1–3 done (round 3 run by Claude via computer use, at Amirul's request, 2026-10-05).**
+  - **P4 split into Grid load + Forecast** (Amirul's choice). Grid slicers are synced. The date dropdown holds 2024 days only, with nothing forced. Final layout is in `c8f9303`.
+  - **Checks:**
+    - ✅ Grid → Singapore switches the whole page.
+    - ✅ The sync carries both ways.
+    - ✅ The season toggle changes the curve only.
+    - ✅ Picking a day works.
+    - ✅ Clearing returns to the peak day.
+    - ✅ The nav rail works.
+    - Twins 23/23.
+    - ⚠ Tooltips (heatmap and card hover) can't be checked by automated hover, because no chart tooltip appears under synthetic mouse moves. The card tooltip content is shown on the page anyway.
+    - Cosmetic: Singapore's season labels truncate slightly.
+  - **Desktop limits learned:** minimum category width is 20 px; legends hide below ~140 px; charts become placeholders below ~120 px; header font minimum is 8 pt.
+  - **Next:** the forecast-doc note on the record-peak under-forecast, then step 13.
+- **Step 12 (original notes):** a Sonnet agent is building `tools/build_p4_page.py`, which will be continued across GUI rounds. Then step 13: acceptance (empty-DB rebuild, twins, doc 06, push). DEV runs 1–6 stay in `dw.forecast_run` and are never shown.
 - **Old step 9 note:** it needed Amirul's go because the run is irreversible and H3's banner policy was his call.
   - **Runbook:**
     1. `pipeline forecast --final --grid TH_EGAT`
