@@ -79,7 +79,7 @@ Nuclear is not generated in Malaysia or the peer set. If a D1 country ever shows
 **Malaysia = `accent.navy` `#104281`, 2.5 px line. Peers = `peer.muted` `#8a8984`, 1.5 px, direct-labelled at the line end.** This is highlight-versus-context, not a categorical palette. Identity comes from direct labels, so it never relies on telling five greys apart. Hover (T2) names the country.
 
 ### 3.4 Sequential scale: SAIFI/SAIDI map and heatmap (P3, P4)
-One hue, **blue**, light→dark = better→worse (more interruptions or higher load). The validator checks it as ordinal steps `#86b6ef → #5598e7 → #256abf → #184f95 → #0d366b`: **ALL PASS** (monotone lightness, step gaps ≥ 0.06, light end 2.06:1). Power BI theme: `minimum #cde2fb`, `center #3987e5`, `maximum #0d366b` (continuous). "Not reported" (Sabah, Sarawak) = `border.subtle` `#e4e3df` plus the label "Not reported", never a data colour.
+One hue, **blue**, light→dark = better→worse (more interruptions or higher load). The validator checks it as ordinal steps `#86b6ef → #5598e7 → #256abf → #184f95 → #0d366b`: **ALL PASS** (monotone lightness, step gaps ≥ 0.06, light end 2.06:1). Power BI theme: `minimum #cde2fb`, `center #3987e5`, `maximum #0d366b` (continuous). "Not reported" (Sabah, Sarawak) = `border.subtle` `#e4e3df` plus the label "Not reported", never a data colour. **As built (M4):** the P3b Shape Map gradient runs `#86b6ef` → `#0d366b` (the theme minimum `#cde2fb` was too close to the "not reported" grey); unreported shapes take Shape Map's default grey, with an on-page note. The P3b ranked bar uses solid `accent.blue` with data labels (a gradient fill isn't accepted on the bar). Region series colours on P3 (Peninsular `#730d62`, Sabah `#bc629e`, Sarawak `#52514e`) are kept clear of the energy-source palette, checked with CIEDE2000 under colour-blind simulation.
 
 ### 3.5 Status (P6 data quality, pipeline state), fixed
 | Status | Mark colour | Text-safe variant | Icon + word |
@@ -102,7 +102,7 @@ YoY deltas on KPI cards use the text-safe variants with ▲/▼ plus sign. **Dir
   - **Header band:** y 16–88, holding the title, subtitle, "Data as of", Reset and ⓘ.
   - **Body:** y 104–680.
   - **Footnote strip:** y 688–712.
-- **Grid:** the content area is a 12-column grid with 16 px gutters (column ≈ 73 px). KPI rows use 5 equal cards (P1) or 4 (region cards on P3).
+- **Grid:** the content area is a 12-column grid with 16 px gutters (column ≈ 73 px). KPI rows use 5 equal cards (P1) or 3 (region cards on P3: one card per region, 5 callouts in a 3-column table layout; **as built, M4**).
 - **Wireframe, P1 (other pages follow the same frame):**
 
 ```
@@ -168,4 +168,4 @@ Power BI motion is native and minimal: visual transitions, the loading spinner a
 | F1 | **Dual-axis combo charts** in doc 03: P2 "demand growth (column TWh + YoY % line)" and P4 "monthly peak demand and load factor (combo)". Dual axes are a hard anti-pattern in the `dataviz` method, because two y-scales invite false correlations. | doc 03 P2, P4 | Replace each with **two aligned single-axis charts** sharing the x-axis (P2: annual demand TWh │ YoY growth %; P4: monthly peak MW │ load factor %). Once this doc is approved, Claude makes this one-line change to doc 03 and logs it in the index. |
 
 ## 9. Open questions
-Resolved in review 2026-09-30: nav labels "Overview · Generation · Regions · Grid load · ASEAN · About" (**Decided**); accent stays navy `#104281` (**Decided**). Nothing open remains.
+Resolved in review 2026-09-30: nav labels "Overview · Generation · Regions · Grid load · ASEAN · About" (**Decided**; **as built** after the M3/M4 page splits: Overview · Generation · Regions · State reliability · Grid load · Forecast · ASEAN · About, 8 buttons); accent stays navy `#104281` (**Decided**). Nothing open remains.

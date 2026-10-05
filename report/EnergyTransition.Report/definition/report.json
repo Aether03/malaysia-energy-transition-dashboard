@@ -68,6 +68,11 @@
           "name": "energy-transition.json",
           "path": "energy-transition.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "mys_adm1_9469f09.topojson",
+          "path": "mys_adm1_9469f09.topojson",
+          "type": "ShapeMap"
         }
       ]
     }

@@ -1082,7 +1082,7 @@ table _Measures
 		displayFolder: State reliability
 		lineageTag: 129800e5-463e-413a-a7de-ab25265a2389
 
-	measure 'P3b Footnote' = "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pp. 83-84). " & [Handbook Consent Notice] & " Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0). Putrajaya includes Cyberjaya. Sabah, Sarawak and Labuan are not reported by state (see Regions). CAIDI (not shown) is misaligned for four states in 2015-2018 in both the 2022 and 2023 editions; SAIDI and SAIFI are shown as published."
+	measure 'P3b Footnote' = "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pp. 83-84). " & [Handbook Consent Notice] & " Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0). Putrajaya includes Cyberjaya."
 		displayFolder: State reliability
 		lineageTag: 3ca62d9e-9bb1-42c0-9461-3ec2de70a273
 
@@ -1147,7 +1147,7 @@ table _Measures
 		displayFolder: Regions
 		lineageTag: e375a609-a2f5-41d3-9f96-bc90916dcf6a
 
-	measure 'Region Card Note' = "Capacity at 31 Dec " & CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "INSTALLED_MW" ) & " · use " & [Region Consumption Year] & " · SAIFI " & [Region SAIFI Year]
+	measure 'Region Card Note' = "Capacity MW at 31 Dec " & CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "INSTALLED_MW" ) & " · use " & [Region Consumption Year] & " · SAIFI " & [Region SAIFI Year]
 		displayFolder: Regions
 		lineageTag: b16aa434-044c-4f83-9de4-9e3d4f305ea0
 
@@ -1166,9 +1166,37 @@ table _Measures
 		displayFolder: Regions
 		lineageTag: 4ed20217-9079-4a68-a2fd-513e2f50d109
 
-	measure 'P3 Footnote' = "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pp. 13-19, 82-85). " & [Handbook Consent Notice] & " Sabah includes Labuan. Sarawak's reliability table prints its years one year early; years are mapped from the 2022 edition (2015-2021), and its unproven last column is left out. Peninsular SAIFI/SAIDI are the state tables' totals."
+	measure 'P3 Footnote' = "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pp. 13-19, 82-85). " & [Handbook Consent Notice] & " Sabah includes Labuan."
 		displayFolder: Regions
 		lineageTag: 1705f1f8-ce62-4b6a-a2c5-4d598f2b327e
+
+	measure 'Reliability State Name' = SELECTEDVALUE ( dim_state[name] )
+		displayFolder: State reliability
+		lineageTag: 0fc905dd-0c29-4e99-beb1-25095dd86172
+
+	measure 'Reliability Map Title' = [Reliability Metric] & " by state, " & [Reliability Year] & " (darker = less reliable)"
+		displayFolder: State reliability
+		lineageTag: f44f720d-35e4-41ab-87b8-f86e9b02cd4a
+
+	measure 'Reliability Bar Title' = [Reliability Metric] & " by state, " & [Reliability Year] & " (rank 1 = most reliable)"
+		displayFolder: State reliability
+		lineageTag: 807e9476-085e-419c-a2a5-221f3bfa6965
+
+	measure 'P3b Note' = "Year: leave empty for the latest (" & MAX ( reliability_year[year] ) & "). CAIDI (not shown) is misaligned for four states in 2015-2018 in both the 2022 and 2023 editions; SAIDI and SAIFI are shown as published."
+		displayFolder: State reliability
+		lineageTag: 80ff034d-fa3a-4867-993e-0c91ad6dab90
+
+	measure 'P3 Subtitle' = "Peninsular Malaysia, Sabah (incl. Labuan) and Sarawak · capacity, use and supply reliability · Source: Energy Commission"
+		displayFolder: Regions
+		lineageTag: 94be8717-1f91-4acc-b68e-e66c93e2449f
+
+	measure 'P3 Note' = "Sarawak's reliability table prints its years one year early; years are mapped from the 2022 edition (2015-2021), and its unproven last column is left out. Peninsular SAIFI/SAIDI are the state tables' totals."
+		displayFolder: Regions
+		lineageTag: ef151e5b-adb3-4e53-a9a2-d37ad4dd6120
+
+	measure 'P3 SAIFI Bar Title' = "SAIFI by region: Sabah's is " & FORMAT ( [Sabah vs Peninsular SAIFI], "0.0" ) & "× Peninsular's"
+		displayFolder: Regions
+		lineageTag: b706b4cd-d20f-497a-a714-12cf78ba4267
 
 	partition _Measures = calculated
 		mode: import

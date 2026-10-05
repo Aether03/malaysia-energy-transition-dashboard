@@ -38,6 +38,7 @@ NAV = (
     ("Overview", OVERVIEW_PAGE),
     ("Generation", "p2_generation"),
     ("Regions", "p3_regions"),
+    ("State reliability", "p3b_state_reliability"),
     ("Grid load", "p4_grid_load"),
     ("Forecast", "p4b_forecast"),
     ("ASEAN", "p5_asean"),
@@ -76,10 +77,26 @@ def projection(field: dict, active: bool = False) -> dict:
     return proj
 
 
-def container(title: str | None, title_measure: str | None = None) -> dict:
-    """Title block. `title_measure` binds the title text to a measure (e.g. 'Capacity Factor Title')."""
-    # Subtitles are auto-generated from field names ("X by year and display_name"): always hidden.
+def container(title: str | None, title_measure: str | None = None, subtitle_measure: str | None = None) -> dict:
+    """Title block. `title_measure` binds the title text to a measure (e.g. 'Capacity Factor Title').
+
+    `subtitle_measure` shows a measure-bound subtitle under the title (9 pt, muted). It is evaluated in
+    the visual's own filter context, so a per-region card can carry per-region years (P3).
+    """
+    # Subtitles are auto-generated from field names ("X by year and display_name"): hidden unless a
+    # measure is bound on purpose.
     hidden_subtitle = [{"properties": {"show": lit("false")}}]
+    if subtitle_measure:
+        hidden_subtitle = [
+            {
+                "properties": {
+                    "show": lit("true"),
+                    "text": {"expr": measure_ref(subtitle_measure)},
+                    "fontSize": lit("9D"),
+                    "fontColor": solid(TEXT_MUTED),
+                }
+            }
+        ]
     if title is None and title_measure is None:
         return {"title": [{"properties": {"show": lit("false")}}], "subTitle": hidden_subtitle}
     return {
@@ -522,10 +539,12 @@ def frame(
     subtitle_measure: str,
     footnote_text: str | None,
     footnote_measure: str | None = None,
+    title_size: int = 20,
 ) -> list[dict]:
     """Nav rail, takeaway title, scope/as-of subtitle and footnote strip (doc 03 A3, doc 04 §4).
 
     The footnote is static text, or bound to a measure (a boxed text shape) when `footnote_measure` is set.
+    `title_size` (pt) lets a page with a long takeaway title (P3, P3b) drop to 16 pt, so two lines fit the 44 px box.
     """
     visuals = [
         visual("frame_rail", 0, 0, 176, 720, 0, shape(NAVY), tab=False),
@@ -564,7 +583,7 @@ def frame(
             840,
             44,
             30,
-            shape(None, {"expr": measure_ref(title_measure)}, 20, TEXT_PRIMARY, "Segoe UI Semibold"),
+            shape(None, {"expr": measure_ref(title_measure)}, title_size, TEXT_PRIMARY, "Segoe UI Semibold"),
         ),
         visual(
             "frame_subtitle",
@@ -609,6 +628,41 @@ def write_page(
     if page_name not in meta["pageOrder"]:
         meta["pageOrder"].append(page_name)
     meta_file.write_text(json.dumps(meta, indent=2), encoding="utf-8")
+
+
+REPORT_DIR = ROOT / "report" / "EnergyTransition.Report"
+REGISTERED_RESOURCES = REPORT_DIR / "StaticResources" / "RegisteredResources"
+REPORT_JSON = REPORT_DIR / "definition" / "report.json"
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def register_shape_map(source: Path, file_name: str) -> dict:
+    """Register a TopoJSON as a Shape Map resource (M4 step 11; the layout Desktop 2.158 itself writes).
+
+    Copies `source` byte-identically to StaticResources/RegisteredResources/<file_name> (SHA-256 asserted
+    equal) and adds {"name", "path", "type": "ShapeMap"} to the report.json "RegisteredResources" package.
+    Idempotent: nothing is rewritten when the copy and the entry already exist. Returns the entry.
+    """
+    target = REGISTERED_RESOURCES / file_name
+    if not target.exists() or _sha256(target) != _sha256(source):
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    assert _sha256(target) == _sha256(source), f"{file_name} is not byte-identical to {source.name}"
+
+    entry = {"name": file_name, "path": file_name, "type": "ShapeMap"}
+    raw = REPORT_JSON.read_bytes()
+    report = json.loads(raw.decode("utf-8"))
+    package = next(p for p in report["resourcePackages"] if p["name"] == "RegisteredResources")
+    if not any(item["name"] == file_name for item in package["items"]):
+        package["items"].append(entry)
+        out = json.dumps(report, indent=2, ensure_ascii=False)
+        if b"\r\n" in raw:  # keep the file's own CRLF line endings (and its missing final newline)
+            out = out.replace("\n", "\r\n")
+        REPORT_JSON.write_bytes(out.encode("utf-8"))
+    return entry
 
 
 def set_page_order(order: list[str]) -> None:

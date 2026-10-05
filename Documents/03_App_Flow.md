@@ -15,7 +15,8 @@
 |---|---|---|---|---|
 | P1 | **Overview** | Answer the headline question in 10 seconds: latest KPIs, trend and NETR progress | Report opens here; "Home" button on every page | FR-06, FR-10 |
 | P2 | **Malaysia: Generation & Targets** | How the mix changed; RE capacity vs NETR; capacity factor; demand growth | Nav rail; P1 KPI cards | FR-07, FR-10, FR-11 |
-| P3 | **Regions & State Reliability** | Peninsular vs Sabah vs Sarawak; SAIFI/SAIDI by state | Nav rail | FR-23, FR-24 |
+| P3 | **Regions** (as built, M4) | Peninsular vs Sabah vs Sarawak: capacity, consumption, interruptions, SAIFI | Nav rail | FR-23 |
+| P3b | **State reliability** (split from P3, M4 Q5) | SAIFI/SAIDI by Peninsular state: map, ranked bar, selected-state trend | Nav rail | FR-24 |
 | P4 | **Grid Load** | Daily load shapes, heatmap, peaks, load factor; Thailand ↔ Malaysia flows | Nav rail | FR-22, S2 |
 | P4b | **Forecast** | Day-ahead forecast vs actual for a picked backtest day; backtest metrics and verdict | Nav rail | FR-13 |
 | P5 | **ASEAN Comparison** | Malaysia vs peers on RE share, carbon intensity, per-capita demand; Malaysia's rank | Nav rail; P1 "vs ASEAN" card | FR-08, FR-09 |
@@ -79,21 +80,25 @@ Common to every page (**Recommended**): a header with the page title as a takeaw
 **Edge cases:** capacity missing for a year → CF shows blank with footnote "capacity not reported", never 0. Leap years → 8,784 h (handled in the DAX/SQL formula).
 
 ### P3 — Regions & State Reliability
-**Layout:** header → region cards (Peninsular / Sabah / Sarawak: installed capacity, available capacity, sales or generation, per the handbook tables) → left: **state reliability map** (SAIFI, colour scale) · right: **ranked bar** SAIFI by state (latest year) → small multiples: SAIFI trend per state 2015–latest → metric toggle **SAIFI | SAIDI** → source credit + consent notice.
+**As built (M4, plan Q5): split into two pages**, P3 Regions and P3b State reliability, because one page needed ~640 px of the 568 px body. Original layout, kept for reference: header → region cards → state map + ranked bar → small multiples → SAIFI | SAIDI toggle → source credit + consent notice.
+
+**P3 Regions:** header (takeaway title on the Sabah ÷ Peninsular SAIFI ratio) → 3 region cards (Peninsular / Sabah incl. Labuan / Sarawak: installed MW, available MW, consumption GWh, kWh per person, latest SAIFI; each card's subtitle gives its own years) → capacity mix by region (100% stacked column, source palette) · consumption by year (line) → SAIFI by region (bar, ratio in the title) · supply interruptions 2010–2022 (line) → note (Sarawak year mapping, Peninsular totals) → footnote (credit + consent notice).
+
+**P3b State reliability:** header (worst and best state for the selected year and metric) → SAIFI | SAIDI tiles, year dropdown, CAIDI note → left: **Shape Map** (13 Peninsular states and territories, sequential blue) and the **selected-state trend** below it; right: **ranked bar** (all 13, rank 1 = most reliable, data labels) → footnote (credit + consent notice + ODbL credit).
 
 | Element | User action | Result |
 |---|---|---|
-| Region cards | Click | Filters the page to that region where data allows (Sabah/Sarawak have no state split → map greys out non-selected) |
-| Metric toggle SAIFI / SAIDI | Click | Map, bar and small multiples switch metric and unit (interruptions/customer/yr ↔ minutes/customer/yr) |
-| Map state / bar | Click | Cross-filters the small multiples to that state |
+| Region cards (P3) | Click | **As built (Q9): no filter.** P3b holds only Peninsular states, so a region filter would empty it. The P3b map's grey "not reported" note points back to Regions instead |
+| Metric toggle SAIFI / SAIDI (P3b) | Click | Map, bar, trend, titles and subtitle switch metric and unit (interruptions ↔ minutes per customer per year) |
+| Map state / bar (P3b) | Click | Cross-filters the trend to that state, drawn against the Peninsular total. **As built:** one selected-state line replaces the small multiples (13 panels needed ~1080 × 340 px; M4 step 1 spike). Nothing selected = Peninsular alone |
 | | Hover | State, value, rank, change vs 2015 |
-| Year slicer (synced) | Change | Map and bar show that year |
+| Year dropdown (P3b) | Change | Map and bar show that year; empty = the latest year. **As built (Q9): P3b's own control, not synced** with P1/P2/P5, whose years run to 2025 |
 
-**States:** Empty: SAIDI not published for a state/year → "Not reported", greyed. **Consent notice** (**Decided** per doc 01 R3): until the Energy Commission grants consent, the page footer reads "Source: Energy Commission Malaysia, Malaysia Energy Statistics Handbook. Reproduced for non-commercial portfolio use; permission requested."
+**States:** Empty: SAIDI not published for a state/year → "Not reported", greyed. **Consent notice** (**Decided** per doc 01 R3; **as built, M4 Q1**): both footers read "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pages)" followed by a measure on the D5 consent status. Today it says "Derived charts for non-commercial portfolio use; written permission to be requested from the Energy Commission." It changes to "…permission requested…" once the email is sent and the seed says `REQUESTED`, and to "Reproduced with the Energy Commission's written permission." if consent is `GRANTED`.
 **Edge cases:** state names differ between handbook editions (e.g. "WP Kuala Lumpur" vs "Kuala Lumpur") → normalised in `stg` via a state mapping table (doc 05). **Map visual (verified 2026-09-30; Decided):**
 - Power BI **Shape Map** (now generally available; accepts a custom TopoJSON/GeoJSON file; [MS Learn](https://learn.microsoft.com/en-us/power-bi/visuals/desktop-shape-map)). It's used instead of the classic Filled Map, which Microsoft is deprecating in favour of Azure Maps ([MS Learn](https://learn.microsoft.com/en-us/azure/azure-maps/power-bi-visual-conversion)). Shape Map also renders offline with no map-service dependency.
-- Boundaries: **geoBoundaries `MYS` ADM1 simplified TopoJSON** (16 units: 13 states + 3 federal territories, 2017 boundaries). **ODbL 1.0**, derived from OpenStreetMap ([API record](https://www.geoboundaries.org/api/current/gbOpen/MYS/ADM1/)).
-- Credit on P3 and P6: "Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0)".
+- Boundaries: **geoBoundaries `MYS` ADM1 TopoJSON** (**as built:** the full-resolution file, 795,812 B, since geoBoundaries publishes the simplified version only as GeoJSON; registered in the report as a Shape Map resource with an explicit Mercator projection; joined on `shapeISO` = `dim_state.iso_3166_2`) (16 units: 13 states + 3 federal territories, 2017 boundaries). **ODbL 1.0**, derived from OpenStreetMap ([API record](https://www.geoboundaries.org/api/current/gbOpen/MYS/ADM1/)).
+- Credit on P3b (as built; the map moved there) and P6: "Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0)".
 - The state mapping table (doc 05) also maps handbook state names to the geoBoundaries shape names.
 - Sabah and Sarawak shapes show "not reported" styling, since SAIFI by state covers Peninsular states only.
 

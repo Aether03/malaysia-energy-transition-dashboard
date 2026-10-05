@@ -1,6 +1,6 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-05 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M3 are done.
+**Updated:** 2026-10-05 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done; **next: M5** (finish and ship v1.0.0; start with `/plan` on doc 06 Phase 5).
 
 **M3 COMPLETE (2026-10-05):**
 - **Forecast:** both grids beat the baseline in the locked, once-only 2024 backtest (TH +46.9%, SG +34.5%).
@@ -8,38 +8,18 @@
 - **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
 - **Details:** `plans/M3_plan.md` (Outcome).
 
-**M4 IN PROGRESS: steps 1–10 DONE 2026-10-05 (`895fd33`, pushed); resume at step 11 (P3/P3b pages + ≤ 2 GUI rounds), then step 12 acceptance.** Plan: `plans/M4_plan.md`, approved 2026-10-05 (Q1–Q9). Its step outcome rows hold the detail.
-- **Step 1, Desktop spike:**
-  - Shape Map + TopoJSON work and join on the ISO code.
-  - The SWITCH toggle works.
-  - Small multiples need ~1080×340, so **P3b row 2 = selected-state trend** (Amirul).
-- **Steps 2–6:**
-  - V015.
-  - Seeds: 3 regions, 16 states, 26 aliases.
-  - `tools/fetch_map.py` + the ODbL map.
-  - `pipeline/sources/handbook.py`: 12 tables pinned, 989 cells, in `raw.handbook_cell`.
-  - Synthetic fixtures; 948 tests.
-  - D5 is in `pipeline run`.
-- **Step 7, the independent check:**
-  - The blind re-read of all 989 cells shows **0 differences**.
-  - `ecc:python-reviewer` findings fixed.
-  - **Sarawak's printed years are one year early (proven via the 2022 edition). Decision: columns 1–7 → 2015–2021, column 8 excluded (Amirul).**
-- **Local-only material** (git-ignored `data/private/`): the re-read CSVs, notes and the 2022 edition. `tests/test_handbook_pdf.py` uses them when the PDF is present.
-- **Steps 8–10 (same day):**
-  - stg/dw + 12 D5 rules, all PASS; `ecc:database-reviewer` HIGH/MEDIUM findings fixed (V016).
-  - The Sarawak year map lives in `R__stg_handbook` and cites the 2022 edition.
-  - `R__mart_m4` + showcase `12`/`13`.
-  - 7 model tables, 29 measures, **twins 31/31**.
-- **Next: step 11, P3/P3b pages.**
-  - Build with `tools/build_p3_page.py` + `build_p3b_page.py` (Sonnet), using the Q5 budget (P3b row 2 = selected-state trend) and the templates `shape_map.json` and `line_chart_small_multiples.json`.
-  - The Shape Map needs the TopoJSON as a registered resource (`StaticResources/RegisteredResources/` + `report.json` resourcePackages entry, type `ShapeMap`) and an explicit Mercator projection.
-  - Then ≤ 2 GUI rounds.
-- **Then step 12:** empty-DB rebuild, doc 01/03/04/05/06 edits, `DATA_LICENSES.md`.
+**M4 COMPLETE (2026-10-05):** plan `plans/M4_plan.md` (step outcome rows + Outcome).
+- **Data:** 12 handbook tables (989 cells) land at runtime only. Blind re-read: 0 differences. The Sarawak year remap is proven by the 2022 edition. 12 D5 rules; twins 31/31; 948 tests.
+- **Pages:** **P3 Regions** + **P3b State reliability** (Shape Map on a registered TopoJSON, Mercator, ISO join; ranked bar; selected-state trend; SAIFI | SAIDI; own year dropdown). Built by `tools/build_p3_page.py` / `build_p3b_page.py`; 2 GUI rounds by Claude via computer use; every doc 03 row passes; credits, consent notice and ODbL credit visible.
+- **Acceptance:** the empty-DB rebuild passes (second run merges 0; only the 4 known WARNs; FINAL replays identical). Docs 01/03/04/05/06 as built; `DATA_LICENSES.md` has the handbook's p.5 terms and the ODbL redistribution.
+- **⚠ For M5 task 5.8 (before the repo goes public):** two real handbook figures were in committed text (doc 05 sample row; a comment in V015/`R__stg_handbook`). They're fixed in the tree, and `tools/scan_handbook_values.py` now guards it, but **they remain in git history**: rewrite history or accept that, deliberately.
+- **D5 consent:** the email stays task 6.1, sent after completion (decided). When it is sent, set D5 `consent_status = REQUESTED` and the page notice updates by itself.
 - **Rules still standing:**
   - Close Desktop before `pipeline run`, and never rebuild pages while it is open.
   - `Start-Process` to launch Desktop; `tools/model_refresh.ps1` to refresh it.
   - Validator + twins (Desktop open) before every commit.
-  - No handbook value in any committed file.
+  - No handbook value in any committed file (`tools/scan_handbook_values.py` + the guard test).
+  - Desktop captures: back up `report/` before saving in Desktop, then restore it.
 
 **M3 history (kept for reference):** step plan `Documents/plans/M3_plan.md`, approved 2026-10-03 (Q1–Q6).
 

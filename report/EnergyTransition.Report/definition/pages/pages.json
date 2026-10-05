@@ -3,6 +3,8 @@
   "pageOrder": [
     "59dacfc5089b163e62a0",
     "p2_generation",
+    "p3_regions",
+    "p3b_state_reliability",
     "p4_grid_load",
     "p4b_forecast",
     "p5_asean",

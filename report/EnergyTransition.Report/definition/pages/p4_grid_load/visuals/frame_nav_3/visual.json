@@ -45,7 +45,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Forecast'"
+                  "Value": "'State reliability'"
                 }
               }
             },
@@ -236,7 +236,7 @@
             "navigationSection": {
               "expr": {
                 "Literal": {
-                  "Value": "'p4b_forecast'"
+                  "Value": "'p3b_state_reliability'"
                 }
               }
             }

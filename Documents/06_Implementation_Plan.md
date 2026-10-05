@@ -18,7 +18,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 | **M1** | **Vertical slice**: Ember → SQL Server → P1 Overview (thin) | FR-01, 02, 03 (3 rules), 04, 05, 06 (partial) | M0 | **done 2026-09-30**: [plans/M1_plan.md](plans/M1_plan.md); all acceptance checks passed |
 | **M2** | Malaysia and ASEAN analysis | FR-06, 07, 08, 09, 10, 11, 12, 15; D1, T1, T2 | M1 | **done 2026-10-03**: [plans/M2_plan.md](plans/M2_plan.md); acceptance passed (T1/T2 as built-in tooltips, report-page tooltips moved to M5) |
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | **done 2026-10-05**: [plans/M3_plan.md](plans/M3_plan.md) (Outcome section) |
-| **M4** | Regions and state reliability | FR-23, 24 | M1 | **in progress**: [plans/M4_plan.md](plans/M4_plan.md), approved 2026-10-05 |
+| **M4** | Regions and state reliability | FR-23, 24 | M1 | **done 2026-10-05**: [plans/M4_plan.md](plans/M4_plan.md) (Outcome). P3 split into Regions + State reliability |
 | **M5** | Finish and ship **v1.0.0** | FR-14, 16, 17, 18, 20; NFR-01…08 | M2, M3, M4 | pending |
 | **M6** | Post-v1 | FR-21 (Streamlit), FR-19 (optional), Energy Commission consent, GSO if consented | M5 | pending |
 
@@ -110,7 +110,7 @@ flowchart LR
 | 4.1 | Handbook PDF extractor (`pdfplumber`) for SAIFI/SAIDI by state and the regional tables; pages pinned per edition; builds at runtime only (PDFs never committed) | `pipeline/sources/handbook.py` | doc 02 §4 | P1 | **High** | D | 2 years × all states match the PDF by eye; **review: a fresh-context agent re-reads the PDF pages** | L |
 | 4.2 | `ref.state_alias`, `dim_state`/`dim_region` seeds; download geoBoundaries MYS ADM1 TopoJSON; verify `shapeName` values | `seed/*.csv`, `report/maps/mys_adm1.topojson` | doc 03 P3 | P1 | Low | S | All 16 shapes join; none unmatched | S |
 | 4.3 | `stg`/`dw` for `fact_region_annual` and `fact_state_reliability` | `sql/transform/region_*.sql` | task 1.5 | P1 | Medium | D | Sample values equal the PDF; NULL where not reported | M |
-| 4.4 | P3 page: region cards, Shape Map, ranked bar, small multiples, SAIFI/SAIDI toggle, consent footer, ODbL credit (GUI) | PBIR | doc 03 P3 | P1 | Low | S | Doc 03 P3 element table click-through | M |
+| 4.4 | P3 page: region cards, Shape Map, ranked bar, small multiples, SAIFI/SAIDI toggle, consent footer, ODbL credit (GUI). **As built:** P3 Regions + P3b State reliability; small multiples → selected-state trend (M4 Q5) | PBIR | doc 03 P3 | P1 | Low | S | Doc 03 P3 element table click-through | M |
 
 **Deep reasons:** 4.1 parses numbers from a PDF, so errors are silent (High); 4.3 is P1 × Medium per the matrix.
 
@@ -171,7 +171,7 @@ flowchart LR
 | S2: interconnector flows visual | Tasks 3.1, 3.6 | Docs done; built there |
 | **Unverified**: Segoe UI tabular digits | Task 5.3 | Scheduled |
 | **Unverified**: TH regional sum vs national demand | Task 3.3 | Scheduled |
-| **Unverified**: geoBoundaries `shapeName` values | Task 4.2 | Scheduled |
+| ~~**Unverified**: geoBoundaries `shapeName` values~~ | Task 4.2 | **Verified** (M4 step 3): all 16 `shapeName` and `shapeISO` values join `dim_state`; the map keys on ISO |
 | **Unverified**: GitHub Actions allowances | Task 5.6 | Scheduled |
 | **Unverified**: model ranking (Fable 5.1) | Task 0.6 | Scheduled |
 | Singapore EMA as a second hourly source | — | **Deferred to v2**: licence unverified, and Thailand covers FR-22 |

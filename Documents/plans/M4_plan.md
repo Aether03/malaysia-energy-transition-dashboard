@@ -1,6 +1,6 @@
 # Plan: M4 — Regions and state reliability
 
-**Source:** [06 Implementation Plan](../06_Implementation_Plan.md) Phase 4 (tasks 4.1–4.4) · **Complexity:** Medium-Large (about 2 sessions; the PDF parser and its independent re-read are the slow, careful parts) · **Status:** APPROVED 2026-10-05 in the plan canvas (Q1–Q9 accepted as proposed); in progress
+**Source:** [06 Implementation Plan](../06_Implementation_Plan.md) Phase 4 (tasks 4.1–4.4) · **Complexity:** Medium-Large (about 2 sessions; the PDF parser and its independent re-read are the slow, careful parts) · **Status:** APPROVED 2026-10-05 in the plan canvas (Q1–Q9 accepted as proposed); **COMPLETE 2026-10-05** (Outcome below)
 
 ## Summary
 M4 adds the Malaysian regional and state view (FR-23, FR-24):
@@ -139,6 +139,8 @@ M4 adds the Malaysian regional and state view (FR-23, FR-24):
 | 8–10 → outcome | 4.3, 4.4 model | **Done 2026-10-05 (same session, Amirul: "resume step 8 here"):**<br>• **Step 8:**<br>— `R__stg_handbook`: typed cells with DECIMAL print half-units, the Sarawak year map (citing the 2022 edition), and state/region/capacity views.<br>— `070`/`080`, plus `dim_year` gains the handbook years.<br>— 12 D5 rules (9 BLOCKING, 3 WARN), all PASS. Without their exception lists, the WARN rules return exactly the registered 20 and 3 cells.<br>— Fault injection proved 6 BLOCKING rules fire (rolled back).<br>— Sample check: every state for 2015 and 2022, and every region for 2015 and 2021 (66 cells): `dw` equals the blind re-read, Sarawak remap included.<br>— Sabah's years were also confirmed against the 2022 edition (35/35 cells).<br>— **`ecc:database-reviewer`:** 0 CRITICAL, 2 HIGH, 5 MEDIUM, all fixed. New BLOCKING `CAPACITY_MATCHES_TOTALS` (fuel mapping vs printed totals) and `HANDBOOK_RAW_SHAPE` (stale or missing cells); `REGION_METRICS_COMPLETE` checks exact years per region and metric; explicit NULL handling; V016 makes `value_text` NOT NULL; non-negative guards in the transforms. LOW items noted (unindexed FKs at ~100 rows; ref data in views).<br>• **Step 9:** `R__mart_m4` (+ disconnected `reliability_metric` and `reliability_year`), showcase `12_regions` and `13_state_reliability`. They hold no values: the handbook is restricted.<br>• **Step 10:** 7 generated tables, 8 relationships and 29 measures (P3b controls/value/rank/change/trend/titles/consent notice; P3 cards/ratio/titles/footnotes). **Twins 31/31** (23 old + 8 new; handbook values compared exactly) | — | — |
 | 11 | 4.4 | `build_p3_page.py` + `build_p3b_page.py` to the Q5 budget (one Sonnet agent, continued with SendMessage across rounds), then **≤ 2 GUI rounds** | S + GUI | `validate_report.py` 0 problems; click-through of every row of doc 03 P3's table (as amended); credits and consent notice visible on both pages |
 | 12 | acceptance | Empty-DB rebuild (throwaway DB), twins, doc 01/03/04/05/06 edits, `DATA_LICENSES.md`, index, skill-test memory, push | D | The acceptance list below |
+| 11 → outcome | 4.4 | **Done 2026-10-05.** Sonnet built `build_p3_page.py` + `build_p3b_page.py` (+ `rb.register_shape_map`: byte-identical copy into `StaticResources/RegisteredResources/mys_adm1_9469f09.topojson`, a `report.json` entry of type `ShapeMap`, idempotent; `projectionEnum 'mercator'`). 7 display-only measures were added; the footnotes were shortened, with the moved text on on-page notes (credits verbatim). **2 GUI rounds, driven by Claude via computer use:**<br>• **Round 1:** the map, toggle, bar → trend cross-filter and map tooltip work. Fixes: card callouts truncated; capacity bars scrolled; "0.1M" axes; the bar's gradient fill was ignored (theme brown) and it scrolled at 13 states; the year dropdown was clipped at 44 px; the trend lost its year axis at 160 px; raw tooltip labels.<br>• **Round 2:** P3b passed every doc 03 row (toggle; year 2015; map → bar + trend; bar → map + trend; hover). P3 needed one in-round fix: as columns, Desktop hid the region axis; with the legend on top, the horizontal bars scrolled; the legend wouldn't move to the side. Final: horizontal 100% bar, built-in legend off, a coloured-text legend on the title line. The cards use the Desktop-captured grid layout (`layout.style 'Table'`, `columnCount 3L`, `orientation 0D`, plus per-measure `value.labelDisplayUnits 1D`). Region cards don't filter (checked).<br>• Captures were made by saving in Desktop with `report/` backed up first, then restored, so no Desktop renumbering leaked. Validator 0 problems (194 visuals) | — | — |
+| 12 → outcome | acceptance | **Done 2026-10-05.**<br>• **Empty DB** (`EnergyDW_M4Test`): `migrate && seed && run` exits 0 (24 scripts). The second run merges 0 rows for D1–D3, D5, DTH and DSG. Only the 4 known M2 WARNs fire; 30 rules PASS. FINAL forecast runs replay identically to the live DB. `compare_reread`: 989/989, 0 differences. DB dropped.<br>• **Found while checking "no handbook value":** two real handbook figures in committed text, the doc 05 "synthetic" sample row and the example in comments in V015 and `R__stg_handbook`. All replaced; the live V015 checksum was updated. New `tools/scan_handbook_values.py` checks every committed file against the landed cells (names, lines and counts only; reviewed coincidences listed). **Both values remain in git history** (repo private): **M5 task 5.8** must rewrite history or accept that before the repo goes public | — | — |
 
 **Batching:**
 - Step 3 (S) runs in parallel with steps 4–5.
@@ -172,6 +174,7 @@ M4 adds the Malaysian regional and state view (FR-23, FR-24):
 .venv/Scripts/python tools/compare_reread.py  # 0 unexplained cell differences
 .venv/Scripts/python tools/validate_report.py # 0 problems
 .venv/Scripts/python tools/dax_twin_check.py  # all twins PASS (Desktop open)
+.venv/Scripts/python tools/scan_handbook_values.py  # 0 files to check (added at step 12)
 git ls-files | grep -iE '\.pdf$|^data/'       # empty
 ```
 
@@ -188,13 +191,25 @@ git ls-files | grep -iE '\.pdf$|^data/'       # empty
 | RAM with Desktop + SQL Server | Medium | Standing rule: close Desktop before `pipeline run` |
 
 ## Acceptance (the doc 06 M4 check, plus)
-- [ ] P3/P3b values match the handbook for 2 sample years: states 2015 and 2022, regions 2015 and 2021 (step 8), **and** the blind re-read shows 0 unexplained differences over all cells (step 7)
-- [ ] Credits visible on P3 and P3b: "Source: Energy Commission…", the consent notice (driven by the status measure), and the ODbL boundaries credit
-- [ ] All 16 shapes join to `dim_state`, none unmatched; Sabah, Sarawak and Labuan greyed and explained
-- [ ] `git ls-files` holds no PDF, nothing under `data/`, and no handbook value (guard test + a review of `docs/` diffs)
-- [ ] Empty-DB rebuild: `migrate && seed && run` exits 0; a second run merges 0 rows; forecast replay identical
-- [ ] BLOCKING rules PASS; WARNs only the registered ones
-- [ ] `ecc:python-reviewer` and `ecc:database-reviewer` findings resolved
-- [ ] Twins: the new ones PASS and all 23 existing ones still PASS
-- [ ] Doc 03 P3 click-through passes in Desktop (≤ 2 GUI rounds)
-- [ ] Docs 01/03/04/05/06, `DATA_LICENSES.md`, the index and the skill-test memory updated; pushed
+- [x] P3/P3b values match the handbook for 2 sample years: states 2015 and 2022, regions 2015 and 2021 (step 8), **and** the blind re-read shows 0 unexplained differences over all cells (step 7)
+- [x] Credits visible on P3 and P3b: "Source: Energy Commission…", the consent notice (driven by the status measure), and the ODbL boundaries credit
+- [x] All 16 shapes join to `dim_state`, none unmatched; Sabah, Sarawak and Labuan greyed and explained
+- [x] `git ls-files` holds no PDF, nothing under `data/`, and no handbook value (guard test + `tools/scan_handbook_values.py`; 2 old leaks fixed in the tree, still in history → M5 task 5.8)
+- [x] Empty-DB rebuild: `migrate && seed && run` exits 0; a second run merges 0 rows; forecast replay identical
+- [x] BLOCKING rules PASS; WARNs only the registered ones
+- [x] `ecc:python-reviewer` and `ecc:database-reviewer` findings resolved
+- [x] Twins: the new ones PASS and all 23 existing ones still PASS
+- [x] Doc 03 P3 click-through passes in Desktop (≤ 2 GUI rounds)
+- [x] Docs 01/03/04/05/06, `DATA_LICENSES.md`, the index and the skill-test memory updated; pushed
+
+## Outcome (2026-10-05)
+**M4 complete.**
+- **Data:** 12 handbook tables (989 cells) land at runtime only. A blind vision re-read found 0 differences. Sarawak's misprinted years were proven and remapped with the 2022 edition as witness. 12 D5 rules; twins 31/31.
+- **Pages:** P3 Regions (3 region cards, capacity mix, consumption, SAIFI by region with the Sabah ÷ Peninsular ratio, interruptions) and P3b State reliability (Shape Map on a registered TopoJSON resource, Mercator, ISO join; ranked bar; selected-state trend; SAIFI | SAIDI toggle; own year dropdown). Credits, the consent-status notice and the ODbL credit are on the pages.
+- **Licence:** nothing from the handbook is in the tree (guard test + value scan). Two earlier leaks are still in history, flagged for M5 task 5.8.
+
+**Lessons**
+- **Restricted data needs a value scan, not just a file-type guard.** A "synthetic" example written at planning time was the real figure. Scan committed text against the landed values.
+- **Capture Desktop's JSON by saving with `report/` backed up**, then restore. The new card's grid layout (`orientation 0D`) and per-measure display units existed only in Desktop's save, not in any template.
+- **Desktop 2.158 limits added:** a 100% column chart hides a wrapping category axis at 168 px; a top legend pushes 3 horizontal bars into scrolling at 168 px, and the legend can't move to the side; a bar chart ignores a gradient `dataPoint` fill; a 44 px dropdown slicer is clipped; a cardVisual table needs `orientation 0D` (grid) to wrap.
+- **The GUI budget held:** 2 rounds, plus one in-round fix verified in the same round.

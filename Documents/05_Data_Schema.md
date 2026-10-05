@@ -76,9 +76,15 @@ PK: `(area, year, electricity_source)`.
 | edition | SMALLINT | ✓ | PK part | Handbook year, e.g. 2023 |
 | page | SMALLINT | ✓ | PK part | Pinned per edition (doc 02 §4) |
 | table_code | VARCHAR(40) | ✓ | PK part | e.g. `SAIFI_BY_STATE` |
-| row_label | NVARCHAR(100) | ✓ | PK part | e.g. `Johor` |
-| col_label | NVARCHAR(40) | ✓ | PK part | e.g. `2022` |
-| value_text | NVARCHAR(40) | | | As printed; cast in stg |
+| row_pos | SMALLINT | ✓ | PK part | 1-based data row, top to bottom (**as built, M4 Q3**: positions, not labels, are the key, so duplicate printed labels such as p.13's repeated "IPPs" or Sarawak's two "2019" headers fit) |
+| col_pos | SMALLINT | ✓ | PK part | 1-based value column, left to right |
+| row_group | NVARCHAR(60) | | | Block the row sits in (p.13 region blocks) |
+| row_label | NVARCHAR(150) | ✓ | | As printed, e.g. `Johor`; a wrapped label is joined with single spaces |
+| col_label | NVARCHAR(60) | ✓ | | As printed, e.g. `2022` |
+| value_text | NVARCHAR(40) | ✓ | | As printed (`-` kept); cast in stg. NOT NULL since V016 |
+| _run_id, _source_file, _loaded_at | | ✓ | | Lineage, as in the other raw tables |
+
+Runtime only: the D5 licence forbids committing these cells (M4 plan Q1, `DATA_LICENSES.md`).
 
 ### 2.2 `ref` — hand-authored seeds (from `seed/*.csv`, committed)
 | Table | Fields (type) | PK | Purpose (doc 03/04 need) |
@@ -97,8 +103,8 @@ PK: `(area, year, electricity_source)`.
 | **`dw.dim_date`** | date_key INT PK (yyyymmdd) · date DATE UNIQUE · year SMALLINT FK→dim_year · month TINYINT · month_name CHAR(3) · iso_weekday TINYINT · is_weekend BIT · season_th VARCHAR(10) (`HOT`/`RAINY`/`COOL`) · season_my VARCHAR(12) (`NE_MONSOON`/`SW_MONSOON`/`INTER`) · is_holiday_th BIT · is_holiday_my BIT · is_holiday_sg BIT (V012) | P4 toggles; forecast features. Holidays from the `holidays` package at build (**Recommended**) |
 | **`dw.dim_hour`** | hour TINYINT PK (0–23) · label CHAR(5) | P4 load curves, heatmap |
 | **`dw.dim_grid`** | grid_key INT IDENTITY PK · grid_code VARCHAR(20) UNIQUE · name NVARCHAR(80) · country_key FK · utc_offset_min SMALLINT (TH 420, MY 480, SG 480) · data_source_code FK · is_published BIT | P4 grid selector. `MY_PEN_GSO.is_published = 0` until TNB consents (doc 03 P4) |
-| **`dw.dim_region`** | region_key INT IDENTITY PK · region_code CHAR(3) UNIQUE (`PEN`,`SAB`,`SAR`) · name NVARCHAR(40) | P3 region cards |
-| **`dw.dim_state`** | state_key INT IDENTITY PK · state_code CHAR(3) UNIQUE · name NVARCHAR(60) · geo_shape_name NVARCHAR(60) (exact geoBoundaries `shapeName`, verified at build) · region_key FK · is_federal_territory BIT | P3 Shape Map join key (doc 03 P3) |
+| **`dw.dim_region`** | region_key INT IDENTITY PK · region_code CHAR(3) UNIQUE (`PEN`,`SAB`,`SAR`) · name NVARCHAR(40) UNIQUE · display_order SMALLINT UNIQUE | P3 region cards. SAB includes Labuan (handbook p.18 note) |
+| **`dw.dim_state`** | state_key INT IDENTITY PK · state_code CHAR(3) UNIQUE · name NVARCHAR(60) UNIQUE · geo_shape_name NVARCHAR(60) UNIQUE (exact geoBoundaries `shapeName`) · **iso_3166_2 CHAR(5) UNIQUE** (`MY-01`…`MY-16`, as built, M4 Q6) · region_key FK · is_federal_territory BIT · display_order SMALLINT UNIQUE. `mart.dim_state` adds is_reported_by_state (PEN states only) | P3b Shape Map joins on **`iso_3166_2`** (shapeISO; the step 1 spike showed it joins as well as the name and doesn't depend on spelling). 16 rows: 13 states + 3 federal territories |
 | **`dw.dim_data_source`** | data_source_code VARCHAR(10) PK (`D1`…`D6`, `DTH`, `GEO`) · name · licence NVARCHAR(60) · url NVARCHAR(400) · credit_text NVARCHAR(400) · consent_status VARCHAR(20) (`OPEN`/`REQUESTED`/`GRANTED`/`REFUSED`) · is_publishable BIT | P6 sources table and consent status. Export filter (doc 02 §3.2) |
 
 ### 2.4 `dw` — facts
@@ -106,8 +112,9 @@ PK: `(area, year, electricity_source)`.
 |---|---|---|---|---|
 | **`dw.fact_generation_annual`** | country × year × source · PK (country_key, year, source_key) | generation_twh DECIMAL(12,4) · share_pct DECIMAL(7,3) · capacity_gw DECIMAL(10,4) NULL · emissions_mtco2e DECIMAL(12,4) NULL | dim_country, dim_year, dim_source | P1, P2, D1 mix; capacity factor; RE capacity share |
 | **`dw.fact_country_annual`** | country × year · PK (country_key, year) | total_generation_twh · demand_twh · net_imports_twh (DECIMAL(12,4)) · emissions_intensity_gco2e_kwh DECIMAL(10,3) · population BIGINT NULL · demand_per_capita_mwh DECIMAL(10,4) NULL · re_share_gen_pct · re_share_capacity_pct DECIMAL(7,3) NULL | dim_country, dim_year | P1 KPIs, P5, T2, NETR line |
-| **`dw.fact_region_annual`** | region × year × metric · PK (region_key, year, metric_code) | value DECIMAL(14,3) · unit NVARCHAR(20) | dim_region, dim_year | P3 region cards (metrics vary by handbook table, hence long form) |
-| **`dw.fact_state_reliability`** | state × year · PK (state_key, year) | saifi DECIMAL(6,3) NULL · saidi_min DECIMAL(8,2) NULL (NULL = "Not reported") | dim_state, dim_year | P3 map, bar, small multiples |
+| **`dw.fact_region_annual`** | region × year × metric · PK (region_key, year, metric_code) | value DECIMAL(14,3) NULL · unit NVARCHAR(30) · page SMALLINT (lineage). metric_code ∈ `INSTALLED_MW`, `AVAILABLE_MW`, `ELEC_CONSUMPTION_GWH`, `ELEC_PER_CAPITA_KWH`, `POPULATION_K`, `SUPPLY_INTERRUPTIONS`, `SAIFI`, `SAIDI_MIN` (CHECK) | dim_region, dim_year | P3 cards and charts (metrics vary by handbook table, hence long form). PEN SAIFI/SAIDI = the state tables' total rows (M4 Q4) |
+| **`dw.fact_region_capacity`** (**as built, M4 step 2**) | region × year × source · PK (region_key, year, source_key) | installed_mw · available_mw DECIMAL(10,1) NULL (at least one set) | dim_region, dim_year, dim_source | P3 capacity mix by region. Split out because the long-form key can't hold a fuel breakdown without a NULL in the key; handbook fuels map to the doc 04 palette groups (M4 plan definitions) |
+| **`dw.fact_state_reliability`** | state × year · PK (state_key, year) | saifi DECIMAL(6,3) NULL · saidi_min DECIMAL(8,2) NULL (NULL = "Not reported") | dim_state, dim_year | P3b map, ranked bar, selected-state trend (small multiples ruled out in the M4 spike) |
 | **`dw.fact_grid_hourly`** | grid × UTC hour · PK (grid_key, ts_utc) | ts_local DATETIME2(0) · demand_mw DECIMAL(10,1) · is_imputed BIT DEFAULT 0 · date_key INT · hour TINYINT | dim_grid, dim_date, dim_hour | P4 curves, heatmap, peak, load factor; forecast input |
 | **`dw.fact_grid_flow_hourly`** | grid × UTC hour × counterparty · PK (grid_key, ts_utc, counterparty) | import_mw DECIMAL(10,1) NULL · export_mw DECIMAL(10,1) NULL | dim_grid, dim_date, dim_hour | **Recommended new**: Thailand↔Malaysia interconnector flows (see Q1) |
 | **`dw.fact_sector_monthly`** | month × sector × measure · PK (date_key, sector, measure) | value_gwh DECIMAL(14,4) | dim_date | DQ cross-check only (see Q2) |
@@ -131,7 +138,7 @@ PK: `(area, year, electricity_source)`.
 | `meta.schema_version` | version INT PK · script_name NVARCHAR(200) · applied_at DATETIME2(0) · checksum CHAR(64) | Migration tracking (§5) |
 
 ### 2.6 `mart` views (the Power BI contract)
-`mart.dim_country`, `mart.dim_source`, `mart.dim_year`, `mart.dim_date`, `mart.dim_hour`, `mart.dim_grid` (only `is_published = 1` grids), `mart.dim_region`, `mart.dim_state`, `mart.dim_data_source`, `mart.kpi`, `mart.netr_target`, `mart.generation_annual`, `mart.country_annual`, `mart.region_annual`, `mart.state_reliability`, `mart.grid_hourly`, `mart.grid_flow_daily` (daily net flow, M3 Q3), `mart.forecast_date` and `mart.season_pick` (disconnected P4 controls), `mart.forecast_run_current`, `mart.load_forecast_current`, `mart.forecast_status`, `mart.run_latest`, `mart.dq_latest`. Each view selects explicit columns (no `SELECT *`), so a raw-schema change can't silently alter the report.
+`mart.dim_country`, `mart.dim_source`, `mart.dim_year`, `mart.dim_date`, `mart.dim_hour`, `mart.dim_grid` (only `is_published = 1` grids), `mart.dim_region`, `mart.dim_state`, `mart.dim_data_source`, `mart.kpi`, `mart.netr_target`, `mart.generation_annual`, `mart.country_annual`, `mart.region_annual`, `mart.region_capacity`, `mart.state_reliability`, `mart.reliability_metric` and `mart.reliability_year` (disconnected P3b controls, M4), `mart.grid_hourly`, `mart.grid_flow_daily` (daily net flow, M3 Q3), `mart.forecast_date` and `mart.season_pick` (disconnected P4 controls), `mart.forecast_run_current`, `mart.load_forecast_current`, `mart.forecast_status`, `mart.run_latest`, `mart.dq_latest`. Each view selects explicit columns (no `SELECT *`), so a raw-schema change can't silently alter the report.
 
 ## 3. Relationships
 
