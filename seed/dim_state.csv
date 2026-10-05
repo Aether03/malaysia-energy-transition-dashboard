@@ -1,0 +1,17 @@
+state_code,name,geo_shape_name,iso_3166_2,region_code,is_federal_territory,display_order
+JHR,Johor,Johor,MY-01,PEN,0,1
+KDH,Kedah,Kedah,MY-02,PEN,0,2
+KTN,Kelantan,Kelantan,MY-03,PEN,0,3
+KUL,Kuala Lumpur,Kuala Lumpur,MY-14,PEN,1,4
+MLK,Melaka,Malacca,MY-04,PEN,0,5
+NSN,Negeri Sembilan,Negeri Sembilan,MY-05,PEN,0,6
+PHG,Pahang,Pahang,MY-06,PEN,0,7
+PRK,Perak,Perak,MY-08,PEN,0,8
+PLS,Perlis,Perlis,MY-09,PEN,0,9
+PNG,Pulau Pinang,Penang,MY-07,PEN,0,10
+PJY,Putrajaya,Putrajaya,MY-16,PEN,1,11
+SGR,Selangor,Selangor,MY-10,PEN,0,12
+TRG,Terengganu,Terengganu,MY-11,PEN,0,13
+LBN,Labuan,Labuan,MY-15,SAB,1,14
+SBH,Sabah,Sabah,MY-12,SAB,0,15
+SWK,Sarawak,Sarawak,MY-13,SAR,0,16

@@ -41,6 +41,13 @@ THAILAND_MD5 = {
     "system_2023.csv": "426d0db764f75780f589a8aeb6b1ef65",
     "system_2024.csv": "5c1f09d6641ad6addb6f282f981e808a",
 }
+# D5: Energy Commission, Malaysia Energy Statistics Handbook (restricted: runtime extraction only,
+# M4 plan Q1). The MD5 pins the exact file the page pins in pipeline/sources/handbook.py were
+# profiled on (8,046,592 B, Last-Modified 31 Mar 2026; checked 2026-10-05).
+HANDBOOK_URL = {
+    2023: "https://www.st.gov.my/sites/default/files/2026-02/Malaysia_Energy_Statistics_Handbook_2023.pdf",
+}
+HANDBOOK_MD5 = {2023: "ba481c7f1b515eccd43fc6505ad6b96c"}
 # DSG: EMA weekly half-hourly system demand workbooks (Singapore Open Data Licence v1.0).
 EMA_HALF_HOURLY_URL = (
     "https://www.ema.gov.sg/content/dam/corporate/resources/statistics/half-hourly-data/{year}/{file_name}"

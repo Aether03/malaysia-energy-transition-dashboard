@@ -100,6 +100,15 @@ SEEDS: tuple[SeedSpec, ...] = (
         ("grid_code", "name", "country_key", "utc_offset_min", "data_source_code", "is_published"),
         lookups=(Lookup("country_iso3", "country_key", "SELECT country_key FROM dw.dim_country WHERE iso3 = ?"),),
     ),
+    SeedSpec("dim_region.csv", "dw.dim_region", "region_code", ("region_code", "name", "display_order")),
+    SeedSpec(
+        "dim_state.csv",
+        "dw.dim_state",
+        "state_code",
+        ("state_code", "name", "geo_shape_name", "iso_3166_2", "region_key", "is_federal_territory", "display_order"),
+        lookups=(Lookup("region_code", "region_key", "SELECT region_key FROM dw.dim_region WHERE region_code = ?"),),
+    ),
+    SeedSpec("state_alias.csv", "ref.state_alias", "alias", ("alias", "state_code")),
     SeedSpec(
         "kpi.csv",
         "ref.kpi",

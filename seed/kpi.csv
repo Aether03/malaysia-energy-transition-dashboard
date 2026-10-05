@@ -8,3 +8,5 @@ DEMAND_PER_CAPITA,Electricity demand per person,The average electricity demand p
 CAPACITY_FACTOR,Capacity factor,How much a source generated compared with running at full capacity all year.,Generation (TWh) × 1000 ÷ (capacity (GW) × hours in year; 8784 in leap years),%,1,D1
 DEMAND_GROWTH,Demand growth,Year-on-year change in a country's electricity demand.,(Demand this year − demand last year) ÷ demand last year × 100,%,1,D1
 EMISSIONS,Power-sector emissions,Greenhouse-gas emissions from electricity generation in a year.,Ember 'Emissions (MtCO2e)' on the Total generation row,MtCO₂e,-1,D1
+SAIFI,System Average Interruption Frequency Index,Average number of sustained interruptions per customer per year.,Total customer interruptions ÷ total customers served,events/customer/yr,-1,D5
+SAIDI,System Average Interruption Duration Index,Average minutes of interruption per customer per year.,Sum of customer interruption durations ÷ total customers served,min/customer/yr,-1,D5

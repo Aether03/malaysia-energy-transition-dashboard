@@ -1,0 +1,115 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "0c99839395c5bac6a7f3",
+  "position": {
+    "x": 100,
+    "y": 330,
+    "z": 5,
+    "height": 340,
+    "width": 1080,
+    "tabOrder": 5
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "zz_spike"
+                    }
+                  },
+                  "Property": "year"
+                }
+              },
+              "queryRef": "zz_spike.year",
+              "nativeQueryRef": "year",
+              "active": true
+            }
+          ]
+        },
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "zz_spike"
+                    }
+                  },
+                  "Property": "shape_name"
+                }
+              },
+              "queryRef": "zz_spike.shape_name",
+              "nativeQueryRef": "shape_name"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "zz_spike"
+                    }
+                  },
+                  "Property": "zz Spike Value"
+                }
+              },
+              "queryRef": "zz_spike.zz Spike Value",
+              "nativeQueryRef": "zz Spike Value"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "zz_spike"
+                  }
+                },
+                "Property": "zz Spike Value"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
+    },
+    "objects": {
+      "smallMultiplesLayout": [
+        {
+          "properties": {
+            "rowCount": {
+              "expr": {
+                "Literal": {
+                  "Value": "3L"
+                }
+              }
+            },
+            "columnCount": {
+              "expr": {
+                "Literal": {
+                  "Value": "6L"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}
