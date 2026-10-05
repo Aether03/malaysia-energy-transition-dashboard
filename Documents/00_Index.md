@@ -8,7 +8,7 @@
 - **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
 - **Details:** `plans/M3_plan.md` (Outcome).
 
-**M4 IN PROGRESS: session 1 (steps 1–7) DONE 2026-10-05; resume at step 8 in a fresh session.** Plan: `plans/M4_plan.md`, approved 2026-10-05 (Q1–Q9). Its step outcome rows hold the detail.
+**M4 IN PROGRESS: steps 1–10 DONE 2026-10-05 (`895fd33`, pushed); resume at step 11 (P3/P3b pages + ≤ 2 GUI rounds), then step 12 acceptance.** Plan: `plans/M4_plan.md`, approved 2026-10-05 (Q1–Q9). Its step outcome rows hold the detail.
 - **Step 1, Desktop spike:**
   - Shape Map + TopoJSON work and join on the ISO code.
   - The SWITCH toggle works.
@@ -25,12 +25,16 @@
   - `ecc:python-reviewer` findings fixed.
   - **Sarawak's printed years are one year early (proven via the 2022 edition). Decision: columns 1–7 → 2015–2021, column 8 excluded (Amirul).**
 - **Local-only material** (git-ignored `data/private/`): the re-read CSVs, notes and the 2022 edition. `tests/test_handbook_pdf.py` uses them when the PDF is present.
-- **Next: steps 8–12.**
-  - Step 8: `R__stg_handbook` + `070`/`080` + DQ rules, including the Sarawak year override as a seed citing the 2022 edition, then `ecc:database-reviewer`.
-  - Step 9: mart + showcase.
-  - Step 10: model + twins.
-  - Step 11: P3/P3b + ≤ 2 GUI rounds.
-  - Step 12: acceptance.
+- **Steps 8–10 (same day):**
+  - stg/dw + 12 D5 rules, all PASS; `ecc:database-reviewer` HIGH/MEDIUM findings fixed (V016).
+  - The Sarawak year map lives in `R__stg_handbook` and cites the 2022 edition.
+  - `R__mart_m4` + showcase `12`/`13`.
+  - 7 model tables, 29 measures, **twins 31/31**.
+- **Next: step 11, P3/P3b pages.**
+  - Build with `tools/build_p3_page.py` + `build_p3b_page.py` (Sonnet), using the Q5 budget (P3b row 2 = selected-state trend) and the templates `shape_map.json` and `line_chart_small_multiples.json`.
+  - The Shape Map needs the TopoJSON as a registered resource (`StaticResources/RegisteredResources/` + `report.json` resourcePackages entry, type `ShapeMap`) and an explicit Mercator projection.
+  - Then ≤ 2 GUI rounds.
+- **Then step 12:** empty-DB rebuild, doc 01/03/04/05/06 edits, `DATA_LICENSES.md`.
 - **Rules still standing:**
   - Close Desktop before `pipeline run`, and never rebuild pages while it is open.
   - `Start-Process` to launch Desktop; `tools/model_refresh.ps1` to refresh it.
