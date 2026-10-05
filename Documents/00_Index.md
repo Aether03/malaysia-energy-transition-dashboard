@@ -8,7 +8,16 @@
 - **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
 - **Details:** `plans/M3_plan.md` (Outcome).
 
-**Next: M4** (Regions and state reliability, doc 06 Phase 4). Start it in a fresh session with `/plan`.
+**Next: M4** (Regions and state reliability, doc 06 Phase 4).
+- **2026-10-05:** step plan drafted at `plans/M4_plan.md` (Q1–Q9) and **APPROVED 2026-10-05** in the plan canvas (Q1–Q9 as proposed). Next: step 1 (Desktop spike).
+- **Profiling findings are in the plan's "Facts verified" section:**
+  - SAIDI is by state too.
+  - The data runs to 2022.
+  - p.81 is rotated and excluded.
+  - The PDF has 3 internal inconsistencies.
+  - The handbook's p.5 copyright wording applies.
+  - geoBoundaries shapeNames are exonyms.
+- **After approval:** session 1 = steps 1–7, session 2 = steps 8–12.
 - **Carry-overs:**
   - Singapore's season labels truncate slightly (cosmetic).
   - Hover tooltips are unverified by automation.
