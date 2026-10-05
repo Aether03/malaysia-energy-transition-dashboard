@@ -119,3 +119,27 @@ Load factor = mean hourly MW ÷ peak, over the hours present (168 per grid, 0 im
 | Load factor (%) | 88.4688 | 88.4689 | +0.0001 pp | PASS |
 
 The only differences are the `DECIMAL(10,1)` rounding of stored values on the Singapore half-hour means. **Part B: 8/8 pass.**
+
+## M4: Energy Commission handbook extraction (step 7, 2026-10-05)
+
+The handbook is restricted ("All rights reserved"; M4 plan Q1), so this section records counts, cell ids and pass/fail only, never a handbook value. Cell ids are `table_code row_pos,col_pos` in `raw.handbook_cell` (edition 2023).
+
+### Part A: independent blind re-read of every cell
+- **Method:** two fresh-context agents read the pinned pages (pp. 13, 14, 17–19 and pp. 82–85) as page images. They were given an empty grid of positions and printed headings, never the parser's output or the database. Each did two separate passes.
+- **Coverage:** 989 of 989 cells. Pass-2 corrections: 0. Unsure cells: 0.
+- **Comparison** (`tools/compare_reread.py`, against `raw.handbook_cell`): **0 differences**, 0 missing, 0 extra. The transcriptions stay in git-ignored `data/private/`. The local golden test `tests/test_handbook_pdf.py` repeats the comparison on every run where the PDF is present.
+- **Arithmetic checks on the parsed real PDF** (golden test, all pass): p.13 rows sum to Total, blocks to their Subtotal, and Subtotals to Total; p.14 rows and columns sum; KEY_DATA per capita = total ÷ population for electricity (kWh) and final energy (toe), within 1%.
+- **Printed slips found by the re-read** (within the tolerances above; the source's rounding, not misreads):
+  - INSTALLED_CAPACITY 13,10; 22,3; 22,9 (0.1 MW each)
+  - AVAILABLE_CAPACITY 2,7 (1 MW)
+  - KEY_DATA_SAB 10,7; 11,7; KEY_DATA_SAR 10,7 (about 0.05)
+  - KEY_DATA_SAR row 7 cols 2–7: GDP per capita ≠ GDP ÷ population. Not used by the report.
+
+### Part B: the PDF's own inconsistencies (M4 plan Q4), checked against the 2022 edition
+- **Sarawak header (SARAWAK_DIST_PERF):** the 2023 edition prints the years 2014 … 2020, 2019. In the 2022 edition (pp. 86–88; check only, in `data/private/`) the same table covers 2015–2021. Its 21 values equal the 2023 edition's columns 1–7 in order, so **every printed Sarawak year is one year early**. Column 8 is absent from the 2022 edition, so its year is unproven.
+  - **Decision (Amirul, 2026-10-05): proven years only.** Columns 1–7 map to 2015–2021, citing the 2022 edition; column 8 is excluded. Raw keeps the printed labels.
+- **CAIDI ≠ SAIDI ÷ SAIFI (CAIDI_BY_STATE):**
+  - The 16 cells for Pahang, Perak, Perlis and Pulau Pinang in 2015–2018 are identical in both editions, and inconsistent in both. The printed CAIDI rows look rotated among those four states (one pattern for 2015–2017, another for 2018); SAIDI and SAIFI are not implicated.
+  - Terengganu 2017 is inconsistent in both editions, with a different cause.
+  - CAIDI is landed for checks only and never shown. Known exceptions for the `CAIDI_CONSISTENT` WARN are the 16 cells above, Terengganu 2017, the PENINSULAR MALAYSIA 2017 total, and the two Putrajaya cells whose SAIFI rounds to zero.
+- **Peninsular totals:** p.83's summary (PEN_DIST_PERF) and p.84's total rows disagree in 3 cells: SAIFI 2022, and CAIDI 2017 and 2022. The state tables' total rows are the internally consistent ones (in 2022 they agree with SAIDI ÷ SAIFI), so the report uses them (Q4.1).

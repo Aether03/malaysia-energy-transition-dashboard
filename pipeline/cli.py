@@ -42,9 +42,9 @@ def _cmd_seed(_: argparse.Namespace) -> int:
 def _extract_and_load(run, refresh: bool) -> None:
     """Each source: download (or reuse today's file), then MERGE into raw in its own transaction."""
     from pipeline import db
-    from pipeline.sources import dosm, ember, owid, singapore, thailand
+    from pipeline.sources import dosm, ember, handbook, owid, singapore, thailand
 
-    for code, source in (("D1", ember), ("D2", owid), ("D3", dosm), ("DTH", thailand), ("DSG", singapore)):
+    for code, source in (("D1", ember), ("D2", owid), ("D3", dosm), ("D5", handbook), ("DTH", thailand), ("DSG", singapore)):
         with run.step("EXTRACT", code) as step:
             path, version = source.download(refresh=refresh)
             step.source_version = version[:100]

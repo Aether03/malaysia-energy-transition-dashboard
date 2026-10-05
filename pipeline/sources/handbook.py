@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -51,7 +52,7 @@ LINE_TOLERANCE_PT = 3.0
 COLUMN_TOLERANCE_PT = 10.0
 # A value token: a number with optional thousands commas, decimals and percent sign, or a lone
 # dash (printed for "none"/"not applicable"; kept as printed and turned into NULL in stg).
-VALUE_TOKEN = re.compile(r"^-?(\d{1,3}(,\d{3})+|\d+)(\.\d+)?%?$|^-$")
+VALUE_TOKEN = re.compile(r"^-?([0-9]{1,3}(,[0-9]{3})+|[0-9]+)(\.[0-9]+)?%?$|^-$")
 # The running header/footer on every page ("84 MALAYSIA ENERGY STATISTICS HANDBOOK 2023").
 PAGE_FURNITURE = "ENERGY STATISTICS HANDBOOK"
 
@@ -247,6 +248,14 @@ TABLES: dict[int, tuple[TableSpec, ...]] = {
 }  # fmt: skip
 
 
+def _centre(word: Word) -> float:
+    return (word.top + word.bottom) / 2
+
+
+def _x_centre(word: Word) -> float:
+    return (word.x0 + word.x1) / 2
+
+
 def normalise(text: str) -> str:
     """Collapse every run of whitespace to one space and strip the ends."""
     return " ".join(text.split())
@@ -261,12 +270,24 @@ def group_lines(words: list[Word], tolerance: float = LINE_TOLERANCE_PT) -> list
     line. Within a line words are sorted by x0. `y_centre` is the first word's centre; `text` is
     the normalised join of the word texts. Returns [] for no words.
     """
-    raise NotImplementedError
+    lines: list[list[Word]] = []
+    anchors: list[float] = []
+    for word in sorted(words, key=_centre):
+        if lines and abs(_centre(word) - anchors[-1]) <= tolerance:
+            lines[-1].append(word)
+        else:
+            lines.append([word])
+            anchors.append(_centre(word))
+    out = []
+    for members, anchor in zip(lines, anchors, strict=True):
+        ordered = tuple(sorted(members, key=lambda w: w.x0))
+        out.append(Line(ordered, anchor, normalise(" ".join(w.text for w in ordered))))
+    return out
 
 
 def page_text(words: list[Word]) -> str:
     """The page as one normalised string: `group_lines` texts joined by single spaces."""
-    raise NotImplementedError
+    return normalise(" ".join(line.text for line in group_lines(words)))
 
 
 def table_region(lines: list[Line], spec: TableSpec) -> list[Line]:
@@ -277,7 +298,19 @@ def table_region(lines: list[Line], spec: TableSpec) -> list[Line]:
     Raises SchemaMismatchError when `start_after` or `stop_before` isn't found (the layout moved),
     or when the region is empty.
     """
-    raise NotImplementedError
+    start = 0
+    if spec.start_after is not None:
+        found = next((i for i, line in enumerate(lines) if spec.start_after in line.text), None)
+        if found is None:
+            raise SchemaMismatchError(f"{spec.table_code}: start anchor {spec.start_after!r} not found on p.{spec.page}")
+        start = found + 1
+    stop = next((i for i in range(start, len(lines)) if spec.stop_before in lines[i].text), None)
+    if stop is None:
+        raise SchemaMismatchError(f"{spec.table_code}: stop anchor {spec.stop_before!r} not found below the start")
+    region = [line for line in lines[start:stop] if line.text not in spec.ignore_lines]
+    if not region:
+        raise SchemaMismatchError(f"{spec.table_code}: empty table region on p.{spec.page}")
+    return region
 
 
 def cells_from_words(words: list[Word], spec: TableSpec, edition: int) -> list[Cell]:
@@ -307,12 +340,114 @@ def cells_from_words(words: list[Word], spec: TableSpec, edition: int) -> list[C
        get None. The number of `group_end_label` rows must equal len(row_groups).
     8. Output: one Cell per (data row, column); value_text exactly as printed (no casting).
     """
-    raise NotImplementedError
+    if spec.title not in page_text(words):
+        raise SchemaMismatchError(f"{spec.table_code}: title {spec.title!r} not found on p.{spec.page}")
+    region = table_region(group_lines(words), spec)
+    header, body = region[: spec.header_lines], region[spec.header_lines :]
+    data = _data_lines(body, spec)
+    centres = _column_centres(data, spec)
+    _check_column_labels(header, centres, spec)
+    row_labels = _row_labels(body, data, spec)
+    groups = _row_groups(row_labels, spec)
+    return [
+        Cell(edition, spec.page, spec.table_code, r + 1, c + 1, groups[r], row_labels[r], spec.col_labels[c], w.text)
+        for r, (_, values) in enumerate(data)
+        for c, w in enumerate(values)
+    ]
+
+
+# Rule helpers for cells_from_words. Error messages give positions, never a data line's text or a
+# value: they end up in meta.load_step and logs, and the handbook is restricted (M4 review M3).
+
+
+def _data_lines(body: list[Line], spec: TableSpec) -> list[tuple[Line, list[Word]]]:
+    """Rule 3: body lines with value-zone words, each holding exactly len(col_labels) values."""
+    data = []
+    for n, line in enumerate(body, start=1):
+        values = [w for w in line.words if w.x0 >= spec.label_x_max]
+        if not values:
+            continue
+        for k, w in enumerate(values, start=1):
+            if not VALUE_TOKEN.fullmatch(w.text):
+                raise SchemaMismatchError(f"{spec.table_code}: value-zone word {k} of body line {n} is not a number")
+        if len(values) != len(spec.col_labels):
+            raise SchemaMismatchError(
+                f"{spec.table_code}: body line {n} holds {len(values)} values, expected {len(spec.col_labels)}"
+            )
+        data.append((line, values))
+    if not data:
+        raise SchemaMismatchError(f"{spec.table_code}: no data lines on p.{spec.page}")
+    return data
+
+
+def _column_centres(data: list[tuple[Line, list[Word]]], spec: TableSpec) -> list[float]:
+    """Rule 4: each column's median x-centre; every value must sit within COLUMN_TOLERANCE_PT of it."""
+    centres = [statistics.median(_x_centre(values[c]) for _, values in data) for c in range(len(spec.col_labels))]
+    for r, (_, values) in enumerate(data, start=1):
+        for c, w in enumerate(values):
+            offset = _x_centre(w) - centres[c]
+            if abs(offset) > COLUMN_TOLERANCE_PT:
+                raise SchemaMismatchError(f"{spec.table_code}: data row {r} column {c + 1} is {offset:+.1f} pt off its column")
+    return centres
+
+
+def _check_column_labels(header: list[Line], centres: list[float], spec: TableSpec) -> None:
+    """Rule 5: header words right of label_x_max, by nearest column, must spell the pinned labels."""
+    parts: list[list[str]] = [[] for _ in centres]
+    for line in header:
+        for w in line.words:
+            if w.x0 >= spec.label_x_max:
+                parts[min(range(len(centres)), key=lambda c: abs(_x_centre(w) - centres[c]))].append(w.text)
+    for c, (words_, pinned) in enumerate(zip(parts, spec.col_labels, strict=True), start=1):
+        if normalise(" ".join(words_)) != pinned:
+            raise SchemaMismatchError(f"{spec.table_code}: column {c} header differs from the pinned {pinned!r}")
+
+
+def _row_labels(body: list[Line], data: list[tuple[Line, list[Word]]], spec: TableSpec) -> tuple[str, ...]:
+    """Rule 6: label words per data line, wrapped parts joined to the nearest data line."""
+    parts: list[list[tuple[float, str]]] = [[] for _ in data]
+    index = {id(line): i for i, (line, _) in enumerate(data)}
+    for line in body:
+        label = normalise(" ".join(w.text for w in line.words if w.x0 < spec.label_x_max))
+        if not label:
+            continue
+        if id(line) in index:
+            parts[index[id(line)]].append((line.y_centre, label))
+            continue
+        nearest = sorted((abs(d.y_centre - line.y_centre), i) for i, (d, _) in enumerate(data))
+        if len(nearest) > 1 and nearest[1][0] - nearest[0][0] <= 1.0:
+            raise SchemaMismatchError(f"{spec.table_code}: a wrapped label part is equally near two data lines")
+        parts[nearest[0][1]].append((line.y_centre, label))
+    labels = tuple(normalise(" ".join(text for _, text in sorted(row))) for row in parts)
+    if len(labels) != len(spec.row_labels):
+        raise SchemaMismatchError(f"{spec.table_code}: {len(labels)} data rows, expected {len(spec.row_labels)}")
+    for r, (got, pinned) in enumerate(zip(labels, spec.row_labels, strict=True), start=1):
+        if got != pinned:
+            raise SchemaMismatchError(f"{spec.table_code}: row {r} label differs from the pinned {pinned!r}")
+    return labels
+
+
+def _row_groups(row_labels: tuple[str, ...], spec: TableSpec) -> list[str | None]:
+    """Rule 7: rows to the pinned groups in order, each ending after a `group_end_label` row."""
+    groups: list[str | None] = [None] * len(row_labels)
+    if not spec.row_groups:
+        return groups
+    ends = [i for i, label in enumerate(row_labels) if label == spec.group_end_label]
+    if len(ends) != len(spec.row_groups):
+        raise SchemaMismatchError(
+            f"{spec.table_code}: {len(ends)} {spec.group_end_label!r} rows for {len(spec.row_groups)} pinned groups"
+        )
+    first = 0
+    for name, end in zip(spec.row_groups, ends, strict=True):
+        groups[first : end + 1] = [name] * (end + 1 - first)
+        first = end + 1
+    return groups
 
 
 def words_from_page(page) -> list[Word]:
-    """Words of a pdfplumber page built from upright characters only (rotated text dropped)."""
-    upright = page.filter(lambda obj: obj.get("object_type") != "char" or obj.get("upright", True))
+    """Words of a pdfplumber page built from upright characters only (rotated text dropped), after
+    removing overprinted duplicate characters (a fake-bold "5" drawn twice would read "55")."""
+    upright = page.dedupe_chars().filter(lambda obj: obj.get("object_type") != "char" or obj.get("upright", True))
     return [Word(w["text"], w["x0"], w["x1"], w["top"], w["bottom"]) for w in upright.extract_words()]
 
 
@@ -323,7 +458,21 @@ def records_from(path: Path, edition: int = EDITION) -> list[tuple]:
     `cells_from_words` per table. Raises SchemaMismatchError for an unknown edition or a page
     number beyond the document.
     """
-    raise NotImplementedError
+    specs = TABLES.get(edition)
+    if specs is None:
+        raise SchemaMismatchError(f"no pinned tables for handbook edition {edition}")
+    import pdfplumber  # imported here: the pure layer and its tests don't need it
+
+    records: list[tuple] = []
+    with pdfplumber.open(path) as pdf:
+        words_by_page: dict[int, list[Word]] = {}
+        for spec in specs:
+            if spec.page > len(pdf.pages):
+                raise SchemaMismatchError(f"{spec.table_code}: p.{spec.page} is beyond the {len(pdf.pages)}-page document")
+            if spec.page not in words_by_page:
+                words_by_page[spec.page] = words_from_page(pdf.pages[spec.page - 1])
+            records.extend(cell.as_record() for cell in cells_from_words(words_by_page[spec.page], spec, edition))
+    return records
 
 
 def verify_checksum(path: Path) -> str:
@@ -331,7 +480,7 @@ def verify_checksum(path: Path) -> str:
 
     The pin ties the page numbers above to one exact file: a re-issued PDF stops the run.
     """
-    md5 = hashlib.md5(path.read_bytes()).hexdigest()  # identifies the pinned file; not a security use
+    md5 = hashlib.md5(path.read_bytes(), usedforsecurity=False).hexdigest()  # identifies the pinned file
     expected = config.HANDBOOK_MD5[EDITION]
     if md5 != expected:
         raise InvalidDownloadError(f"{path.name} md5 {md5} differs from the pinned {expected}")

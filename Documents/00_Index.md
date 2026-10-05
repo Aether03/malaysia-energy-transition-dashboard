@@ -8,24 +8,34 @@
 - **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
 - **Details:** `plans/M3_plan.md` (Outcome).
 
-**Next: M4** (Regions and state reliability, doc 06 Phase 4).
-- **2026-10-05:** step plan drafted at `plans/M4_plan.md` (Q1–Q9) and **APPROVED 2026-10-05** in the plan canvas (Q1–Q9 as proposed). Next: step 1 (Desktop spike).
-- **Profiling findings are in the plan's "Facts verified" section:**
-  - SAIDI is by state too.
-  - The data runs to 2022.
-  - p.81 is rotated and excluded.
-  - The PDF has 3 internal inconsistencies.
-  - The handbook's p.5 copyright wording applies.
-  - geoBoundaries shapeNames are exonyms.
-- **After approval:** session 1 = steps 1–7, session 2 = steps 8–12.
-- **Carry-overs:**
-  - Singapore's season labels truncate slightly (cosmetic).
-  - Hover tooltips are unverified by automation.
-  - A record-peak extrapolation model is a v2 item, run as POST_HOC.
+**M4 IN PROGRESS: session 1 (steps 1–7) DONE 2026-10-05; resume at step 8 in a fresh session.** Plan: `plans/M4_plan.md`, approved 2026-10-05 (Q1–Q9). Its step outcome rows hold the detail.
+- **Step 1, Desktop spike:**
+  - Shape Map + TopoJSON work and join on the ISO code.
+  - The SWITCH toggle works.
+  - Small multiples need ~1080×340, so **P3b row 2 = selected-state trend** (Amirul).
+- **Steps 2–6:**
+  - V015.
+  - Seeds: 3 regions, 16 states, 26 aliases.
+  - `tools/fetch_map.py` + the ODbL map.
+  - `pipeline/sources/handbook.py`: 12 tables pinned, 989 cells, in `raw.handbook_cell`.
+  - Synthetic fixtures; 948 tests.
+  - D5 is in `pipeline run`.
+- **Step 7, the independent check:**
+  - The blind re-read of all 989 cells shows **0 differences**.
+  - `ecc:python-reviewer` findings fixed.
+  - **Sarawak's printed years are one year early (proven via the 2022 edition). Decision: columns 1–7 → 2015–2021, column 8 excluded (Amirul).**
+- **Local-only material** (git-ignored `data/private/`): the re-read CSVs, notes and the 2022 edition. `tests/test_handbook_pdf.py` uses them when the PDF is present.
+- **Next: steps 8–12.**
+  - Step 8: `R__stg_handbook` + `070`/`080` + DQ rules, including the Sarawak year override as a seed citing the 2022 edition, then `ecc:database-reviewer`.
+  - Step 9: mart + showcase.
+  - Step 10: model + twins.
+  - Step 11: P3/P3b + ≤ 2 GUI rounds.
+  - Step 12: acceptance.
 - **Rules still standing:**
-  - Close Desktop before `pipeline run`.
-  - Never rebuild pages while Desktop is open.
-  - Launch Desktop with `Start-Process`, not computer-use `open_application`.
+  - Close Desktop before `pipeline run`, and never rebuild pages while it is open.
+  - `Start-Process` to launch Desktop; `tools/model_refresh.ps1` to refresh it.
+  - Validator + twins (Desktop open) before every commit.
+  - No handbook value in any committed file.
 
 **M3 history (kept for reference):** step plan `Documents/plans/M3_plan.md`, approved 2026-10-03 (Q1–Q6).
 

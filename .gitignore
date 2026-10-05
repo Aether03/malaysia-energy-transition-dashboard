@@ -11,6 +11,9 @@ __pycache__/
 # Data: raw landing files may include sources that can't be redistributed
 # (Energy Commission handbook, GSO). Never commit. See DATA_LICENSES.md.
 data/raw/
+# Local-only verification material for the restricted handbook (M4 plan Q1): the independent
+# re-read transcriptions and the 2022 check-only edition. Never commit.
+data/private/
 exports/*.parquet
 logs/
 
