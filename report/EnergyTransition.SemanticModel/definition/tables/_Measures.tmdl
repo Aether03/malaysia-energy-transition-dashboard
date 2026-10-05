@@ -995,6 +995,181 @@ table _Measures
 		isNameInferred
 		sourceColumn: [Value]
 
+	measure 'Reliability Metric' = SELECTEDVALUE ( reliability_metric[metric_code], "SAIFI" )
+		displayFolder: State reliability
+		lineageTag: dcc6c35f-0fca-4fa7-abd3-edd817f05a77
+
+	measure 'Reliability Year' = SELECTEDVALUE ( reliability_year[year], MAX ( reliability_year[year] ) )
+		formatString: 0
+		displayFolder: State reliability
+		lineageTag: fc6782ec-fb2d-4837-bc5f-e0323b08041b
+
+	measure 'Reliability Unit' = IF ( [Reliability Metric] = "SAIDI", "minutes per customer per year", "interruptions per customer per year" )
+		displayFolder: State reliability
+		lineageTag: 9effe27b-6f03-4439-b37e-cb762bb545ae
+
+	measure 'Reliability Raw' = IF ( [Reliability Metric] = "SAIDI", AVERAGE ( state_reliability[saidi_min] ), AVERAGE ( state_reliability[saifi] ) )
+		formatString: 0.00
+		displayFolder: State reliability
+		lineageTag: 6112d337-2041-4397-8649-1b465a628507
+
+	measure 'Reliability Value' =
+			VAR y = [Reliability Year]
+			RETURN CALCULATE ( [Reliability Raw], dim_year[year] = y )
+		formatString: 0.00
+		displayFolder: State reliability
+		lineageTag: 943c5ab6-1f7c-4256-b7ff-53720f29a6f3
+
+	measure 'Reliability Rank' =
+			VAR v = [Reliability Value]
+			RETURN
+			    IF (
+			        HASONEVALUE ( dim_state[state_code] ) && NOT ISBLANK ( v ),
+			        RANKX ( FILTER ( ALL ( dim_state ), NOT ISBLANK ( [Reliability Value] ) ), [Reliability Value], v, ASC, SKIP )
+			    )
+		formatString: 0
+		displayFolder: State reliability
+		lineageTag: 649a9bd3-c188-420d-ae35-cb63192d7570
+
+	measure 'Reliability Change Since 2015' =
+			VAR v = [Reliability Value]
+			VAR base = CALCULATE ( [Reliability Raw], dim_year[year] = 2015 )
+			RETURN IF ( NOT ISBLANK ( v ) && NOT ISBLANK ( base ), v - base )
+		formatString: +0.00;-0.00;0.00
+		displayFolder: State reliability
+		lineageTag: 8a5d143d-7f8e-4402-8153-1d973ed009d5
+
+	measure 'Reliability Selected State' = IF ( HASONEVALUE ( dim_state[state_code] ), [Reliability Raw] )
+		formatString: 0.00
+		displayFolder: State reliability
+		lineageTag: a9abaad1-b702-4415-b690-e080f50fc17b
+
+	measure 'Reliability Peninsular' =
+			VAR code = IF ( [Reliability Metric] = "SAIDI", "SAIDI_MIN", "SAIFI" )
+			RETURN CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = code, dim_region[region_code] = "PEN" )
+		formatString: 0.00
+		displayFolder: State reliability
+		lineageTag: 1a422289-b5b6-4d30-82cc-6a0716a3f12e
+
+	measure 'Reliability Trend Title' =
+			VAR who = IF ( HASONEVALUE ( dim_state[name] ), VALUES ( dim_state[name] ) & " vs Peninsular Malaysia", "Peninsular Malaysia (click a state to compare)" )
+			RETURN who & " · " & [Reliability Metric] & " by year"
+		displayFolder: State reliability
+		lineageTag: 92e1583d-85ee-41a0-a371-df8a2801edfc
+
+	measure 'P3b Title' =
+			VAR y = [Reliability Year]
+			VAR states = FILTER ( ALL ( dim_state ), NOT ISBLANK ( [Reliability Value] ) )
+			VAR worst = MAXX ( TOPN ( 1, states, [Reliability Value], DESC, dim_state[name], ASC ), dim_state[name] )
+			VAR best = MAXX ( TOPN ( 1, states, [Reliability Value], ASC, dim_state[name], ASC ), dim_state[name] )
+			RETURN worst & " had the least reliable supply in " & y & ", " & best & " the most (" & [Reliability Metric] & ")"
+		displayFolder: State reliability
+		lineageTag: 11532b6e-b94a-42c8-aea7-ecbad7c3afe5
+
+	measure 'P3b Subtitle' = "Peninsular Malaysia · " & [Reliability Metric] & ", " & [Reliability Unit] & " · " & [Reliability Year] & " · Source: Energy Commission"
+		displayFolder: State reliability
+		lineageTag: f976b825-eed6-480c-821a-51f391f18c1f
+
+	measure 'Handbook Consent Notice' =
+			VAR s = LOOKUPVALUE ( data_source[consent_status], data_source[data_source_code], "D5" )
+			RETURN
+			    SWITCH (
+			        s,
+			        "GRANTED", "Reproduced with the Energy Commission's written permission.",
+			        "REQUESTED", "Derived charts for non-commercial portfolio use; written permission requested from the Energy Commission.",
+			        "Derived charts for non-commercial portfolio use; written permission to be requested from the Energy Commission."
+			    )
+		displayFolder: State reliability
+		lineageTag: 129800e5-463e-413a-a7de-ab25265a2389
+
+	measure 'P3b Footnote' = "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pp. 83-84). " & [Handbook Consent Notice] & " Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0). Putrajaya includes Cyberjaya. Sabah, Sarawak and Labuan are not reported by state (see Regions). CAIDI (not shown) is misaligned for four states in 2015-2018 in both the 2022 and 2023 editions; SAIDI and SAIFI are shown as published."
+		displayFolder: State reliability
+		lineageTag: 3ca62d9e-9bb1-42c0-9461-3ec2de70a273
+
+	measure 'Region Installed (MW)' = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "INSTALLED_MW" )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: 310197d8-1fb0-4851-b8c6-517a5894ab60
+
+	measure 'Region Available (MW)' = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "AVAILABLE_MW" )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: a09c6a06-83d7-439b-acb6-43e8dbf85a9a
+
+	measure 'Region Consumption by Year (GWh)' = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "ELEC_CONSUMPTION_GWH" )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: bfed60d3-2a32-4247-a1c2-89bd1c223755
+
+	measure 'Region Interruptions by Year' = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "SUPPLY_INTERRUPTIONS" )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: fc8ae8a9-d2ec-48bc-af84-ece0564ac240
+
+	measure 'Region SAIFI by Year' = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "SAIFI" )
+		formatString: 0.00
+		displayFolder: Regions
+		lineageTag: ea48007b-daff-4b30-864f-806b70c2e3fd
+
+	measure 'Region Consumption Year' = CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "ELEC_CONSUMPTION_GWH" )
+		formatString: 0
+		displayFolder: Regions
+		lineageTag: a9757905-c864-40f7-bc6d-30ee025fbb33
+
+	measure 'Region Consumption (GWh)' =
+			VAR y = [Region Consumption Year]
+			RETURN CALCULATE ( [Region Consumption by Year (GWh)], dim_year[year] = y )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: f064ba3e-3da8-4886-8207-926ccfb1c1ac
+
+	measure 'Region Use per Person (kWh)' =
+			VAR y = [Region Consumption Year]
+			RETURN CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "ELEC_PER_CAPITA_KWH", dim_year[year] = y )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: 685ba842-9183-446a-abea-3959b4dd37fd
+
+	measure 'Region SAIFI Year' = CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "SAIFI" )
+		formatString: 0
+		displayFolder: Regions
+		lineageTag: 77d1cf31-664d-42c7-bbb8-655769cadcaa
+
+	measure 'Region SAIFI' =
+			VAR y = [Region SAIFI Year]
+			RETURN CALCULATE ( [Region SAIFI by Year], dim_year[year] = y )
+		formatString: 0.00
+		displayFolder: Regions
+		lineageTag: aed11416-3c2c-4764-aa22-ec85094b5b81
+
+	measure 'Region Installed by Fuel (MW)' = SUM ( region_capacity[installed_mw] )
+		formatString: #,0
+		displayFolder: Regions
+		lineageTag: e375a609-a2f5-41d3-9f96-bc90916dcf6a
+
+	measure 'Region Card Note' = "Capacity at 31 Dec " & CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "INSTALLED_MW" ) & " · use " & [Region Consumption Year] & " · SAIFI " & [Region SAIFI Year]
+		displayFolder: Regions
+		lineageTag: b16aa434-044c-4f83-9de4-9e3d4f305ea0
+
+	measure 'Sabah vs Peninsular SAIFI' =
+			VAR y = CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "SAIFI", dim_region[region_code] = "SAB" )
+			VAR sab = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "SAIFI", dim_region[region_code] = "SAB", dim_year[year] = y )
+			VAR pen = CALCULATE ( SUM ( region_annual[value] ), region_annual[metric_code] = "SAIFI", dim_region[region_code] = "PEN", dim_year[year] = y )
+			RETURN DIVIDE ( sab, pen )
+		formatString: 0.0
+		displayFolder: Regions
+		lineageTag: 86b364d2-911f-4d27-949e-2989c4d70e5d
+
+	measure 'P3 Title' =
+			VAR y = CALCULATE ( MAX ( region_annual[year] ), region_annual[metric_code] = "SAIFI", dim_region[region_code] = "SAB", REMOVEFILTERS ( dim_region ) )
+			RETURN "A Sabah customer lost supply about " & FORMAT ( [Sabah vs Peninsular SAIFI], "0" ) & "× as often as a Peninsular one in " & y
+		displayFolder: Regions
+		lineageTag: 4ed20217-9079-4a68-a2fd-513e2f50d109
+
+	measure 'P3 Footnote' = "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pp. 13-19, 82-85). " & [Handbook Consent Notice] & " Sabah includes Labuan. Sarawak's reliability table prints its years one year early; years are mapped from the 2022 edition (2015-2021), and its unproven last column is left out. Peninsular SAIFI/SAIDI are the state tables' totals."
+		displayFolder: Regions
+		lineageTag: 1705f1f8-ce62-4b6a-a2c5-4d598f2b327e
+
 	partition _Measures = calculated
 		mode: import
 		source = ROW ( "Value", 0 )

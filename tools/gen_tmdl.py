@@ -25,6 +25,9 @@ MART_VIEWS = (
     # M3 P4
     "dim_date", "dim_hour", "dim_grid", "grid_hourly", "grid_flow_daily", "forecast_date",
     "forecast_run_current", "load_forecast_current", "forecast_status", "season_pick",
+    # M4 P3 / P3b
+    "dim_region", "dim_state", "region_annual", "region_capacity", "state_reliability", "reliability_metric",
+    "reliability_year",
 )  # fmt: skip
 
 TYPE_MAP = {
@@ -42,6 +45,9 @@ SORT_BY = {
     ("dim_grid", "name"): "display_order",
     ("grid_hourly", "season"): "season_order",
     ("season_pick", "season"): "season_order",
+    ("dim_region", "name"): "display_order",
+    ("dim_state", "name"): "display_order",
+    ("reliability_metric", "label"): "sort_order",
 }
 
 # Fact-table years are hidden so every year filter goes through dim_year (DAX review, LOW).
@@ -51,6 +57,10 @@ HIDDEN = {
     ("grid_hourly", "year"), ("grid_hourly", "month"), ("grid_hourly", "hour"), ("grid_hourly", "ts_local"),
     ("grid_hourly", "season_order"), ("grid_flow_daily", "year"), ("grid_flow_daily", "date"),
     ("load_forecast_current", "hour"), ("load_forecast_current", "ts_local"), ("forecast_date", "date_key"),
+    # M4: handbook facts filter through dim_year, dim_region and dim_state.
+    ("region_annual", "year"), ("region_annual", "region_key"), ("region_capacity", "year"),
+    ("region_capacity", "region_key"), ("region_capacity", "source_key"), ("state_reliability", "year"),
+    ("state_reliability", "state_key"), ("dim_state", "region_key"),
 }  # fmt: skip
 
 

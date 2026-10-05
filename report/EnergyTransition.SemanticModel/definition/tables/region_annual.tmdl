@@ -1,0 +1,41 @@
+table region_annual
+
+	column region_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: region_key
+
+	column year
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column metric_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: metric_code
+
+	column value
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: value
+
+	column unit
+		dataType: string
+		summarizeBy: none
+		sourceColumn: unit
+
+	partition region_annual = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    region_annual = Source{[Schema="mart",Item="region_annual"]}[Data]
+				in
+				    region_annual
+

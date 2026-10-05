@@ -1,0 +1,37 @@
+table state_reliability
+
+	column state_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: state_key
+
+	column year
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: year
+
+	column saifi
+		dataType: double
+		formatString: 0.000
+		summarizeBy: none
+		sourceColumn: saifi
+
+	column saidi_min
+		dataType: double
+		formatString: 0.00
+		summarizeBy: none
+		sourceColumn: saidi_min
+
+	partition state_reliability = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    state_reliability = Source{[Schema="mart",Item="state_reliability"]}[Data]
+				in
+				    state_reliability
+

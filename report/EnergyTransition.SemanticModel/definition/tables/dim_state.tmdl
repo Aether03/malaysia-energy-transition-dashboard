@@ -1,0 +1,62 @@
+table dim_state
+
+	column state_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: state_key
+
+	column state_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: state_code
+
+	column name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: name
+		sortByColumn: display_order
+
+	column geo_shape_name
+		dataType: string
+		summarizeBy: none
+		sourceColumn: geo_shape_name
+
+	column iso_3166_2
+		dataType: string
+		summarizeBy: none
+		sourceColumn: iso_3166_2
+
+	column region_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: region_key
+
+	column is_federal_territory
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_federal_territory
+
+	column is_reported_by_state
+		dataType: boolean
+		summarizeBy: none
+		sourceColumn: is_reported_by_state
+
+	column display_order
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: display_order
+
+	partition dim_state = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    dim_state = Source{[Schema="mart",Item="dim_state"]}[Data]
+				in
+				    dim_state
+

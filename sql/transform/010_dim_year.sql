@@ -1,7 +1,7 @@
 -- 010: upsert dw.dim_year from staged years, first in the rebuild transaction, so a DQ
 -- rollback reverts it together with the facts. Years are never deleted: facts reference them.
 -- is_complete: before the current calendar year and present for the focus country.
--- Years only the hourly data touches get is_complete = 0 (M3 database review 6).
+-- Years only the hourly data (or the handbook) touches get is_complete = 0 (M3 database review 6).
 
 MERGE dw.dim_year AS t
 USING (
@@ -20,6 +20,10 @@ USING (
         SELECT year FROM stg.ember_yearly
         UNION
         SELECT CAST(YEAR(ts_local) AS SMALLINT) FROM stg.grid_hourly
+        UNION  -- and every year the handbook tables cover (M4)
+        SELECT year FROM stg.handbook_region_metric WHERE year IS NOT NULL
+        UNION
+        SELECT year FROM stg.handbook_state_reliability WHERE year IS NOT NULL
     ) AS s
 ) AS src ON t.year = src.year
 WHEN MATCHED AND t.is_complete <> src.is_complete THEN

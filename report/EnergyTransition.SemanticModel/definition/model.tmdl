@@ -11,7 +11,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase","re_capacity_official","dim_date","dim_hour","dim_grid","grid_hourly","grid_flow_daily","forecast_date","forecast_run_current","load_forecast_current","forecast_status","season_pick"]
+annotation PBI_QueryOrder = ["country_annual","data_source","dim_country","dim_source","dim_year","dq_latest","generation_annual","kpi","netr_target","run_latest","SqlServer","SqlDatabase","re_capacity_official","dim_date","dim_hour","dim_grid","grid_hourly","grid_flow_daily","forecast_date","forecast_run_current","load_forecast_current","forecast_status","season_pick","dim_region","dim_state","region_annual","region_capacity","state_reliability","reliability_metric","reliability_year"]
 
 ref table country_annual
 ref table data_source
@@ -39,6 +39,13 @@ ref table forecast_run_current
 ref table load_forecast_current
 ref table forecast_status
 ref table season_pick
+ref table dim_region
+ref table dim_state
+ref table region_annual
+ref table region_capacity
+ref table state_reliability
+ref table reliability_metric
+ref table reliability_year
 
 ref cultureInfo en-US
 

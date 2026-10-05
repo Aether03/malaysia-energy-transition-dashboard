@@ -29,11 +29,17 @@ def transform_and_check(run) -> bool:
                 "SELECT (SELECT COUNT(*) FROM dw.fact_generation_annual), "
                 "(SELECT COUNT(*) FROM dw.fact_country_annual), "
                 "(SELECT COUNT(*) FROM dw.fact_grid_hourly), "
-                "(SELECT COUNT(*) FROM dw.fact_grid_flow_hourly)"
+                "(SELECT COUNT(*) FROM dw.fact_grid_flow_hourly), "
+                "(SELECT COUNT(*) FROM dw.fact_region_annual), "
+                "(SELECT COUNT(*) FROM dw.fact_region_capacity), "
+                "(SELECT COUNT(*) FROM dw.fact_state_reliability)"
             )
             counts = dict(
                 zip(
-                    ("fact_generation_annual", "fact_country_annual", "fact_grid_hourly", "fact_grid_flow_hourly"),
+                    (
+                        "fact_generation_annual", "fact_country_annual", "fact_grid_hourly", "fact_grid_flow_hourly",
+                        "fact_region_annual", "fact_region_capacity", "fact_state_reliability",
+                    ),  # fmt: skip
                     (int(n) for n in cursor.fetchone()),
                     strict=True,
                 )

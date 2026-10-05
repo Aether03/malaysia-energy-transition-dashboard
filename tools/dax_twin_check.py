@@ -265,6 +265,96 @@ P4_TWINS = (
 TWINS = TWINS + P4_TWINS
 
 
+# M4 P3 / P3b: handbook values compare EXACTLY (SAIFI is ~1, so the 0.05 tolerance would hide a
+# wrong cell); only derived ratios use the tolerance. Twins hold no handbook value (plan Q1).
+_STATE_SQL = """SELECT d.state_code, f.saifi, f.saidi_min,
+                       RANK() OVER (ORDER BY f.saifi) AS saifi_rank, RANK() OVER (ORDER BY f.saidi_min) AS saidi_rank,
+                       f.saidi_min - b.saidi_min AS saidi_chg
+                FROM mart.state_reliability AS f JOIN mart.dim_state AS d ON d.state_key = f.state_key
+                JOIN mart.state_reliability AS b ON b.state_key = f.state_key AND b.year = 2015
+                WHERE f.year = {year}"""
+_REGION_SQL = """SELECT g.region_code, a.year, a.metric_code, a.value
+                 FROM mart.region_annual AS a JOIN mart.dim_region AS g ON g.region_key = a.region_key"""
+
+
+def _latest(metric: str, out: str) -> str:
+    return f"""SELECT x.region_code, x.value AS {out} FROM ({_REGION_SQL}) AS x
+               WHERE x.metric_code = '{metric}' AND x.year = (SELECT MAX(y.year) FROM ({_REGION_SQL}) AS y
+                                                              WHERE y.metric_code = '{metric}' AND y.region_code = x.region_code)"""
+
+
+P3_TWINS = (
+    Twin(
+        "P3b default view: SAIFI 2022 by state, value and rank (no picks)",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_state[state_code], "saifi", [Reliability Value], "saifi_rank", [Reliability Rank] )',
+        _STATE_SQL.format(year=2022), ("state_code",), (), exact=("saifi", "saifi_rank"),
+    ),
+    Twin(
+        "P3b SAIDI toggle + 2015 picked: value, rank, change since 2015 (zero)",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_state[state_code], TREATAS ( { "SAIDI" }, reliability_metric[metric_code] ), '
+        'TREATAS ( { 2015 }, reliability_year[year] ), "saidi_min", [Reliability Value], "saidi_rank", [Reliability Rank], '
+        '"saidi_chg", [Reliability Change Since 2015] )',
+        _STATE_SQL.format(year=2015), ("state_code",), (), exact=("saidi_min", "saidi_rank", "saidi_chg"),
+    ),
+    Twin(
+        "P3b SAIDI change since 2015, 2022 picked",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_state[state_code], TREATAS ( { "SAIDI" }, reliability_metric[metric_code] ), '
+        'TREATAS ( { 2022 }, reliability_year[year] ), "saidi_chg", [Reliability Change Since 2015] )',
+        _STATE_SQL.format(year=2022), ("state_code",), ("saidi_chg",),
+    ),
+    Twin(
+        "P3b trend: Johor clicked vs Peninsular, SAIFI by year",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_year[year], TREATAS ( { "JHR" }, dim_state[state_code] ), '
+        '"sel", [Reliability Selected State], "pen", [Reliability Peninsular] )',
+        """SELECT f.year, f.saifi AS sel, p.value AS pen
+           FROM mart.state_reliability AS f JOIN mart.dim_state AS d ON d.state_key = f.state_key AND d.state_code = 'JHR'
+           JOIN mart.region_annual AS p ON p.year = f.year AND p.metric_code = 'SAIFI'
+           JOIN mart.dim_region AS g ON g.region_key = p.region_key AND g.region_code = 'PEN'""",
+        ("year",), (), exact=("sel", "pen"),
+    ),
+    Twin(
+        "P3 region cards: installed and available MW, latest consumption, use per person and SAIFI",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_region[region_code], "inst", [Region Installed (MW)], "avail", [Region Available (MW)], '
+        '"gwh", [Region Consumption (GWh)], "kwh", [Region Use per Person (kWh)], "saifi", [Region SAIFI], '
+        '"saifi_year", [Region SAIFI Year] )',
+        f"""SELECT i.region_code, i.inst, a.avail, c.gwh, k.kwh, s.saifi,
+                   (SELECT MAX(y.year) FROM ({_REGION_SQL}) AS y WHERE y.metric_code = 'SAIFI' AND y.region_code = i.region_code) AS saifi_year
+            FROM ({_latest('INSTALLED_MW', 'inst')}) AS i JOIN ({_latest('AVAILABLE_MW', 'avail')}) AS a ON a.region_code = i.region_code
+            JOIN ({_latest('ELEC_CONSUMPTION_GWH', 'gwh')}) AS c ON c.region_code = i.region_code
+            JOIN ({_latest('ELEC_PER_CAPITA_KWH', 'kwh')}) AS k ON k.region_code = i.region_code
+            JOIN ({_latest('SAIFI', 'saifi')}) AS s ON s.region_code = i.region_code""",
+        ("region_code",), (), exact=("inst", "avail", "gwh", "kwh", "saifi", "saifi_year"),
+    ),
+    Twin(
+        "P3 headline: Sabah vs Peninsular SAIFI in Sabah's latest year",
+        'EVALUATE ROW ( "ratio", [Sabah vs Peninsular SAIFI] )',
+        f"""SELECT CAST(s.value AS FLOAT) / p.value AS ratio FROM ({_REGION_SQL}) AS s JOIN ({_REGION_SQL}) AS p
+                ON p.year = s.year AND p.metric_code = 'SAIFI' AND p.region_code = 'PEN'
+            WHERE s.metric_code = 'SAIFI' AND s.region_code = 'SAB'
+              AND s.year = (SELECT MAX(year) FROM ({_REGION_SQL}) AS y WHERE y.metric_code = 'SAIFI' AND y.region_code = 'SAB')""",
+        (), ("ratio",),
+    ),
+    Twin(
+        "P3 capacity mix: installed MW by region and fuel group (31 Dec 2021)",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_region[region_code], dim_source[source_code], "mw", [Region Installed by Fuel (MW)] )',
+        """SELECT g.region_code, s.source_code, c.installed_mw AS mw FROM mart.region_capacity AS c
+           JOIN mart.dim_region AS g ON g.region_key = c.region_key JOIN mart.dim_source AS s ON s.source_key = c.source_key
+           WHERE c.installed_mw IS NOT NULL""",
+        ("region_code", "source_code"), (), exact=("mw",),
+    ),
+    Twin(
+        "P3 consumption and interruptions by region and year",
+        'EVALUATE SUMMARIZECOLUMNS ( dim_region[region_code], dim_year[year], "gwh", [Region Consumption by Year (GWh)], '
+        '"cuts", [Region Interruptions by Year] )',
+        f"""SELECT region_code, year, MAX(CASE WHEN metric_code = 'ELEC_CONSUMPTION_GWH' THEN value END) AS gwh,
+                   MAX(CASE WHEN metric_code = 'SUPPLY_INTERRUPTIONS' THEN value END) AS cuts
+            FROM ({_REGION_SQL}) AS x WHERE metric_code IN ('ELEC_CONSUMPTION_GWH', 'SUPPLY_INTERRUPTIONS') GROUP BY region_code, year""",
+        ("region_code", "year"), (), exact=("gwh", "cuts"),
+    ),
+)
+TWINS = TWINS + P3_TWINS
+
+
 # ---------- running and comparing ----------
 def run_dax(query: str) -> list[dict]:
     with tempfile.NamedTemporaryFile("w", suffix=".dax", delete=False, encoding="utf-8") as fh:

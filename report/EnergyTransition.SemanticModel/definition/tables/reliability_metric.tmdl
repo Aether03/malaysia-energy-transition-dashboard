@@ -1,0 +1,33 @@
+table reliability_metric
+
+	column metric_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: metric_code
+
+	column label
+		dataType: string
+		summarizeBy: none
+		sourceColumn: label
+		sortByColumn: sort_order
+
+	column unit
+		dataType: string
+		summarizeBy: none
+		sourceColumn: unit
+
+	column sort_order
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: sort_order
+
+	partition reliability_metric = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    reliability_metric = Source{[Schema="mart",Item="reliability_metric"]}[Data]
+				in
+				    reliability_metric
+

@@ -62,3 +62,34 @@ relationship 6f1b2c3d-0016-4a1e-9b01-000000000016
 	fromColumn: season_pick.grid_key
 	toColumn: dim_grid.grid_key
 
+relationship 6f1b2c3d-0017-4a1e-9b01-000000000017
+	fromColumn: dim_state.region_key
+	toColumn: dim_region.region_key
+
+relationship 6f1b2c3d-0018-4a1e-9b01-000000000018
+	fromColumn: region_annual.region_key
+	toColumn: dim_region.region_key
+
+relationship 6f1b2c3d-0019-4a1e-9b01-000000000019
+	fromColumn: region_annual.year
+	toColumn: dim_year.year
+
+relationship 6f1b2c3d-0020-4a1e-9b01-000000000020
+	fromColumn: region_capacity.region_key
+	toColumn: dim_region.region_key
+
+relationship 6f1b2c3d-0021-4a1e-9b01-000000000021
+	fromColumn: region_capacity.year
+	toColumn: dim_year.year
+
+relationship 6f1b2c3d-0022-4a1e-9b01-000000000022
+	fromColumn: region_capacity.source_key
+	toColumn: dim_source.source_key
+
+relationship 6f1b2c3d-0023-4a1e-9b01-000000000023
+	fromColumn: state_reliability.state_key
+	toColumn: dim_state.state_key
+
+relationship 6f1b2c3d-0024-4a1e-9b01-000000000024
+	fromColumn: state_reliability.year
+	toColumn: dim_year.year
