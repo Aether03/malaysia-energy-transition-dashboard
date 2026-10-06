@@ -352,7 +352,29 @@ P3_TWINS = (
         ("region_code", "year"), (), exact=("gwh", "cuts"),
     ),
 )
-TWINS = TWINS + P3_TWINS
+_DQ_ROW = 'ROW ( "rules", [DQ Rule Count], "pass", [DQ Pass Count], "warn", [DQ Warn Count], "fail", [DQ Fail Count] )'
+_DQ_SQL = """SELECT COUNT(*) AS rules, SUM(CASE WHEN status = 'PASS' THEN 1 ELSE 0 END) AS pass,
+                    SUM(CASE WHEN status = 'WARN' THEN 1 ELSE 0 END) AS warn, SUM(CASE WHEN status = 'FAIL' THEN 1 ELSE 0 END) AS fail
+             FROM mart.dq_latest"""
+_DQ_COLS = ("rules", "pass", "warn", "fail")
+
+# M5 P6 About / P6b Data quality. The fail count drives the nav badge on every page.
+P6_TWINS = (
+    Twin("P6b DQ counts by status (fail count = nav badge)", f"EVALUATE {_DQ_ROW}", _DQ_SQL, (), (), exact=_DQ_COLS),
+    Twin(
+        "P6b DQ counts ignore the page's source and status filters",
+        f'EVALUATE CALCULATETABLE ( {_DQ_ROW}, data_source[data_source_code] = "D1", dq_latest[status] = "PASS" )',
+        _DQ_SQL, (), (), exact=_DQ_COLS,
+    ),
+    Twin(
+        "P6b rows per source, each source's latest completed load",
+        'EVALUATE SUMMARIZECOLUMNS ( data_source[data_source_code], "rows_in", [Source Rows Read], "rows_merged", [Source Rows Changed] )',
+        "SELECT data_source_code, rows_in, rows_merged FROM mart.source_load_latest",
+        ("data_source_code",), (), exact=("rows_in", "rows_merged"),
+    ),
+    Twin("P6b latest run", 'EVALUATE ROW ( "run", [Latest Run ID] )', "SELECT run_id AS run FROM mart.run_latest", (), (), exact=("run",)),
+)
+TWINS = TWINS + P3_TWINS + P6_TWINS
 
 
 # ---------- running and comparing ----------
@@ -364,7 +386,7 @@ def run_dax(query: str) -> list[dict]:
         out = subprocess.run(
             ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
              str(config.ROOT / "tools" / "dax_query.ps1"), "-QueryFile", path],
-            capture_output=True, text=True, encoding="utf-8",
+            capture_output=True, text=True, encoding="utf-8", check=False,
         )
     finally:
         Path(path).unlink(missing_ok=True)
@@ -419,7 +441,7 @@ def main() -> int:
     for twin in TWINS:
         try:
             problems = check(twin, cursor)
-        except Exception as exc:  # report and continue, so one bad twin doesn't hide the rest
+        except Exception as exc:  # noqa: BLE001 - report and continue, so one bad twin doesn't hide the rest
             problems = [f"error: {exc}"]
         failures += bool(problems)
         print(f"{'FAIL' if problems else 'PASS'}  {twin.name}")

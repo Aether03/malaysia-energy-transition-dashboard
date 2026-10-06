@@ -1,0 +1,45 @@
+table source_load_latest
+
+	column data_source_code
+		dataType: string
+		summarizeBy: none
+		sourceColumn: data_source_code
+
+	column run_id
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: run_id
+
+	column loaded_at
+		dataType: dateTime
+		formatString: General Date
+		summarizeBy: none
+		sourceColumn: loaded_at
+
+	column rows_in
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: rows_in
+
+	column rows_merged
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: rows_merged
+
+	column source_version
+		dataType: string
+		summarizeBy: none
+		sourceColumn: source_version
+
+	partition source_load_latest = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database(SqlServer, SqlDatabase),
+				    source_load_latest = Source{[Schema="mart",Item="source_load_latest"]}[Data]
+				in
+				    source_load_latest
+

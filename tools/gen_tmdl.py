@@ -28,6 +28,8 @@ MART_VIEWS = (
     # M4 P3 / P3b
     "dim_region", "dim_state", "region_annual", "region_capacity", "state_reliability", "reliability_metric",
     "reliability_year",
+    # M5 P6 / P6b
+    "source_load_latest",
 )  # fmt: skip
 
 TYPE_MAP = {
@@ -62,6 +64,9 @@ HIDDEN = {
     ("region_capacity", "region_key"), ("region_capacity", "source_key"), ("state_reliability", "year"),
     ("state_reliability", "state_key"), ("dim_state", "region_key"),
 }  # fmt: skip
+
+# Link columns: Power BI renders a WebUrl column as a clickable link in a table (M5 P6 sources table).
+DATA_CATEGORY = {("data_source", "url"): "WebUrl"}
 
 
 def _columns(cursor, view: str) -> list[tuple[str, str, int]]:
@@ -111,6 +116,8 @@ def _column_tmdl(view: str, name: str, sql_type: str, scale: int, tag: str | Non
         lines.append("\t\tformatString: General Date")
     if tag:
         lines.append(f"\t\tlineageTag: {tag}")
+    if (view, name) in DATA_CATEGORY:
+        lines.append(f"\t\tdataCategory: {DATA_CATEGORY[(view, name)]}")
     lines.append("\t\tsummarizeBy: none")  # all aggregation goes through explicit measures
     lines.append(f"\t\tsourceColumn: {name}")
     if (view, name) in SORT_BY:

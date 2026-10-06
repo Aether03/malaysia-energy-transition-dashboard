@@ -1198,6 +1198,95 @@ table _Measures
 		displayFolder: Regions
 		lineageTag: b706b4cd-d20f-497a-a714-12cf78ba4267
 
+	/// Rules checked in the latest run that recorded results; ignores page filters (counts are page-wide).
+	measure 'DQ Rule Count' = CALCULATE ( COUNTROWS ( dq_latest ), REMOVEFILTERS ( dq_latest ), REMOVEFILTERS ( data_source ) ) + 0
+		formatString: 0
+		displayFolder: About
+		lineageTag: d83023c7-acca-4849-a644-11a0279a335a
+
+	measure 'DQ Pass Count' = CALCULATE ( COUNTROWS ( dq_latest ), REMOVEFILTERS ( dq_latest ), REMOVEFILTERS ( data_source ), dq_latest[status] = "PASS" ) + 0
+		formatString: 0
+		displayFolder: About
+		lineageTag: 54b0bcdf-98d0-482e-9db2-311150edf5ad
+
+	measure 'DQ Warn Count' = CALCULATE ( COUNTROWS ( dq_latest ), REMOVEFILTERS ( dq_latest ), REMOVEFILTERS ( data_source ), dq_latest[status] = "WARN" ) + 0
+		formatString: 0
+		displayFolder: About
+		lineageTag: 8adcaf6c-b9f9-48cd-9f2b-76f809e36541
+
+	/// Drives the nav badge on every page (M5 plan: hidden when 0).
+	measure 'DQ Fail Count' = CALCULATE ( COUNTROWS ( dq_latest ), REMOVEFILTERS ( dq_latest ), REMOVEFILTERS ( data_source ), dq_latest[status] = "FAIL" ) + 0
+		formatString: 0
+		displayFolder: About
+		lineageTag: 9036af94-1609-422d-bea7-896907d57e1e
+
+	/// Blank text and a rail-navy fill when nothing fails, so the badge disappears into the nav rail.
+	measure 'DQ Fail Badge Text' = IF ( [DQ Fail Count] > 0, FORMAT ( [DQ Fail Count], "0" ), "" )
+		displayFolder: About
+		lineageTag: 84e4b60c-1f4f-4189-a68d-1e01f96ef853
+
+	measure 'DQ Fail Badge Fill' = IF ( [DQ Fail Count] > 0, "#d03b3b", "#104281" )
+		displayFolder: About
+		lineageTag: 3d60a5f7-9489-4430-955e-b7e8ba8aab36
+
+	measure 'DQ Summary' =
+			IF (
+				[DQ Rule Count] = 0,
+				"No pipeline run recorded",
+				[DQ Pass Count] & " pass · " & [DQ Warn Count] & " warn · " & [DQ Fail Count] & " fail, of " & [DQ Rule Count] & " rules"
+			)
+		displayFolder: About
+		lineageTag: 0bbfb3da-875b-4bb7-8ed0-26d32dad00a7
+
+	/// Overlay text for the empty DQ table (doc 03 P6 state).
+	measure 'DQ Empty Message' = IF ( [DQ Rule Count] = 0, "No pipeline run recorded" )
+		displayFolder: About
+		lineageTag: 1cecf901-fc95-4bca-8bbc-d8658c2cc072
+
+	measure 'Latest Run ID' = MAX ( run_latest[run_id] )
+		formatString: 0
+		displayFolder: About
+		lineageTag: 9558caba-09b4-47e0-8668-814b1e2edd11
+
+	/// The latest completed, non-dry run (mart.run_latest), which may be transform-only.
+	measure 'Run Summary' =
+			VAR id = [Latest Run ID]
+			RETURN
+				IF (
+					ISBLANK ( id ),
+					"No pipeline run recorded",
+					"Run " & id & " · " & MAX ( run_latest[status] ) & " · started " & FORMAT ( MAX ( run_latest[started_at] ), "yyyy-mm-dd hh:nn" )
+						& ", finished " & FORMAT ( MAX ( run_latest[finished_at] ), "yyyy-mm-dd hh:nn" ) & " UTC"
+				)
+		displayFolder: About
+		lineageTag: 3da149a1-91c2-40ad-83da-386b66de687f
+
+	/// Rows in each source's most recent completed load (mart.source_load_latest).
+	measure 'Source Rows Read' = SUM ( source_load_latest[rows_in] )
+		formatString: #,0
+		displayFolder: About
+		lineageTag: ab487109-c813-46bb-bf23-86d5c8737cf1
+
+	measure 'Source Rows Changed' = SUM ( source_load_latest[rows_merged] )
+		formatString: #,0
+		displayFolder: About
+		lineageTag: 54685c1a-d755-4233-b6ea-9155b37eaa35
+
+	measure 'Source Last Loaded' = FORMAT ( MAX ( source_load_latest[loaded_at] ), "yyyy-mm-dd" )
+		displayFolder: About
+		lineageTag: d89a9312-bbf3-4ef4-bc9e-e49959d211c2
+
+	/// Sources that need written permission, with their status (doc 03 P6 consent status).
+	measure 'Consent Summary' =
+			CONCATENATEX (
+				FILTER ( ALL ( data_source ), data_source[consent_status] <> "OPEN" ),
+				data_source[name] & ": " & SWITCH ( data_source[consent_status], "REQUESTED", "permission requested", "GRANTED", "permission granted", "REFUSED", "permission refused", data_source[consent_status] ),
+				"; ",
+				data_source[name]
+			)
+		displayFolder: About
+		lineageTag: 0397cdc0-7bac-4979-9455-04828f5a1f39
+
 	partition _Measures = calculated
 		mode: import
 		source = ROW ( "Value", 0 )

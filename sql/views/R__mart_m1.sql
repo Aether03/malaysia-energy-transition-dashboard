@@ -17,7 +17,7 @@ FROM dw.dim_year;
 GO
 
 CREATE OR ALTER VIEW mart.data_source AS
-SELECT data_source_code, name, licence, url, credit_text, consent_status, is_publishable
+SELECT data_source_code, name, provides, licence, url, credit_text, consent_status, is_publishable
 FROM dw.dim_data_source;
 GO
 

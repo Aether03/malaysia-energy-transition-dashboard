@@ -93,3 +93,11 @@ relationship 6f1b2c3d-0023-4a1e-9b01-000000000023
 relationship 6f1b2c3d-0024-4a1e-9b01-000000000024
 	fromColumn: state_reliability.year
 	toColumn: dim_year.year
+
+relationship 6f1b2c3d-0025-4a1e-9b01-000000000025
+	fromColumn: dq_latest.data_source_code
+	toColumn: data_source.data_source_code
+
+relationship 6f1b2c3d-0026-4a1e-9b01-000000000026
+	fromColumn: source_load_latest.data_source_code
+	toColumn: data_source.data_source_code

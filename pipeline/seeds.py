@@ -60,7 +60,7 @@ SEEDS: tuple[SeedSpec, ...] = (
         "data_source.csv",
         "dw.dim_data_source",
         "data_source_code",
-        ("data_source_code", "name", "licence", "url", "credit_text", "consent_status", "is_publishable"),
+        ("data_source_code", "name", "provides", "licence", "url", "credit_text", "consent_status", "is_publishable"),
     ),
     SeedSpec(
         "dim_source.csv",

@@ -13,6 +13,11 @@ table data_source
 		summarizeBy: none
 		sourceColumn: name
 
+	column provides
+		dataType: string
+		summarizeBy: none
+		sourceColumn: provides
+
 	column licence
 		dataType: string
 		lineageTag: 4673ef10-6c72-4067-ac21-18ad5e2680ae
@@ -22,6 +27,7 @@ table data_source
 	column url
 		dataType: string
 		lineageTag: 56a30985-2b73-44e5-ba44-66e0d81670f2
+		dataCategory: WebUrl
 		summarizeBy: none
 		sourceColumn: url
 
