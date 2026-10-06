@@ -1,6 +1,7 @@
 -- 010: upsert dw.dim_year from staged years, first in the rebuild transaction, so a DQ
 -- rollback reverts it together with the facts. Years are never deleted: facts reference them.
--- is_complete: before the current calendar year and present for the focus country.
+-- is_complete: before the current calendar year (Malaysia time, UTC+8: the focus country's calendar,
+-- not the server's clock or UTC) and present for the focus country.
 -- Years only the hourly data (or the handbook) touches get is_complete = 0 (M3 database review 6).
 
 MERGE dw.dim_year AS t
@@ -8,7 +9,7 @@ USING (
     SELECT
         s.year,
         CAST(CASE
-            WHEN s.year < YEAR(SYSUTCDATETIME())
+            WHEN s.year < YEAR(SYSDATETIMEOFFSET() AT TIME ZONE 'Singapore Standard Time')
              AND EXISTS (
                 SELECT 1 FROM stg.ember_yearly AS f
                 JOIN dw.dim_country AS c ON c.country_key = f.country_key AND c.is_focus = 1

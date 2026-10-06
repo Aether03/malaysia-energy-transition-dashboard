@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import logging
 import sys
 
 from pipeline import config
+from pipeline.db import PipelineBusyError
 
 log = logging.getLogger("pipeline")
 
@@ -33,9 +35,11 @@ def _cmd_db_migrate(_: argparse.Namespace) -> int:
 
 
 def _cmd_seed(_: argparse.Namespace) -> int:
+    from pipeline import db
     from pipeline.seeds import seed_all
 
-    log.info("Seeded: %s", seed_all())
+    with db.pipeline_lock("seed"):
+        log.info("Seeded: %s", seed_all())
     return 0
 
 
@@ -64,9 +68,12 @@ def _extract_and_load(run, refresh: bool) -> None:
 
 
 def _cmd_run(args: argparse.Namespace) -> int:
+    from pipeline import db
     from pipeline.meta import RunLog
 
-    with RunLog(dry_run=args.dry_run) as run:
+    # The lock comes first so a refused run writes no load_run row; a dry run touches no data.
+    lock = contextlib.nullcontext() if args.dry_run else db.pipeline_lock("run")
+    with lock, RunLog(dry_run=args.dry_run) as run:
         if args.dry_run:
             log.info("Dry run %d: no data touched", run.run_id)
             return 0
@@ -117,6 +124,7 @@ def _forecast(run, mode: str, grids: list[str] | None) -> None:
 
 
 def _cmd_forecast(args: argparse.Namespace) -> int:
+    from pipeline import db
     from pipeline.meta import RunLog
 
     mode = "dev" if args.dev else "final" if args.final else "replay"
@@ -124,7 +132,7 @@ def _cmd_forecast(args: argparse.Namespace) -> int:
         # One grid per FINAL run: commit docs/forecast_final.json before the next (the gate enforces it).
         log.error("--final runs one grid at a time: pass exactly one --grid")
         return 2
-    with RunLog() as run:
+    with db.pipeline_lock("forecast"), RunLog() as run:
         _forecast(run, mode=mode, grids=args.grid or None)
     return 0
 
@@ -139,16 +147,19 @@ def _transform(run) -> bool:
 
 
 def _cmd_transform(_: argparse.Namespace) -> int:
+    from pipeline import db
     from pipeline.meta import RunLog
 
-    with RunLog() as run:
+    with db.pipeline_lock("transform"), RunLog() as run:
         return 0 if _transform(run) else 1
 
 
 def _cmd_extract_load(args: argparse.Namespace) -> int:
+    from pipeline import db
     from pipeline.meta import RunLog
 
-    with RunLog() as run:
+    # Locked here, not in _extract_and_load: `run` already holds the lock when it calls the helper.
+    with db.pipeline_lock("extract-load"), RunLog() as run:
         _extract_and_load(run, refresh=getattr(args, "refresh", False))
     return 0
 
@@ -198,6 +209,9 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return args.func(args)
+    except PipelineBusyError as exc:
+        log.error("%s", exc)  # expected and self-explanatory: no traceback
+        return 1
     except Exception:
         log.exception("Command failed")
         return 1

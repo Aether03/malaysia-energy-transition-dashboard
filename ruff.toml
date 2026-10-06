@@ -1,0 +1,7 @@
+# Pinned so local runs and CI agree. There is no user-level ruff config on the dev machine:
+# the rule set below is ruff's own built-in default for the version pinned in requirements.txt
+# (0.16.x, ~410 rules incl. the F, E, B, UP, SIM, RUF, DTZ, PLE/PLW/PLR, FURB, PYI families).
+# `required-version` makes a different ruff fail loudly instead of silently changing the rules.
+required-version = "==0.16.9"
+target-version = "py313"
+line-length = 120  # the code base is written to ~120 columns

@@ -20,7 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from pipeline.db import connect  # noqa: E402
+from pipeline.db import connect
+
 SKIP_SUFFIXES = (".topojson", ".png", ".pbix", ".abf", ".xls", ".xlsx", ".parquet")
 # Reviewed coincidences: file -> number of matching tokens that are not from the handbook.
 KNOWN = {

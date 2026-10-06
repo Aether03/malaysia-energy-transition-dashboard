@@ -94,3 +94,18 @@ def test_unknown_lookup_value_raises_a_clear_error():
 def test_known_lookup_value_resolves():
     spec = _spec("dim_grid.csv")
     assert seeds._resolve(_Cursor((7,)), spec, spec.lookups[0], "THA") == 7
+
+
+def _dq_rule(code):
+    import csv
+
+    with (config.SEED_DIR / "dq_rule.csv").open(encoding="utf-8", newline="") as handle:
+        return next(row for row in csv.DictReader(handle) if row["rule_code"] == code)
+
+
+def test_negative_generation_rule_has_a_rounding_tolerance():
+    # Stored as DECIMAL(12,4) TWh, so one unit is 0.0001 TWh (0.1 GWh). The cut-off is 1 GWh: ten storage
+    # units of slack for source rounding, far below any real negative (M5 Q4, transform review LOW).
+    rule = _dq_rule("NO_NEGATIVE_GENERATION")
+    assert "generation_twh < -0.001" in rule["check_sql"]
+    assert "1 GWh" in rule["description"]

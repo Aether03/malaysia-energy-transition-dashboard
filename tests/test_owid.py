@@ -5,8 +5,13 @@ import pandas as pd
 import pytest
 
 from pipeline import config
-from pipeline.sources.owid import REQUIRED_COLUMNS, read_csv, filter_asean, to_raw_records
 from pipeline.sources._common import SchemaMismatchError, assert_unique_keys
+from pipeline.sources.owid import (
+    REQUIRED_COLUMNS,
+    filter_asean,
+    read_csv,
+    to_raw_records,
+)
 
 
 def fixture_path():
@@ -297,7 +302,7 @@ def test_assert_unique_keys_passes_on_unique_keys():
 
     # Key positions: (2, 1) = (iso_code, year)
     # This should pass since all ASEAN records should have unique (iso_code, year)
-    assert_unique_keys(records, (2, 1)) is None
+    assert assert_unique_keys(records, (2, 1)) is None
 
 
 def test_assert_unique_keys_raises_on_duplicate():

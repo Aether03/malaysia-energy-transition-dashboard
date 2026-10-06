@@ -5,6 +5,8 @@
 - `sql/views/R__name.sql` are repeatable: re-applied whenever their checksum changes.
 
 Each script runs in its own transaction and is recorded in `meta.schema_version`.
+A pending V-script numbered below the highest applied version is refused (it would run
+out of order), and a second concurrent migrate or pipeline run is refused (`db.pipeline_lock`).
 """
 
 from __future__ import annotations
@@ -81,6 +83,24 @@ def discover(migrations_dir: Path, views_dir: Path) -> list[Script]:
     return versioned + repeatable
 
 
+def check_version_order(scripts: list[Script], recorded: dict[str, int | None]) -> None:
+    """Refuse a pending V-script numbered below the highest applied version.
+
+    `recorded` maps every applied script name to its version (None for R scripts). Such a script
+    was skipped or added late; applying it now would run it after migrations that may depend on
+    it not existing. Renumber it above the highest applied version instead.
+    """
+    highest = max((v for v in recorded.values() if v is not None), default=None)
+    if highest is None:
+        return
+    late = [s.name for s in scripts if s.kind == "V" and s.name not in recorded and s.version < highest]
+    if late:
+        raise MigrationError(
+            f"Out-of-order migration(s) {late}: the highest applied version is V{highest:03d}. "
+            "Renumber them above it; they will not be applied silently."
+        )
+
+
 def _ensure_read_committed_snapshot() -> None:
     """Readers (Power BI, mart queries) never wait on a rebuild (transform review, finding 4).
 
@@ -98,8 +118,15 @@ def _ensure_read_committed_snapshot() -> None:
 
 
 def migrate() -> list[str]:
-    """Apply pending scripts; returns the names applied."""
+    """Apply pending scripts; returns the names applied. Fails fast if a run is in progress."""
+    # Before the lock: the ALTER DATABASE below (first run only) uses ROLLBACK IMMEDIATE, which
+    # can disconnect other sessions and would silently drop the lock.
     _ensure_read_committed_snapshot()
+    with db.pipeline_lock("db migrate"):
+        return _apply_pending()
+
+
+def _apply_pending() -> list[str]:
     applied: list[str] = []
     conn = db.connect()
     try:
@@ -107,10 +134,13 @@ def migrate() -> list[str]:
         db.run_script(cursor, _BOOTSTRAP)
         conn.commit()
 
-        cursor.execute("SELECT script_name, checksum FROM meta.schema_version")
-        recorded = {name: checksum for name, checksum in cursor.fetchall()}
+        cursor.execute("SELECT script_name, checksum, version FROM meta.schema_version")
+        rows = cursor.fetchall()
+        recorded = {name: checksum for name, checksum, _ in rows}
+        scripts = discover(config.MIGRATIONS_DIR, config.VIEWS_DIR)
+        check_version_order(scripts, {name: version for name, _, version in rows})
 
-        for script in discover(config.MIGRATIONS_DIR, config.VIEWS_DIR):
+        for script in scripts:
             previous = recorded.get(script.name)
             if previous == script.checksum:
                 continue

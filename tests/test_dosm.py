@@ -170,7 +170,7 @@ class TestToRawRecords:
 
     def test_to_raw_records_blank_value_raises_value_error(self, tmp_path):
         """to_raw_records raises ValueError when a value field is blank."""
-        from pipeline.sources.dosm import read_csv, to_raw_records
+        from pipeline.sources.dosm import to_raw_records
         # Create a DataFrame with a blank value
         fixture = pd.read_csv(fixture_supply_path(), dtype=str, keep_default_na=False)
         fixture.loc[0, "supply"] = ""
@@ -189,8 +189,9 @@ class TestRecordsFrom:
 
     def test_records_from_with_both_fixtures_returns_24_records(self, tmp_path):
         """records_from reads both supply and consumption from a folder and returns 24 records total."""
-        from pipeline.sources.dosm import records_from, FILES
         import shutil
+
+        from pipeline.sources.dosm import FILES, records_from
 
         # Copy both fixture files to a temporary folder with the expected names
         tmp_fixtures = tmp_path / "dosm_data"
@@ -203,8 +204,9 @@ class TestRecordsFrom:
 
     def test_records_from_supply_records_come_first(self, tmp_path):
         """records_from returns supply records before consumption records."""
-        from pipeline.sources.dosm import records_from, FILES
         import shutil
+
+        from pipeline.sources.dosm import FILES, records_from
 
         tmp_fixtures = tmp_path / "dosm_data"
         tmp_fixtures.mkdir()
@@ -234,7 +236,7 @@ class TestAssertUniqueKeys:
 
         # Key positions: (0, 1, 2) = (month, sector, measure)
         # This should pass since all records should have unique keys
-        assert_unique_keys(all_records, (0, 1, 2)) is None
+        assert assert_unique_keys(all_records, (0, 1, 2)) is None
 
     def test_assert_unique_keys_raises_on_duplicate_key(self):
         """assert_unique_keys raises ValueError on duplicate (month, sector, measure) keys."""

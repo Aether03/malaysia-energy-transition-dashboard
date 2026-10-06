@@ -21,6 +21,7 @@ SELECT
         THEN CAST(100.0 * 1000 * g.generation_twh / (g.capacity_gw * y.hours_in_year) AS DECIMAL(7, 2))
     END AS capacity_factor_pct,
     CASE
+        WHEN g.generation_twh IS NULL                               THEN 'GENERATION_NOT_REPORTED'
         WHEN g.capacity_gw IS NULL                                  THEN 'CAPACITY_NOT_REPORTED'
         WHEN g.capacity_gw = 0 AND g.generation_twh > 0             THEN 'CAPACITY_NOT_REPORTED'
         WHEN g.capacity_gw = 0                                      THEN 'NO_CAPACITY'

@@ -1,8 +1,9 @@
 -- 020: rebuild dw.fact_generation_annual inside the caller's transaction.
 -- Mix sources only (ref.source_map.include_in_mix = 1): Net imports, Demand and Ember's
 -- aggregates are excluded by label. Sources sharing a display slot (Wind + Other
--- renewables; Other fossil + Nuclear) are summed. Rows with no generation value are
--- skipped (database review, finding 5).
+-- renewables; Other fossil + Nuclear) are summed. A source with no generation and no positive
+-- capacity is skipped (database review, finding 5); one with capacity > 0 but no generation is
+-- kept with generation NULL so its capacity still counts (M5 Q4; DQ rule CAPACITY_WITHOUT_GENERATION).
 
 DELETE FROM dw.fact_generation_annual;
 
@@ -22,5 +23,5 @@ SELECT
 FROM stg.ember_yearly AS s
 JOIN dw.dim_source AS d ON d.source_code = s.source_code
 WHERE s.include_in_mix = 1
-  AND s.generation_twh IS NOT NULL
+  AND (s.generation_twh IS NOT NULL OR s.capacity_gw > 0)
 GROUP BY s.country_key, s.year, d.source_key;

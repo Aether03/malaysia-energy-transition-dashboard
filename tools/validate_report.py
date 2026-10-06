@@ -29,10 +29,10 @@ def parse_model() -> dict[str, dict[str, set[str]]]:
     model: dict[str, dict[str, set[str]]] = {}
     for f in TABLES.glob("*.tmdl"):
         text = f.read_text(encoding="utf-8")
-        m = re.search(r"^table\s+(.+?)\s*$", text, re.M)
+        m = re.search(r"^table\s+(.+?)\s*$", text, re.MULTILINE)
         table = unquote(m.group(1))
-        cols = {unquote(x) for x in re.findall(r"^\tcolumn\s+('(?:[^']|'')+'|[^\s=]+)", text, re.M)}
-        meas = {unquote(x) for x in re.findall(r"^\tmeasure\s+('(?:[^']|'')+'|[^\s=]+)", text, re.M)}
+        cols = {unquote(x) for x in re.findall(r"^\tcolumn\s+('(?:[^']|'')+'|[^\s=]+)", text, re.MULTILINE)}
+        meas = {unquote(x) for x in re.findall(r"^\tmeasure\s+('(?:[^']|'')+'|[^\s=]+)", text, re.MULTILINE)}
         model[table] = {"columns": cols, "measures": meas}
     return model
 

@@ -82,7 +82,7 @@ def to_raw_records(df: pd.DataFrame, measure: str) -> list[tuple]:
             raise ValueError(f"Blank value for {date_str} and {sector}")
 
         try:
-            month = datetime.strptime(date_str, "%Y-%m-%d").date()
+            month = datetime.strptime(date_str, "%Y-%m-%d").date()  # noqa: DTZ007 - a calendar date, no zone
         except ValueError as e:
             raise ValueError(f"Invalid date format: {date_str}") from e
 
@@ -102,7 +102,7 @@ def download(refresh: bool = False, retries: int = 3) -> tuple[Path, str]:
     supply_path, supply_version = _common.download(
         config.DOSM_SUPPLY_URL, "dosm", FILES["supply"], refresh=refresh, retries=retries
     )
-    consumption_path, consumption_version = _common.download(
+    _consumption_path, consumption_version = _common.download(
         config.DOSM_CONSUMPTION_URL, "dosm", FILES["consumption"], refresh=refresh, retries=retries
     )
 
@@ -134,4 +134,4 @@ def load(conn, records: list[tuple], run_id: int, source_file: str) -> int:
     return _common.merge_into(conn, "raw.dosm_electricity", RAW_COLUMNS, KEY_COLUMNS, records, run_id, source_file)
 
 
-__all__ = ["FILES", "RAW_COLUMNS", "KEY_COLUMNS", "SchemaMismatchError", "download", "load", "read_csv", "records_from", "to_raw_records"]
+__all__ = ["FILES", "KEY_COLUMNS", "RAW_COLUMNS", "SchemaMismatchError", "download", "load", "read_csv", "records_from", "to_raw_records"]

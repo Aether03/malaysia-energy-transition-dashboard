@@ -158,12 +158,12 @@ def build() -> list[dict]:
                 [
                     # Static text from docs/findings.md (audited 2026-10-02); update both together.
                     ("Headline findings (2015–2025, Ember basis; caveats in docs/findings.md)", 10, rb.TEXT_PRIMARY, True),
-                    ("1. The renewable share roughly doubled (9.6% → 19.7%, 3-year averages), mostly in a 2015–17 hydro "
-                     "step; since 2017 hydro and solar share the growth.", 9, rb.TEXT_PRIMARY, False),
-                    ("2. Each kWh got 9.5% cleaner, yet power-sector emissions rose 27%: generation grew 40%, and all the "
-                     "fossil growth was coal.", 9, rb.TEXT_PRIMARY, False),
-                    ("3. Malaysia is 3rd of 6 ASEAN peers on renewable share but 5th of 6 on carbon intensity (606 g/kWh, "
-                     "2025): the coal-to-gas balance matters too.", 9, rb.TEXT_PRIMARY, False),
+                    (("1. The renewable share roughly doubled (9.6% → 19.7%, 3-year averages), mostly in a 2015–17 hydro "
+                      "step; since 2017 hydro and solar share the growth."), 9, rb.TEXT_PRIMARY, False),
+                    (("2. Each kWh got 9.5% cleaner, yet power-sector emissions rose 27%: generation grew 40%, and all the "
+                      "fossil growth was coal."), 9, rb.TEXT_PRIMARY, False),
+                    (("3. Malaysia is 3rd of 6 ASEAN peers on renewable share but 5th of 6 on carbon intensity (606 g/kWh, "
+                      "2025): the coal-to-gas balance matters too."), 9, rb.TEXT_PRIMARY, False),
                 ]
             ),
         )
