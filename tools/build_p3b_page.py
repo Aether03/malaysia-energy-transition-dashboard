@@ -250,27 +250,44 @@ def build() -> list[dict]:
     visuals = rb.frame(PAGE, "P3b Title", "P3b Subtitle", None, footnote_measure="P3b Footnote", title_size=16)
 
     # --- row 0: controls and the note moved out of the footnote
-    visuals.append(visual("p3b_metric_slicer", rb.CONTENT_X, ROW0_Y, TOGGLE_W, ROW0_H, 40, metric_toggle()))
-    visuals.append(visual("p3b_year_slicer", YEAR_X, ROW0_Y, YEAR_W, ROW0_H, 41, year_dropdown()))
-    visuals.append(visual("p3b_note", NOTE_X, ROW0_Y, NOTE_W, ROW0_H, 42, p4.note("P3b Note")))
+    visuals.append(
+        visual("p3b_metric_slicer", rb.CONTENT_X, ROW0_Y, TOGGLE_W, ROW0_H, 40, metric_toggle(),
+               alt="Tile slicer: switch every chart on this page between SAIFI (interruption frequency) and SAIDI (interruption duration)")
+    )
+    visuals.append(
+        visual("p3b_year_slicer", YEAR_X, ROW0_Y, YEAR_W, ROW0_H, 41, year_dropdown(),
+               alt="Dropdown slicer: choose the year; nothing picked shows the latest year")
+    )
+    visuals.append(
+        visual("p3b_note", NOTE_X, ROW0_Y, NOTE_W, ROW0_H, 42, p4.note("P3b Note"),
+               alt="Note: how the chosen metric relates to CAIDI, and which year is shown")
+    )
 
     # --- left: map with its note underneath | right: ranked bar of the 13 reported states
-    visuals.append(visual("p3b_map", rb.CONTENT_X, BODY2_Y, MAP_W, MAP_H, 50, shape_map()))
+    visuals.append(
+        visual("p3b_map", rb.CONTENT_X, BODY2_Y, MAP_W, MAP_H, 50, shape_map(),
+               alt="Shape map: Peninsular Malaysian states shaded blue by the chosen reliability metric, darker is less reliable; Sabah, Sarawak and Labuan are grey because they are not reported by state; click a state to see its trend")
+    )
     visuals.append(
         visual(
             "p3b_map_note", rb.CONTENT_X + 12, BODY2_Y + MAP_H + 4, MAP_W - 12, MAP_NOTE_H, 51,
             rb.shape(None, text(MAP_NOTE), 9, rb.TEXT_SECONDARY, v_align="top"),
+            alt="Note under the map: the grey shapes are not reported by state",
         )
     )
     visuals.append(
         visual(
             "p3b_rank_bar", BAR_X, BODY2_Y, BAR_W, BAR_H, 52, ranked_bar(),
             filter_config=reported_states_filter("p3b_rank_bar"),
+            alt="Ranked bar chart: the 13 reported states by the chosen metric, most reliable at the top, each labelled with its value",
         )
     )
 
     # --- left column, under the map: selected-state trend
-    visuals.append(visual("p3b_trend", rb.CONTENT_X, TREND_Y, MAP_W, TREND_H, 53, trend_line()))
+    visuals.append(
+        visual("p3b_trend", rb.CONTENT_X, TREND_Y, MAP_W, TREND_H, 53, trend_line(),
+               alt="Line chart: the chosen reliability metric over the years for the state picked on the map or bar (navy), against Peninsular Malaysia (dashed grey)")
+    )
     return visuals
 
 

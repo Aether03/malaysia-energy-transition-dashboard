@@ -7,7 +7,7 @@
     "z": 92,
     "width": 400,
     "height": 120,
-    "tabOrder": 92
+    "tabOrder": 908
   },
   "visual": {
     "visualType": "actionButton",
@@ -185,6 +185,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Rank among the six largest ASEAN power systems. Click for the ASEAN comparison.'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Button over the rank card: opens the ASEAN page'"
                 }
               }
             }

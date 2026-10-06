@@ -7,7 +7,7 @@
     "z": 42,
     "width": 232,
     "height": 120,
-    "tabOrder": 42
+    "tabOrder": 958
   },
   "visual": {
     "visualType": "slicer",
@@ -136,6 +136,21 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tile slicer: choose which metric the trend chart shows'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

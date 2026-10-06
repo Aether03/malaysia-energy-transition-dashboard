@@ -212,34 +212,47 @@ def build() -> list[dict]:
             visual(
                 f"p3_card_{code.lower()}", x, CARDS_Y, w, CARDS_H, 50 + i, region_card(name),
                 filter_config=rb.in_filter("dim_region", "region_code", [code], f"p3_card_{code}"),
+                alt=f"Card: {name} at a glance, with installed and available capacity, consumption, use per person and SAIFI, each for its latest year",
             )
         )
         x += w + rb.GAP
 
     # --- row 2: capacity mix | consumption by year
-    visuals.append(visual("p3_capacity_mix", rb.CONTENT_X, ROW2_Y, COL_W, ROW_H, 60, capacity_mix()))
+    visuals.append(
+        visual("p3_capacity_mix", rb.CONTENT_X, ROW2_Y, COL_W, ROW_H, 60, capacity_mix(),
+               alt="100% stacked bar chart: installed capacity by fuel group for each of the three regions; one colour per fuel group")
+    )
     # On the chart's title line, right of the ~150 px title (GUI round 2: at 312 px "Solar" wrapped); above the chart in z order.
     visuals.append(
-        visual("p3_capacity_legend", rb.CONTENT_X + 176, ROW2_Y + 6, COL_W - 184, 28, 66, capacity_legend(), tab=False)
+        visual("p3_capacity_legend", rb.CONTENT_X + 176, ROW2_Y + 6, COL_W - 184, 28, 66, capacity_legend(), tab=False,
+               alt="Legend: the colour of each fuel group in the capacity mix chart")
     )
     visuals.append(
         visual(
             "p3_consumption_line", COL2_X, ROW2_Y, COL_W, ROW_H, 61,
             region_line("Region Consumption by Year (GWh)", "Electricity consumption by region (GWh)"),
+            alt="Line chart: electricity consumption per year in GWh, one line per region",
         )
     )
 
     # --- row 3: SAIFI by region | supply interruptions by year
-    visuals.append(visual("p3_saifi_bar", rb.CONTENT_X, ROW3_Y, COL_W, ROW_H, 62, saifi_bar()))
+    visuals.append(
+        visual("p3_saifi_bar", rb.CONTENT_X, ROW3_Y, COL_W, ROW_H, 62, saifi_bar(),
+               alt="Bar chart: SAIFI (supply interruptions per customer) for each region at its latest year")
+    )
     visuals.append(
         visual(
             "p3_interruptions_line", COL2_X, ROW3_Y, COL_W, ROW_H, 63,
             region_line("Region Interruptions by Year", "Supply interruptions by region (number per year)"),
+            alt="Line chart: number of supply interruptions per year, one line per region",
         )
     )
 
     # --- note strip: the Q4 disclosures moved out of the footnote (the footnote keeps source + consent)
-    visuals.append(visual("p3_note", rb.CONTENT_X, NOTE_Y, rb.CONTENT_W, NOTE_H, 64, p4.note("P3 Note")))
+    visuals.append(
+        visual("p3_note", rb.CONTENT_X, NOTE_Y, rb.CONTENT_W, NOTE_H, 64, p4.note("P3 Note"),
+               alt="Note: disclosures about how the regional figures are defined")
+    )
     return visuals
 
 

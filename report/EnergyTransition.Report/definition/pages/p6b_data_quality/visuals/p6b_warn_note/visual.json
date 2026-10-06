@@ -1,0 +1,156 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "p6b_warn_note",
+  "position": {
+    "x": 200,
+    "y": 544,
+    "z": 44,
+    "width": 380,
+    "height": 120,
+    "tabOrder": 956
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Expected WARNs (docs/reconciliation.md)",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#0b0b0b",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "OWID_GEN_WITHIN_5PCT: OWID uses a different upstream vintage than Ember.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "DOSM_SUPPLY_WITHIN_10PCT: DOSM's supply is a net balance below Ember's gross generation, and Ember revised 2021 on.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "CF_AT_MOST_1: Ember's capacity is too small for the generation it reports.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "STALE_COUNTRY_YEARS: Brunei, Laos and Myanmar end in 2024.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text box: the four warnings that are expected, and why each fires'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

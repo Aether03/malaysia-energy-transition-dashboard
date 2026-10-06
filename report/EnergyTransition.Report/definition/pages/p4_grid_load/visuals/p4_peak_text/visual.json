@@ -7,7 +7,7 @@
     "z": 51,
     "width": 292,
     "height": 18,
-    "tabOrder": 51
+    "tabOrder": 949
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text: when the highest demand of the year occurred'"
                 }
               }
             }

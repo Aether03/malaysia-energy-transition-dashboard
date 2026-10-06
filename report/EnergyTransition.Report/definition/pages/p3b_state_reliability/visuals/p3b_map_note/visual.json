@@ -7,7 +7,7 @@
     "z": 51,
     "width": 508,
     "height": 20,
-    "tabOrder": 51
+    "tabOrder": 949
   },
   "visual": {
     "visualType": "shape",
@@ -184,6 +184,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Note under the map: the grey shapes are not reported by state'"
                 }
               }
             }

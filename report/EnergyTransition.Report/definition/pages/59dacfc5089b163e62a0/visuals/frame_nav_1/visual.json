@@ -7,7 +7,7 @@
     "z": 3,
     "width": 160,
     "height": 44,
-    "tabOrder": 3
+    "tabOrder": 997
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'p2_generation'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Navigation button: Generation page'"
                 }
               }
             }

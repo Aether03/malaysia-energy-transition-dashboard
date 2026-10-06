@@ -7,7 +7,7 @@
     "z": 2,
     "width": 160,
     "height": 44,
-    "tabOrder": 2
+    "tabOrder": 998
   },
   "visual": {
     "visualType": "actionButton",
@@ -234,6 +234,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Back'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Button: go back to the page you drilled through from, keeping its filters'"
                 }
               }
             }

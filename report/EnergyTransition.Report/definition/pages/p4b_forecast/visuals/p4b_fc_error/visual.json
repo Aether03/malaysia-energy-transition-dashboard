@@ -7,7 +7,7 @@
     "z": 62,
     "width": 816,
     "height": 26,
-    "tabOrder": 62
+    "tabOrder": 938
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Message over the chart: shown when the forecast was not generated in the latest run'"
                 }
               }
             }

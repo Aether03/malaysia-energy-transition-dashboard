@@ -7,7 +7,7 @@
     "z": 52,
     "width": 520,
     "height": 496,
-    "tabOrder": 52
+    "tabOrder": 948
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -207,6 +207,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Ranked bar chart: the 13 reported states by the chosen metric, most reliable at the top, each labelled with its value'"
                 }
               }
             }

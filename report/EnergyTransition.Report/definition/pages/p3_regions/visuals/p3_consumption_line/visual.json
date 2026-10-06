@@ -7,7 +7,7 @@
     "z": 61,
     "width": 520.0,
     "height": 168,
-    "tabOrder": 61
+    "tabOrder": 939
   },
   "visual": {
     "visualType": "lineChart",
@@ -289,6 +289,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: electricity consumption per year in GWh, one line per region'"
                 }
               }
             }

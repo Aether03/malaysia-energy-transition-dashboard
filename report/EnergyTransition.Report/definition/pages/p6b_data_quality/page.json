@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p6b_data_quality",
+  "displayName": "Data quality",
+  "displayOption": "FitToPage",
+  "width": 1280,
+  "height": 720,
+  "visualInteractions": [
+    {
+      "source": "p6b_sources",
+      "target": "p6b_dq_table",
+      "type": "DataFilter"
+    }
+  ]
+}

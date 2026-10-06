@@ -135,6 +135,19 @@
             }
           }
         }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Legend: the colour of each fuel group in the capacity mix chart'"
+                }
+              }
+            }
+          }
+        }
       ]
     }
   }

@@ -7,7 +7,7 @@
     "z": 41,
     "width": 1056,
     "height": 26,
-    "tabOrder": 41
+    "tabOrder": 959
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Banner: which grid is shown and how it relates to Peninsular Malaysia'"
                 }
               }
             }

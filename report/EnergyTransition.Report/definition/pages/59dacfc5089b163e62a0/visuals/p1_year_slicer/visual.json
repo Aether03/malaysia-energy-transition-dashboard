@@ -7,7 +7,7 @@
     "z": 40,
     "width": 200,
     "height": 64,
-    "tabOrder": 40
+    "tabOrder": 960
   },
   "visual": {
     "visualType": "slicer",
@@ -82,6 +82,21 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown slicer: choose the single year shown by the KPI cards and the NETR panel'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

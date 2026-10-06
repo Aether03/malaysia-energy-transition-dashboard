@@ -7,7 +7,7 @@
     "z": 74,
     "width": 161.6,
     "height": 80,
-    "tabOrder": 74
+    "tabOrder": 926
   },
   "visual": {
     "visualType": "card",
@@ -178,6 +178,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: Baseline MAE (MW), a backtest result for the chosen grid'"
                 }
               }
             }

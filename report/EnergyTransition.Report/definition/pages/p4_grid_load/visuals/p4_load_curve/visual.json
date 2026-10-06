@@ -7,7 +7,7 @@
     "z": 52,
     "width": 196,
     "height": 140,
-    "tabOrder": 52
+    "tabOrder": 948
   },
   "visual": {
     "visualType": "lineChart",
@@ -235,6 +235,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: average load by hour of day for a typical weekday and a typical weekend or holiday'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 53,
     "width": 520,
     "height": 192,
-    "tabOrder": 53
+    "tabOrder": 947
   },
   "visual": {
     "visualType": "lineChart",
@@ -249,6 +249,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: the chosen reliability metric over the years for the state picked on the map or bar (navy), against Peninsular Malaysia (dashed grey)'"
                 }
               }
             }

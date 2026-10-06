@@ -43,7 +43,20 @@ NAV = (
     ("Forecast", "p4b_forecast"),
     ("ASEAN", "p5_asean"),
     ("About", "p6_about"),
+    ("Data quality", "p6b_data_quality"),
 )
+# The ⓘ button sits at the foot of the nav rail, level with the footnote: in the header it cut the
+# longest takeaway titles to 800 px (M5 GUI round 1). White on the navy rail.
+TITLE_W = 840
+INFO_X, INFO_Y, INFO_SIZE = 12, FOOTNOTE_Y + 6, 32
+BADGE_SIZE = 20
+TAB_ORDER_TOP = 1000  # above every z in use (footnotes are 99)
+ABOUT_PAGE = "p6_about"
+DQ_PAGE = "p6b_data_quality"
+INFO_TOOLTIP = "About the data: sources, licences and data quality"
+# Visuals that carry no information (background and selection bars, an arrow glyph): no alt text, and not
+# in the tab order. Every other visual must have alt text (tools/validate_report.py).
+DECORATIVE = frozenset({"frame_rail", "frame_nav_selected", "p1_rank_arrow"})
 
 
 # ---------- expression helpers ----------
@@ -124,10 +137,22 @@ def visual(
     body: dict,
     tab: bool = True,
     filter_config: dict | None = None,
+    alt: str | None = None,
 ) -> dict:
+    """One visual container. `alt` is the screen-reader description (visualContainerObjects.general.altText,
+    the shape Desktop writes: tools/templates/table_status_chip_alt_tooltip.json). Describe what the visual
+    shows and its encoding, never data values. Only the names in DECORATIVE go without."""
+    if alt:
+        # A new dict: `body["visualContainerObjects"]` may be the shared BARE constant.
+        body["visualContainerObjects"] = {
+            **body.get("visualContainerObjects", {}),
+            "general": [{"properties": {"altText": text(alt)}}],
+        }
     position = {"x": x, "y": y, "z": z, "width": w, "height": h}
     if tab:
-        position["tabOrder"] = z
+        # Desktop focuses the HIGHEST tabOrder first (its Tab order pane lists it as 1; M5 GUI round 2), so
+        # reading order = ascending z is written as a descending tabOrder.
+        position["tabOrder"] = TAB_ORDER_TOP - z
     out = {"$schema": SCHEMA, "name": name, "position": position, "visual": body}
     if filter_config:
         out["filterConfig"] = filter_config  # container top level, a sibling of "visual" (card_new.json)
@@ -170,8 +195,9 @@ def measure_filter(visual_name: str, measure: str, value: int = 1) -> dict:
 def tooltip_fields(body: dict, measures: list[str]) -> dict:
     """Add measures to a visual's built-in tooltip (the Tooltips well), skipping any already bound.
 
-    Used instead of report-page tooltips, which do not render in this Desktop setup even when set in
-    the GUI (M2 GUI round 6; decision: built-in tooltips now, retry pages in M5).
+    For visuals without a report-page tooltip (P3, P3b, P4b cards). Report-page tooltips do render when
+    written the way Desktop writes them (see tooltip_page; M5 step 1), so a visual with a tooltip page
+    uses that instead and keeps no built-in fields.
     """
     state = body["query"]["queryState"]
     bound = {p["queryRef"] for role in state.values() for p in role.get("projections", [])}
@@ -182,10 +208,16 @@ def tooltip_fields(body: dict, measures: list[str]) -> dict:
 
 
 def tooltip_page(body: dict, page_name: str) -> dict:
-    """Assign a report-page tooltip to a visual (visualContainerObjects.visualTooltip)."""
-    body.setdefault("visualContainerObjects", {})["visualTooltip"] = [
-        {"properties": {"show": lit("true"), "type": text("ReportPage"), "section": text(page_name)}}
-    ]
+    """Assign a report-page tooltip to a visual (visualContainerObjects.visualTooltip).
+
+    Desktop writes only `show` and `section` (tools/templates/table_status_chip_alt_tooltip.json, M5 step 1).
+    An extra `type: 'ReportPage'` property, which the M2 builds wrote, is what stopped the tooltip page
+    rendering. The page replaces the visual's built-in tooltip.
+    """
+    body["visualContainerObjects"] = {
+        **body.get("visualContainerObjects", {}),
+        "visualTooltip": [{"properties": {"show": lit("true"), "section": text(page_name)}}],
+    }
     return body
 
 
@@ -241,21 +273,29 @@ def shape(
     v_align: str = "middle",
     boxed: bool = False,
     left_margin: int = 0,
+    fill_measure: str | None = None,
+    tile: str = "rectangle",
 ) -> dict:
-    """Rectangle (template: shape_measure_title.json). `text_value` is text() or a measure expr.
+    """Rectangle or oval (templates: shape_measure_title.json, shape_fill_measure.json). `text_value` is
+    text() or a measure expr; `fill_measure` binds the fill colour to a measure returning a hex string.
 
     `boxed` keeps the theme's card background and border on the container (instead of BARE) so a
     text shape reads as a card; the shape fill itself stays transparent.
     """
     objects: dict = {
-        "shape": [{"properties": {"tileShape": text("rectangle")}}],
+        "shape": [{"properties": {"tileShape": text(tile)}}],
         "rotation": [{"properties": {"shapeAngle": lit("0L")}}],
         # `show` goes in a selector-free entry and colours in the {"id": "default"} state entry,
         # as Desktop writes them; a `show` inside the state entry is ignored (P1 test, M2 step 6).
         "fill": [
             {"properties": {"show": lit("true")}},
             {
-                "properties": {"fillColor": solid(fill or SURFACE_CARD), "transparency": lit("0D" if fill else "100D")},
+                "properties": {
+                    "fillColor": {"solid": {"color": {"expr": measure_ref(fill_measure)}}}
+                    if fill_measure
+                    else solid(fill or SURFACE_CARD),
+                    "transparency": lit("0D" if fill or fill_measure else "100D"),
+                },
                 "selector": {"id": "default"},
             },
         ],
@@ -351,6 +391,36 @@ def nav_overlay(page_name: str, tooltip: str | None = None) -> dict:
     }
 
 
+def info_button(page_name: str, tooltip: str) -> dict:
+    """ⓘ button with a page-navigation action (the icon from tools/templates/button_info_weburl.json,
+    the action from nav_overlay: Desktop wrote 'WebUrl' there, here it is 'PageNavigation')."""
+    body = nav_overlay(page_name, tooltip)
+    body["objects"]["icon"] = [
+        {"properties": {"shapeType": text("information"), "lineColor": solid(NAV_TEXT)}, "selector": {"id": "default"}}
+    ]
+    return body
+
+
+def fail_badge(page_name: str) -> dict:
+    """20 x 20 oval over the Data quality nav button: fill = [DQ Fail Badge Fill] (rail navy when nothing
+    fails, so it vanishes), text = [DQ Fail Badge Text] (blank at 0). A click on it navigates like the button."""
+    body = shape(
+        None,
+        {"expr": measure_ref("DQ Fail Badge Text")},
+        9,
+        NAV_TEXT,
+        "Segoe UI Semibold",
+        align="center",
+        fill_measure="DQ Fail Badge Fill",
+        tile="oval",
+    )
+    body["visualContainerObjects"] = {
+        **BARE,
+        "visualLink": [{"properties": {"show": lit("true"), "type": text("PageNavigation"), "navigationSection": text(page_name)}}],
+    }
+    return body
+
+
 def textbox(paragraphs: list[tuple[str, int, str, bool]]) -> dict:
     """Textbox from (text, font size pt, colour, bold) paragraphs. Keeps the theme card around it."""
     paras = []
@@ -363,6 +433,47 @@ def textbox(paragraphs: list[tuple[str, int, str, bool]]) -> dict:
         "visualType": "textbox",
         "objects": {"general": [{"properties": {"paragraphs": paras}}]},
         "visualContainerObjects": container(None),
+    }
+
+
+def table(
+    title: str,
+    columns: list[tuple[dict, str, int]],
+    sort: list[tuple[dict, str]] | None = None,
+    extra_values: list[dict] | None = None,
+    font_size: int = 9,
+) -> dict:
+    """Table visual `tableEx` (shape: tools/templates/table_status_chip_alt_tooltip.json, M5 step 1).
+
+    `columns` = (field, header text, width px); the width goes in objects.columnWidth keyed by the
+    projection's queryRef. `sort` = (field, "Ascending" | "Descending"). `extra_values` are selector
+    entries appended to objects.values (conditional formats). Header and cells are `font_size` pt
+    (Desktop's header minimum is 8 pt), totals are off, and the container padding is 4 px: the theme's
+    14-16 px padding would cost a table 30 px of height. Long cell text wraps, so a table scrolls.
+    """
+    projections = [{**projection(field), "displayName": header} for field, header, _ in columns]
+    query: dict = {"queryState": {"Values": {"projections": projections}}}
+    if sort:
+        query["sortDefinition"] = {"sort": [{"field": f, "direction": d} for f, d in sort]}
+    return {
+        "visualType": "tableEx",
+        "query": query,
+        "objects": {
+            "columnWidth": [
+                {"properties": {"value": lit(f"{width}D")}, "selector": {"metadata": proj["queryRef"]}}
+                for proj, (_, _, width) in zip(projections, columns)
+            ],
+            "columnHeaders": [{"properties": {"fontSize": lit(f"{font_size}D")}}],
+            # `urlIcon` shows a WebUrl column as a link icon (a long URL would wrap over many lines).
+            "values": [{"properties": {"fontSize": lit(f"{font_size}D"), "urlIcon": lit("true")}}, *(extra_values or [])],
+            "grid": [{"properties": {"rowPadding": lit("3D")}}],
+            "total": [{"properties": {"totals": lit("false")}}],
+        },
+        "visualContainerObjects": {
+            **container(title),
+            "padding": [{"properties": {side: lit("4D") for side in ("left", "top", "right", "bottom")}}],
+        },
+        "drillFilterOtherVisuals": True,
     }
 
 
@@ -535,16 +646,23 @@ def reset_button(bookmark_name: str) -> dict:
 # ---------- page frame ----------
 def frame(
     page_name: str,
-    title_measure: str,
-    subtitle_measure: str,
+    title_measure: str | None,
+    subtitle_measure: str | None,
     footnote_text: str | None,
     footnote_measure: str | None = None,
     title_size: int = 20,
+    title_text: str | None = None,
+    subtitle_text: str | None = None,
 ) -> list[dict]:
-    """Nav rail, takeaway title, scope/as-of subtitle and footnote strip (doc 03 A3, doc 04 §4).
+    """Nav rail, takeaway title, scope/as-of subtitle, footnote strip, the ⓘ button and the Fail badge
+    (doc 03 A3, doc 04 §4).
 
     The footnote is static text, or bound to a measure (a boxed text shape) when `footnote_measure` is set.
     `title_size` (pt) lets a page with a long takeaway title (P3, P3b) drop to 16 pt, so two lines fit the 44 px box.
+    `title_text` / `subtitle_text` give a static title or subtitle (About and Data quality have no measure for them).
+
+    z order = tab order (the tab=True visuals): nav buttons 2-10, Reset 15, title 30, subtitle 31, the ⓘ button
+    32, page content from 40, footnote 99. The badge (z 16) sits above its nav button and is not a tab stop.
     """
     visuals = [
         visual("frame_rail", 0, 0, 176, 720, 0, shape(NAVY), tab=False),
@@ -557,44 +675,72 @@ def frame(
             1,
             shape(None, text("Malaysia Energy Transition"), 11, NAV_TEXT, "Segoe UI Semibold", v_align="top"),
             tab=False,
+            alt="Report name: Malaysia Energy Transition",
         ),
     ]
     existing = [(label, name) for label, name in NAV if (PAGES / name).is_dir()]
     bookmark = page_bookmark(page_name)
     if bookmark:
         y = BODY_Y + len(existing) * 48 + 24
-        visuals.append(visual("frame_reset", 8, y, 160, 44, 15, reset_button(bookmark)))
+        visuals.append(
+            visual("frame_reset", 8, y, 160, 44, 15, reset_button(bookmark), alt="Button: reset this page's filters and slicers to their defaults")
+        )
     for i, (label, name) in enumerate(existing):
         y = BODY_Y + i * 48
-        visuals.append(visual(f"frame_nav_{i}", 8, y, 160, 44, 2 + i, nav_button(label, name, name == page_name)))
-        if name == page_name:
+        here = name == page_name
+        visuals.append(
+            visual(
+                f"frame_nav_{i}", 8, y, 160, 44, 2 + i, nav_button(label, name, here),
+                alt=f"Navigation button: {label} page" + (" (the current page)" if here else ""),
+            )
+        )
+        if here:
             visuals.append(visual("frame_nav_selected", 0, y + 6, 4, 32, 20, shape(NAV_SELECTED_BAR), tab=False))
+        if name == DQ_PAGE:
+            visuals.append(
+                visual(
+                    "frame_nav_badge", 8 + 160 - BADGE_SIZE - 4, y + (44 - BADGE_SIZE) / 2, BADGE_SIZE, BADGE_SIZE, 16,
+                    fail_badge(name), tab=False,
+                    alt="Badge on the Data quality button: how many data-quality rules failed in the latest run; empty when none failed",
+                )
+            )
     if footnote_measure:
         footnote_body = shape(
             None, {"expr": measure_ref(footnote_measure)}, 9, TEXT_MUTED, v_align="top", boxed=True, left_margin=4
         )
     else:
         footnote_body = footnote(footnote_text or "")
+    title_value = text(title_text) if title_text else {"expr": measure_ref(title_measure)}
+    subtitle_value = text(subtitle_text) if subtitle_text else {"expr": measure_ref(subtitle_measure)}
     visuals += [
         visual(
             "frame_title",
             CONTENT_X,
             HEADER_Y,
-            840,
+            TITLE_W,
             44,
             30,
-            shape(None, {"expr": measure_ref(title_measure)}, title_size, TEXT_PRIMARY, "Segoe UI Semibold"),
+            shape(None, title_value, title_size, TEXT_PRIMARY, "Segoe UI Semibold"),
+            alt="Page title: the main takeaway of this page as one sentence",
         ),
         visual(
             "frame_subtitle",
             CONTENT_X,
             HEADER_Y + 44,
-            840,
+            TITLE_W,
             28,
             31,
-            shape(None, {"expr": measure_ref(subtitle_measure)}, 11, TEXT_SECONDARY),
+            shape(None, subtitle_value, 11, TEXT_SECONDARY),
+            alt="Page scope line: what this page covers and when the data was refreshed",
         ),
-        visual("frame_footnote", CONTENT_X, FOOTNOTE_Y, CONTENT_W, 44, 99, footnote_body),
+        visual(
+            "frame_info", INFO_X, INFO_Y, INFO_SIZE, INFO_SIZE, 32, info_button(ABOUT_PAGE, INFO_TOOLTIP),
+            alt="Button: open the About page, with sources, licences and data quality",
+        ),
+        visual(
+            "frame_footnote", CONTENT_X, FOOTNOTE_Y, CONTENT_W, 44, 99, footnote_body,
+            alt="Footnote: sources, licences and caveats for this page",
+        ),
     ]
     return visuals
 

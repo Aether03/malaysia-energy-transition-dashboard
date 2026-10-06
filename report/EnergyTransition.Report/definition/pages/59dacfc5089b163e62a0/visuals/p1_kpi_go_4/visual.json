@@ -7,7 +7,7 @@
     "z": 84,
     "width": 198.4,
     "height": 100,
-    "tabOrder": 84
+    "tabOrder": 916
   },
   "visual": {
     "visualType": "actionButton",
@@ -185,6 +185,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Electricity demand per person (MWh/person). The average electricity demand per resident of a country in a given year. Formula: Demand (TWh) × 10^6 ÷ population. Source: Our World in Data, Energy dataset, CC BY 4.0 (and underlying sources). Click for the Generation page.'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Button over the electricity demand per person card: its hover text gives the definition, and a click opens the Generation page'"
                 }
               }
             }

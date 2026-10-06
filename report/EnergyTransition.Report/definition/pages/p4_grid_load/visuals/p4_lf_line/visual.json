@@ -7,7 +7,7 @@
     "z": 55,
     "width": 321.0,
     "height": 140,
-    "tabOrder": 55
+    "tabOrder": 945
   },
   "visual": {
     "visualType": "lineChart",
@@ -235,6 +235,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: monthly load factor in percent, one line per year, on the same month axis as the peak chart'"
                 }
               }
             }

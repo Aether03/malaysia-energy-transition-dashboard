@@ -7,7 +7,7 @@
     "z": 6,
     "width": 160,
     "height": 44,
-    "tabOrder": 6
+    "tabOrder": 994
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'p4_grid_load'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Navigation button: Grid load page'"
                 }
               }
             }

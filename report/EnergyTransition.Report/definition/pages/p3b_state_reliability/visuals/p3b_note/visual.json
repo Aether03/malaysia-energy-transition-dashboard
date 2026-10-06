@@ -7,7 +7,7 @@
     "z": 42,
     "width": 672,
     "height": 56,
-    "tabOrder": 42
+    "tabOrder": 958
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Note: how the chosen metric relates to CAIDI, and which year is shown'"
                 }
               }
             }

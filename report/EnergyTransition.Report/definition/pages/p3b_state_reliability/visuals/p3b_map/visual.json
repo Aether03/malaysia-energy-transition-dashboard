@@ -7,7 +7,7 @@
     "z": 50,
     "width": 520,
     "height": 272,
-    "tabOrder": 50
+    "tabOrder": 950
   },
   "visual": {
     "visualType": "shapeMap",
@@ -239,6 +239,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Shape map: Peninsular Malaysian states shaded blue by the chosen reliability metric, darker is less reliable; Sabah, Sarawak and Labuan are grey because they are not reported by state; click a state to see its trend'"
                 }
               }
             }

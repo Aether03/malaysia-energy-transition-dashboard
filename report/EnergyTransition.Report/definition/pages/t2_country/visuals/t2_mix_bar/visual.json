@@ -7,7 +7,7 @@
     "z": 2,
     "width": 304,
     "height": 128,
-    "tabOrder": 2
+    "tabOrder": 998
   },
   "visual": {
     "visualType": "hundredPercentStackedBarChart",
@@ -441,6 +441,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'100% stacked bar: the hovered country''s generation mix by source, one colour per source'"
                 }
               }
             }

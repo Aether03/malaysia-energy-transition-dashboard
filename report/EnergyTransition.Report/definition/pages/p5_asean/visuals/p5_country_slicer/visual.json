@@ -7,7 +7,7 @@
     "z": 41,
     "width": 232,
     "height": 340,
-    "tabOrder": 41
+    "tabOrder": 959
   },
   "visual": {
     "visualType": "slicer",
@@ -89,6 +89,21 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'List slicer: tick the ASEAN countries to compare; none ticked compares the six default peers'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

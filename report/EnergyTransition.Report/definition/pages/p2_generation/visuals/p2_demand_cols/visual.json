@@ -7,7 +7,7 @@
     "z": 55,
     "width": 520.0,
     "height": 128,
-    "tabOrder": 55
+    "tabOrder": 945
   },
   "visual": {
     "visualType": "clusteredColumnChart",
@@ -130,6 +130,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Column chart: electricity demand per year in TWh, on the same year axis as the growth chart beside it'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 53,
     "width": 170,
     "height": 140,
-    "tabOrder": 53
+    "tabOrder": 947
   },
   "visual": {
     "visualType": "slicer",
@@ -89,6 +89,21 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'List slicer: narrow the typical-day chart to one season; the other charts stay whole-year'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

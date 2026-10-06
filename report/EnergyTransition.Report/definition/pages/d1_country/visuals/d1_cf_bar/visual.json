@@ -7,7 +7,7 @@
     "z": 53,
     "width": 1056,
     "height": 208,
-    "tabOrder": 53
+    "tabOrder": 947
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -447,6 +447,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Bar chart: capacity factor of each energy source in the last selected year, as a percent'"
                 }
               }
             }

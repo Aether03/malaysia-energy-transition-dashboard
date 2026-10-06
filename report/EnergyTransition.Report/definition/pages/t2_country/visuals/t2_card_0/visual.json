@@ -3,11 +3,11 @@
   "name": "t2_card_0",
   "position": {
     "x": 8.0,
-    "y": 172,
+    "y": 176,
     "z": 3,
     "width": 148.0,
-    "height": 64,
-    "tabOrder": 3
+    "height": 96,
+    "tabOrder": 997
   },
   "visual": {
     "visualType": "card",
@@ -156,6 +156,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: the hovered country''s renewable share of generation at the comparison year'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 40,
     "width": 200,
     "height": 64,
-    "tabOrder": 40
+    "tabOrder": 960
   },
   "visual": {
     "visualType": "slicer",
@@ -81,6 +81,21 @@
       "groupName": "year_range",
       "fieldChanges": true,
       "filterChanges": true
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Range slicer: choose the first and last year shown on this page; it is synced with the other year-range pages'"
+                }
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

@@ -7,7 +7,7 @@
     "z": 56,
     "width": 1056,
     "height": 120,
-    "tabOrder": 56
+    "tabOrder": 944
   },
   "visual": {
     "visualType": "lineChart",
@@ -156,6 +156,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: daily average net electricity flow between Thailand and Malaysia in MW; above zero means Thailand exports'"
                 }
               }
             }

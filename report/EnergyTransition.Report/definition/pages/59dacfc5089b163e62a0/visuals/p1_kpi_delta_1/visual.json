@@ -7,7 +7,7 @@
     "z": 61,
     "width": 198.4,
     "height": 44,
-    "tabOrder": 61
+    "tabOrder": 939
   },
   "visual": {
     "visualType": "card",
@@ -136,6 +136,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: change in renewable share of generation against the previous year, coloured by whether the change is good or bad'"
                 }
               }
             }

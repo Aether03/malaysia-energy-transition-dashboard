@@ -56,7 +56,10 @@ def build() -> list[dict]:
         },
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_year_slicer", 1056, rb.HEADER_Y, 200, 64, 40, slicer))
+    visuals.append(
+        visual("p1_year_slicer", 1056, rb.HEADER_Y, 200, 64, 40, slicer,
+               alt="Dropdown slicer: choose the single year shown by the KPI cards and the NETR panel")
+    )
 
     kpis = [  # (measure, delta label, delta colour measure or None = neutral, ref.kpi code)
         ("Total Generation (TWh)", "Total Generation Delta Label", None, "TOTAL_GENERATION"),
@@ -66,16 +69,29 @@ def build() -> list[dict]:
         ("Demand per Capita (MWh)", "Demand per Capita Delta Label", None, "DEMAND_PER_CAPITA"),
     ]
     definitions = kpi_tooltips()
+    kpi_alt = [  # what each KPI card is, for the alt text
+        "total electricity generation", "renewable share of generation", "fossil share of generation",
+        "carbon intensity of electricity", "electricity demand per person",
+    ]
     for i, (measure, delta, colour_measure, code) in enumerate(kpis):
         kx = rb.CONTENT_X + i * (KPI_W + rb.GAP)
-        visuals.append(visual(f"p1_kpi_{i}", kx, rb.BODY_Y, KPI_W, 100, 50 + i, rb.card(measure, 28, solid(rb.TEXT_PRIMARY), True)))
+        visuals.append(
+            visual(f"p1_kpi_{i}", kx, rb.BODY_Y, KPI_W, 100, 50 + i, rb.card(measure, 28, solid(rb.TEXT_PRIMARY), True),
+                   alt=f"KPI card: Malaysia's {kpi_alt[i]} in the selected year")
+        )
         delta_colour = (
             {"solid": {"color": {"expr": measure_ref(colour_measure)}}} if colour_measure else solid(rb.TEXT_SECONDARY)
         )
-        visuals.append(visual(f"p1_kpi_delta_{i}", kx, rb.BODY_Y + 100, KPI_W, 44, 60 + i, rb.card(delta, 10, delta_colour, False)))
+        visuals.append(
+            visual(f"p1_kpi_delta_{i}", kx, rb.BODY_Y + 100, KPI_W, 44, 60 + i, rb.card(delta, 10, delta_colour, False),
+                   alt=f"Card: change in {kpi_alt[i]} against the previous year, coloured by whether the change is good or bad")
+        )
         # Cards cannot be clicked reliably: a transparent button over the value card opens P2 (doc 03 P1).
         # Its hover text carries the doc 03 T1 content (report-page tooltips don't render here; M2 GUI round 6).
-        visuals.append(visual(f"p1_kpi_go_{i}", kx, rb.BODY_Y, KPI_W, 100, 80 + i, rb.nav_overlay(P2_PAGE, definitions[code])))
+        visuals.append(
+            visual(f"p1_kpi_go_{i}", kx, rb.BODY_Y, KPI_W, 100, 80 + i, rb.nav_overlay(P2_PAGE, definitions[code]),
+                   alt=f"Button over the {kpi_alt[i]} card: its hover text gives the definition, and a click opens the Generation page")
+        )
 
     area = {
         "visualType": "stackedAreaChart",
@@ -94,7 +110,10 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("Malaysia's generation mix by source (TWh), all years"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_mix_area", rb.CONTENT_X, MID_Y, 640, MID_END - MID_Y, 70, area))
+    visuals.append(
+        visual("p1_mix_area", rb.CONTENT_X, MID_Y, 640, MID_END - MID_Y, 70, area,
+               alt="Stacked area chart: Malaysia's electricity generation by source in TWh across all years; one colour per source")
+    )
 
     targets = [  # (measure, legend label, colour): both bases beside the target (M2 step 1 decision)
         ("RE Capacity Share (%)", "Ember grid basis", rb.NAVY),
@@ -123,12 +142,16 @@ def build() -> list[dict]:
         "visualContainerObjects": rb.container("Renewable share of installed capacity (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("p1_netr_bars", 856, MID_Y, 400, 200, 71, bars))
+    visuals.append(
+        visual("p1_netr_bars", 856, MID_Y, 400, 200, 71, bars,
+               alt="Bar chart: renewable share of installed capacity on the Ember grid basis and the official basis, beside the national target")
+    )
     # A text shape wraps the long label; a classic card truncated it (M2 GUI round 3).
     visuals.append(
         visual(
             "p1_netr_label", 856, MID_Y + 208, 400, MID_END - (MID_Y + 208), 72,
             rb.shape(None, {"expr": measure_ref("NETR Progress Label")}, 9, rb.TEXT_SECONDARY, boxed=True, left_margin=12),
+            alt="Text: progress towards the renewable capacity target, in words",
         )
     )
 
@@ -138,6 +161,7 @@ def build() -> list[dict]:
             "p1_rank_card", rb.CONTENT_X, BOTTOM_Y, RANK_W, BOTTOM_H, 90,
             rb.shape(None, {"expr": measure_ref("Rank Label")}, 14, rb.TEXT_PRIMARY, "Segoe UI Semibold",
                      boxed=True, left_margin=12),
+            alt="Text card: Malaysia's rank among six ASEAN countries on renewable share",
         )
     )
     visuals.append(
@@ -148,7 +172,8 @@ def build() -> list[dict]:
     )
     visuals.append(
         visual("p1_rank_go", rb.CONTENT_X, BOTTOM_Y, RANK_W, BOTTOM_H, 92,
-               rb.nav_overlay(P5_PAGE, "Rank among the six largest ASEAN power systems. Click for the ASEAN comparison."))
+               rb.nav_overlay(P5_PAGE, "Rank among the six largest ASEAN power systems. Click for the ASEAN comparison."),
+               alt="Button over the rank card: opens the ASEAN page")
     )
     findings_x = rb.CONTENT_X + RANK_W + rb.GAP
     visuals.append(
@@ -166,6 +191,7 @@ def build() -> list[dict]:
                       "2025): the coal-to-gas balance matters too."), 9, rb.TEXT_PRIMARY, False),
                 ]
             ),
+            alt="Text box: three headline findings about Malaysia's generation, with a pointer to the caveats",
         )
     )
     return visuals

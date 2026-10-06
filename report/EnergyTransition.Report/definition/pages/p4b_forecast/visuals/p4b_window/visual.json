@@ -7,7 +7,7 @@
     "z": 53,
     "width": 200,
     "height": 72,
-    "tabOrder": 53
+    "tabOrder": 947
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text: the dates and hours the backtest covers'"
                 }
               }
             }

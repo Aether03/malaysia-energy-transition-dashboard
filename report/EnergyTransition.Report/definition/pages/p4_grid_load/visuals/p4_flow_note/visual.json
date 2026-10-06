@@ -7,7 +7,7 @@
     "z": 57,
     "width": 728,
     "height": 22,
-    "tabOrder": 57
+    "tabOrder": 943
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text: annual export and import totals for the flow chart'"
                 }
               }
             }

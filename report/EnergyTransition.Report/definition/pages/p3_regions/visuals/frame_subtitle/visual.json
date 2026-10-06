@@ -7,7 +7,7 @@
     "z": 31,
     "width": 840,
     "height": 28,
-    "tabOrder": 31
+    "tabOrder": 969
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Page scope line: what this page covers and when the data was refreshed'"
                 }
               }
             }

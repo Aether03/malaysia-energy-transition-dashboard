@@ -7,7 +7,7 @@
     "z": 53,
     "width": 396.0,
     "height": 224,
-    "tabOrder": 53
+    "tabOrder": 947
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -47,66 +47,6 @@
               },
               "queryRef": "_Measures.Demand per Capita at Common Year (MWh)",
               "nativeQueryRef": "Demand per Capita at Common Year (MWh)"
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Comparison Year"
-                }
-              },
-              "queryRef": "_Measures.Comparison Year",
-              "nativeQueryRef": "Comparison Year"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "RE Share at Comparison Year (%)"
-                }
-              },
-              "queryRef": "_Measures.RE Share at Comparison Year (%)",
-              "nativeQueryRef": "RE Share at Comparison Year (%)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Intensity at Comparison Year (gCO2e/kWh)"
-                }
-              },
-              "queryRef": "_Measures.Intensity at Comparison Year (gCO2e/kWh)",
-              "nativeQueryRef": "Intensity at Comparison Year (gCO2e/kWh)"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Demand at Comparison Year (TWh)"
-                }
-              },
-              "queryRef": "_Measures.Demand at Comparison Year (TWh)",
-              "nativeQueryRef": "Demand at Comparison Year (TWh)"
             }
           ]
         }
@@ -637,6 +577,39 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "section": {
+              "expr": {
+                "Literal": {
+                  "Value": "'t2_country'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Bar chart: electricity demand per person at the common year for each compared country, highest first; Malaysia in navy'"
                 }
               }
             }

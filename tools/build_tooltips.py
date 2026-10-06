@@ -13,7 +13,7 @@ import report_builder as rb
 from report_builder import column_ref, lit, measure_ref, projection, solid, text, visual
 
 T2_PAGE = "t2_country"
-W, H = 320, 240
+W, H = 320, 280  # 280, not 240: a titled card needs ~90 px to show its value (M5 GUI round 1)
 PAD = 8
 
 
@@ -22,6 +22,7 @@ def build_t2() -> list[dict]:
         visual(
             "t2_title", PAD, PAD, W - 2 * PAD, 28, 1,
             rb.shape(None, {"expr": measure_ref("T2 Title")}, 12, rb.TEXT_PRIMARY, "Segoe UI Semibold"), tab=False,
+            alt="Tooltip title: the hovered country and the comparison year",
         )
     ]
     mix = {
@@ -41,18 +42,23 @@ def build_t2() -> list[dict]:
         "visualContainerObjects": rb.container("Generation mix by source (%)"),
         "drillFilterOtherVisuals": True,
     }
-    visuals.append(visual("t2_mix_bar", PAD, 40, W - 2 * PAD, 128, 2, mix))  # 116 px rendered as an icon (GUI round 4)
+    visuals.append(
+        visual("t2_mix_bar", PAD, 40, W - 2 * PAD, 128, 2, mix,  # 116 px rendered as an icon (GUI round 4)
+               alt="100% stacked bar: the hovered country's generation mix by source, one colour per source")
+    )
     card_w = (W - 3 * PAD) / 2
-    for i, (measure, label) in enumerate(
+    for i, (measure, label, alt) in enumerate(
         [
-            ("RE Share at Comparison Year (%)", "RE share (%)"),
-            ("Intensity at Comparison Year (gCO2e/kWh)", "Intensity (gCO2e/kWh)"),
+            ("RE Share at Comparison Year (%)", "RE share (%)",
+             "Card: the hovered country's renewable share of generation at the comparison year"),
+            ("Intensity at Comparison Year (gCO2e/kWh)", "gCO2e/kWh",  # "Intensity (gCO2e/kWh)" wrapped and hid the value
+             "Card: the hovered country's carbon intensity of electricity at the comparison year"),
         ]
     ):
         visuals.append(
             visual(
-                f"t2_card_{i}", PAD + i * (card_w + PAD), 172, card_w, 64, 3 + i,
-                rb.card(measure, 20, solid(rb.TEXT_PRIMARY), False, title=label),
+                f"t2_card_{i}", PAD + i * (card_w + PAD), 176, card_w, H - 176 - PAD, 3 + i,
+                rb.card(measure, 20, solid(rb.TEXT_PRIMARY), False, title=label), alt=alt,
             )
         )
     return visuals

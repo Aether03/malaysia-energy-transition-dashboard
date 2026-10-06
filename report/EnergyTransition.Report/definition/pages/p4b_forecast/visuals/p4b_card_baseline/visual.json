@@ -7,7 +7,7 @@
     "z": 71,
     "width": 161.6,
     "height": 80,
-    "tabOrder": 71
+    "tabOrder": 929
   },
   "visual": {
     "visualType": "card",
@@ -192,6 +192,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: Baseline MAPE (%), a backtest result for the chosen grid'"
                 }
               }
             }

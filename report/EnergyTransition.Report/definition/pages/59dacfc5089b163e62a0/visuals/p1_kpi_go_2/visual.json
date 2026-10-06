@@ -7,7 +7,7 @@
     "z": 82,
     "width": 198.4,
     "height": 100,
-    "tabOrder": 82
+    "tabOrder": 918
   },
   "visual": {
     "visualType": "actionButton",
@@ -185,6 +185,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'Fossil share of generation (%). The percentage of a country''s annual electricity generation that comes from fossil fuels. Formula: (Coal + Gas + Other fossil) ÷ Total generation × 100. Source: Ember (2026), Yearly Electricity Data, CC BY 4.0. Click for the Generation page.'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Button over the fossil share of generation card: its hover text gives the definition, and a click opens the Generation page'"
                 }
               }
             }

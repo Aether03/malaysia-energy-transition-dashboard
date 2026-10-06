@@ -7,7 +7,7 @@
     "z": 5,
     "width": 160,
     "height": 44,
-    "tabOrder": 5
+    "tabOrder": 995
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'p3b_state_reliability'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Navigation button: State reliability page (the current page)'"
                 }
               }
             }

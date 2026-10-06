@@ -7,7 +7,7 @@
     "z": 51,
     "width": 200,
     "height": 112,
-    "tabOrder": 51
+    "tabOrder": 949
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text: verdict on whether the model beats the seasonal-naive baseline, with its confidence interval'"
                 }
               }
             }

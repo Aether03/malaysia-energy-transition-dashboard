@@ -7,7 +7,7 @@
     "z": 73,
     "width": 161.6,
     "height": 80,
-    "tabOrder": 73
+    "tabOrder": 927
   },
   "visual": {
     "visualType": "card",
@@ -178,6 +178,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: Model MAE (MW), a backtest result for the chosen grid'"
                 }
               }
             }

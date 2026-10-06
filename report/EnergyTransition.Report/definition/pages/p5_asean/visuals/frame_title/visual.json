@@ -7,7 +7,7 @@
     "z": 30,
     "width": 840,
     "height": 44,
-    "tabOrder": 30
+    "tabOrder": 970
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Page title: the main takeaway of this page as one sentence'"
                 }
               }
             }

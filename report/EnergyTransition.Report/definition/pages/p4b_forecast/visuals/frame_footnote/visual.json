@@ -7,7 +7,7 @@
     "z": 99,
     "width": 1056,
     "height": 44,
-    "tabOrder": 99
+    "tabOrder": 901
   },
   "visual": {
     "visualType": "textbox",
@@ -53,6 +53,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Footnote: sources, licences and caveats for this page'"
                 }
               }
             }

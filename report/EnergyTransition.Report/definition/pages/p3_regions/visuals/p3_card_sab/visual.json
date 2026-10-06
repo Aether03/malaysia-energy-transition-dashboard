@@ -7,7 +7,7 @@
     "z": 51,
     "width": 342,
     "height": 168,
-    "tabOrder": 51
+    "tabOrder": 949
   },
   "visual": {
     "visualType": "cardVisual",
@@ -306,6 +306,19 @@
                       "Value": "'#6b6a66'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: Sabah at a glance, with installed and available capacity, consumption, use per person and SAIFI, each for its latest year'"
                 }
               }
             }

@@ -3,11 +3,11 @@
   "name": "t2_card_1",
   "position": {
     "x": 164.0,
-    "y": 172,
+    "y": 176,
     "z": 4,
     "width": 148.0,
-    "height": 64,
-    "tabOrder": 4
+    "height": 96,
+    "tabOrder": 996
   },
   "visual": {
     "visualType": "card",
@@ -104,7 +104,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Intensity (gCO2e/kWh)'"
+                  "Value": "'gCO2e/kWh'"
                 }
               }
             },
@@ -156,6 +156,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: the hovered country''s carbon intensity of electricity at the comparison year'"
                 }
               }
             }

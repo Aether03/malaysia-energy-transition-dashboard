@@ -7,7 +7,7 @@
     "z": 72,
     "width": 400,
     "height": 48,
-    "tabOrder": 72
+    "tabOrder": 928
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text: progress towards the renewable capacity target, in words'"
                 }
               }
             }

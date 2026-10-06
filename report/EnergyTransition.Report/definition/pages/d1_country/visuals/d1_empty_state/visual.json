@@ -7,7 +7,7 @@
     "z": 43,
     "width": 256,
     "height": 32,
-    "tabOrder": 43
+    "tabOrder": 957
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Message: appears when the chosen source has no generation in the selected years'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 52,
     "width": 341,
     "height": 168,
-    "tabOrder": 52
+    "tabOrder": 948
   },
   "visual": {
     "visualType": "cardVisual",
@@ -306,6 +306,19 @@
                       "Value": "'#6b6a66'"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: Sarawak at a glance, with installed and available capacity, consumption, use per person and SAIFI, each for its latest year'"
                 }
               }
             }

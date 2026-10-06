@@ -1,0 +1,167 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "p6_notes",
+  "position": {
+    "x": 716,
+    "y": 420,
+    "z": 42,
+    "width": 540,
+    "height": 180,
+    "tabOrder": 958
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Method notes",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#0b0b0b",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Forecast: LightGBM issued at local midnight, scored once on a locked 2024 backtest against a seasonal-naive baseline (the same hour last week). The verdict is on the Forecast page.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Capacity factor = generation ÷ (capacity × hours in the year); blank if capacity is unreported.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "States: handbook labels map to states through a reference table; reliability by state covers Peninsular states only, and Sabah includes Labuan.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Sarawak: the 2023 handbook prints each Sarawak reliability year one year early, so the years are remapped (see docs/reconciliation.md).",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Data lag: Ember runs to 2025 (Brunei, Laos and Myanmar to 2024); grid load covers 2023-24; DOSM supply ends in June 2024 and is a cross-check only.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#0b0b0b"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "padding": [
+        {
+          "properties": {
+            "left": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "top": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "right": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            },
+            "bottom": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text box: method notes on the forecast, the capacity factor, the state mapping, the Sarawak year remap and data lag'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

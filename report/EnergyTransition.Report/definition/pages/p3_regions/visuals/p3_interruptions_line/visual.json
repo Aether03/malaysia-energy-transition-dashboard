@@ -7,7 +7,7 @@
     "z": 63,
     "width": 520.0,
     "height": 168,
-    "tabOrder": 63
+    "tabOrder": 937
   },
   "visual": {
     "visualType": "lineChart",
@@ -289,6 +289,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: number of supply interruptions per year, one line per region'"
                 }
               }
             }

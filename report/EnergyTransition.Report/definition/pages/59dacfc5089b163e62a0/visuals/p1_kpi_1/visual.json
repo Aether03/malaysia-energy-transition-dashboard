@@ -7,7 +7,7 @@
     "z": 51,
     "width": 198.4,
     "height": 100,
-    "tabOrder": 51
+    "tabOrder": 949
   },
   "visual": {
     "visualType": "card",
@@ -131,6 +131,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'KPI card: Malaysia''s renewable share of generation in the selected year'"
                 }
               }
             }

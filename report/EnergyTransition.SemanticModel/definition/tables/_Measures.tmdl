@@ -1248,14 +1248,15 @@ table _Measures
 		displayFolder: About
 		lineageTag: 9558caba-09b4-47e0-8668-814b1e2edd11
 
-	/// The latest completed, non-dry run (mart.run_latest), which may be transform-only.
+	/// The latest completed, non-dry run (mart.run_latest), which may be transform-only. (`id` as a variable name is
+	/// a SYNTAXERROR in this Desktop, like `at`.)
 	measure 'Run Summary' =
-			VAR id = [Latest Run ID]
+			VAR runId = [Latest Run ID]
 			RETURN
 				IF (
-					ISBLANK ( id ),
+					ISBLANK ( runId ),
 					"No pipeline run recorded",
-					"Run " & id & " · " & MAX ( run_latest[status] ) & " · started " & FORMAT ( MAX ( run_latest[started_at] ), "yyyy-mm-dd hh:nn" )
+					"Run " & runId & " · " & MAX ( run_latest[status] ) & " · started " & FORMAT ( MAX ( run_latest[started_at] ), "yyyy-mm-dd hh:nn" )
 						& ", finished " & FORMAT ( MAX ( run_latest[finished_at] ), "yyyy-mm-dd hh:nn" ) & " UTC"
 				)
 		displayFolder: About
@@ -1272,20 +1273,28 @@ table _Measures
 		displayFolder: About
 		lineageTag: 54685c1a-d755-4233-b6ea-9155b37eaa35
 
-	measure 'Source Last Loaded' = FORMAT ( MAX ( source_load_latest[loaded_at] ), "yyyy-mm-dd" )
+	/// BLANK (not "") for a source with no load, so the blank data_source row and unloaded sources drop out of the table.
+	measure 'Source Last Loaded' =
+			VAR loaded = MAX ( source_load_latest[loaded_at] )
+			RETURN IF ( NOT ISBLANK ( loaded ), FORMAT ( loaded, "yyyy-mm-dd" ) )
 		displayFolder: About
 		lineageTag: d89a9312-bbf3-4ef4-bc9e-e49959d211c2
 
 	/// Sources that need written permission, with their status (doc 03 P6 consent status).
 	measure 'Consent Summary' =
 			CONCATENATEX (
-				FILTER ( ALL ( data_source ), data_source[consent_status] <> "OPEN" ),
+				FILTER ( ALLNOBLANKROW ( data_source ), data_source[consent_status] <> "OPEN" ),
 				data_source[name] & ": " & SWITCH ( data_source[consent_status], "REQUESTED", "permission requested", "GRANTED", "permission granted", "REFUSED", "permission refused", data_source[consent_status] ),
 				"; ",
 				data_source[name]
 			)
 		displayFolder: About
 		lineageTag: 0397cdc0-7bac-4979-9455-04828f5a1f39
+
+	/// Status as icon + word for the DQ table chip (doc 04 §3.5: never colour alone).
+	measure 'DQ Status Label' = SWITCH ( SELECTEDVALUE ( dq_latest[status] ), "PASS", "✓ Pass", "WARN", "! Warn", "FAIL", "✕ Fail" )
+		displayFolder: About
+		lineageTag: 7e17c674-99f5-4e4c-968f-0871e2db8dd6
 
 	partition _Measures = calculated
 		mode: import

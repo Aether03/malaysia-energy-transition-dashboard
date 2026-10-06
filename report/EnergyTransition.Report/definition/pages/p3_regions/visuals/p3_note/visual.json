@@ -7,7 +7,7 @@
     "z": 64,
     "width": 1056,
     "height": 20,
-    "tabOrder": 64
+    "tabOrder": 936
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Note: disclosures about how the regional figures are defined'"
                 }
               }
             }

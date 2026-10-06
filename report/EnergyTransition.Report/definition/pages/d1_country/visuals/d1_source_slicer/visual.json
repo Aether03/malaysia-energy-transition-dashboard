@@ -7,7 +7,7 @@
     "z": 42,
     "width": 256,
     "height": 56,
-    "tabOrder": 42
+    "tabOrder": 958
   },
   "visual": {
     "visualType": "slicer",
@@ -89,6 +89,21 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown slicer: narrow the page to one energy source'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

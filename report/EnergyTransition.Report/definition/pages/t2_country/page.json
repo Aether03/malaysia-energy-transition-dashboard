@@ -4,7 +4,7 @@
   "displayName": "T2 Country",
   "displayOption": "FitToPage",
   "width": 320,
-  "height": 240,
+  "height": 280,
   "type": "Tooltip",
   "visibility": "HiddenInViewMode"
 }

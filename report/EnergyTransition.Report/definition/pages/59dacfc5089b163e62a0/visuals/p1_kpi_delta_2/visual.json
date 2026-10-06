@@ -7,7 +7,7 @@
     "z": 62,
     "width": 198.4,
     "height": 44,
-    "tabOrder": 62
+    "tabOrder": 938
   },
   "visual": {
     "visualType": "card",
@@ -136,6 +136,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: change in fossil share of generation against the previous year, coloured by whether the change is good or bad'"
                 }
               }
             }

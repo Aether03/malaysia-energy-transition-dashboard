@@ -7,7 +7,7 @@
     "z": 40,
     "width": 208,
     "height": 64,
-    "tabOrder": 40
+    "tabOrder": 960
   },
   "visual": {
     "visualType": "slicer",
@@ -141,6 +141,21 @@
       "groupName": "p4_grid",
       "fieldChanges": true,
       "filterChanges": true
+    },
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Dropdown slicer: choose the grid, Thailand or Singapore; it is kept in step between the Grid load and Forecast pages'"
+                }
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

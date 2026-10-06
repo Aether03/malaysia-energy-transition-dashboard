@@ -7,7 +7,7 @@
     "z": 70,
     "width": 640,
     "height": 256,
-    "tabOrder": 70
+    "tabOrder": 930
   },
   "visual": {
     "visualType": "stackedAreaChart",
@@ -427,6 +427,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Stacked area chart: Malaysia''s electricity generation by source in TWh across all years; one colour per source'"
                 }
               }
             }

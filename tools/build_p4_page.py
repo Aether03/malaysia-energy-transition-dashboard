@@ -125,13 +125,19 @@ def grid_slicer() -> dict:
 
 def header_visuals(slicer_name: str) -> list[dict]:
     """The grid slicer in the header, right of the title (x 1048, as on every page)."""
-    return [visual(slicer_name, 1048, rb.HEADER_Y, 208, 64, 40, grid_slicer())]
+    return [
+        visual(
+            slicer_name, 1048, rb.HEADER_Y, 208, 64, 40, grid_slicer(),
+            alt="Dropdown slicer: choose the grid, Thailand or Singapore; it is kept in step between the Grid load and Forecast pages",
+        )
+    ]
 
 
 def banner(name: str) -> dict:
     return visual(
         name, rb.CONTENT_X, BANNER_Y, rb.CONTENT_W, BANNER_H, 41,
         rb.shape(BANNER_FILL, {"expr": measure_ref("Grid Banner")}, 11, rb.NAVY, left_margin=12),
+        alt="Banner: which grid is shown and how it relates to Peninsular Malaysia",
     )
 
 
@@ -268,41 +274,55 @@ def build() -> list[dict]:
     visuals.append(banner("p4_banner"))
 
     # --- row 1: month x hour heatmap, full width; the year's peak at the right of its title row
-    visuals.append(visual("p4_heatmap", rb.CONTENT_X, ROW1_Y, rb.CONTENT_W, ROW1_H, 50, heatmap()))
+    visuals.append(
+        visual("p4_heatmap", rb.CONTENT_X, ROW1_Y, rb.CONTENT_W, ROW1_H, 50, heatmap(),
+               alt="Heatmap table: average load in GW by month (rows) and hour of day (columns); darker blue means higher load")
+    )
     visuals.append(
         visual(
             "p4_peak_text", rb.CONTENT_X + rb.CONTENT_W - 300, ROW1_Y + 6, 292, 18, 51,
             note("Peak Text", align="right"),
+            alt="Text: when the highest demand of the year occurred",
         )
     )
 
     # --- row 2: typical day + season | monthly peak | load factor (doc 04 F1: no dual axis)
-    visuals.append(visual("p4_load_curve", rb.CONTENT_X, ROW2_Y, CURVE_W, ROW2_H, 52, load_curve()))
+    visuals.append(
+        visual("p4_load_curve", rb.CONTENT_X, ROW2_Y, CURVE_W, ROW2_H, 52, load_curve(),
+               alt="Line chart: average load by hour of day for a typical weekday and a typical weekend or holiday")
+    )
     visuals.append(
         visual(
             "p4_season_slicer", SEASON_X, ROW2_Y, SEASON_W, ROW2_H, 53,
             rb.slicer("season_pick", "season", "Season", mode="Basic"),
+            alt="List slicer: narrow the typical-day chart to one season; the other charts stay whole-year",
         )
     )
     visuals.append(
         visual(
             "p4_peak_cols", PEAK_X, ROW2_Y, PAIR_W, ROW2_H, 54,
             month_chart("clusteredColumnChart", "Peak Load (MW)", "Monthly peak (MW)"),
+            alt="Column chart: highest demand in each month in MW, one colour per year",
         )
     )
     visuals.append(
         visual(
             "p4_lf_line", LF_X, ROW2_Y, PAIR_W, ROW2_H, 55,
             month_chart("lineChart", "Load Factor (%)", "Load factor (%)"),
+            alt="Line chart: monthly load factor in percent, one line per year, on the same month axis as the peak chart",
         )
     )
 
     # --- row 3: interconnector flows, full width; the export/import note at the right of its title row
-    visuals.append(visual("p4_flow_line", rb.CONTENT_X, ROW3_Y, rb.CONTENT_W, ROW3_H, 56, flow_chart()))
+    visuals.append(
+        visual("p4_flow_line", rb.CONTENT_X, ROW3_Y, rb.CONTENT_W, ROW3_H, 56, flow_chart(),
+               alt="Line chart: daily average net electricity flow between Thailand and Malaysia in MW; above zero means Thailand exports")
+    )
     visuals.append(
         visual(
             "p4_flow_note", rb.CONTENT_X + 320, ROW3_Y + 6, rb.CONTENT_W - 328, 22, 57,
             note("Flow Subtitle", align="right"),
+            alt="Text: annual export and import totals for the flow chart",
         )
     )
     return visuals

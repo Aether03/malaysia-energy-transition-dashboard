@@ -7,7 +7,7 @@
     "z": 61,
     "width": 816,
     "height": 26,
-    "tabOrder": 61
+    "tabOrder": 939
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Message over the chart: shown when the chosen day is outside the backtest window'"
                 }
               }
             }

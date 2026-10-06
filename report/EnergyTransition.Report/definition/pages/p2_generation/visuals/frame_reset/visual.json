@@ -3,11 +3,11 @@
   "name": "frame_reset",
   "position": {
     "x": 8,
-    "y": 464,
+    "y": 560,
     "z": 15,
     "width": 160,
     "height": 44,
-    "tabOrder": 15
+    "tabOrder": 985
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'65c4cd0bb751808ce790'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Button: reset this page''s filters and slicers to their defaults'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 50,
     "width": 784,
     "height": 152,
-    "tabOrder": 50
+    "tabOrder": 950
   },
   "visual": {
     "visualType": "stackedAreaChart",
@@ -444,6 +444,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Stacked area chart: generation by source over the selected years, in TWh or percent share per the unit toggle; one colour per source'"
                 }
               }
             }

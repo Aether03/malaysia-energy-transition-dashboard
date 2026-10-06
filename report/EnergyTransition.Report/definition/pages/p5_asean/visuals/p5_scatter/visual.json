@@ -7,7 +7,7 @@
     "z": 52,
     "width": 396.0,
     "height": 224,
-    "tabOrder": 52
+    "tabOrder": 948
   },
   "visual": {
     "visualType": "scatterChart",
@@ -84,24 +84,6 @@
               },
               "queryRef": "_Measures.Demand at Comparison Year (TWh)",
               "nativeQueryRef": "Demand at Comparison Year (TWh)"
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "_Measures"
-                    }
-                  },
-                  "Property": "Comparison Year"
-                }
-              },
-              "queryRef": "_Measures.Comparison Year",
-              "nativeQueryRef": "Comparison Year"
             }
           ]
         }
@@ -615,6 +597,39 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "visualTooltip": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "section": {
+              "expr": {
+                "Literal": {
+                  "Value": "'t2_country'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Scatter chart: renewable share of generation (horizontal) against carbon intensity (vertical) for each compared country, bubble size is demand; Malaysia in navy'"
                 }
               }
             }

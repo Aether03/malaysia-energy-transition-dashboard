@@ -7,7 +7,7 @@
     "z": 50,
     "width": 1056,
     "height": 260,
-    "tabOrder": 50
+    "tabOrder": 950
   },
   "visual": {
     "visualType": "pivotTable",
@@ -266,6 +266,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Heatmap table: average load in GW by month (rows) and hour of day (columns); darker blue means higher load'"
                 }
               }
             }

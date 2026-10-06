@@ -7,7 +7,7 @@
     "z": 51,
     "width": 520.0,
     "height": 240,
-    "tabOrder": 51
+    "tabOrder": 949
   },
   "visual": {
     "visualType": "lineChart",
@@ -326,6 +326,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: renewable share of installed capacity on the Ember and official bases, with the national targets as dashed markers, 2000 to 2050'"
                 }
               }
             }

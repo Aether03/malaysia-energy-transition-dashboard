@@ -1,0 +1,77 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "frame_footnote",
+  "position": {
+    "x": 200,
+    "y": 672,
+    "z": 99,
+    "width": 1056,
+    "height": 44,
+    "tabOrder": 901
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Credits are worded as each licence asks. Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0). A source marked REQUESTED needs written permission and is used locally only until it is granted. Links open in your browser (Ctrl+click in Power BI Desktop). Licence texts: DATA_LICENSES.md in the repository.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#6b6a66"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Footnote: sources, licences and caveats for this page'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

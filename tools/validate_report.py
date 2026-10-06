@@ -3,7 +3,9 @@
 Loads every page.json / visual.json under report/EnergyTransition.Report/definition/pages and checks:
 unique visual names (<= 50 chars) per page, positions inside the page, every measure/column/table
 referenced exists in the TMDL files, navigation and tooltip targets exist, and visual interactions point at
-real visuals.
+real visuals. M5 step 4 adds: every visual except report_builder.DECORATIVE has non-empty alt text; every
+page except a tooltip page has the ⓘ About button; every page with a nav rail has the Fail badge; a
+visualTooltip has only `show` and `section` (Desktop's shape; a `type` property stops the page rendering).
 
     .venv/Scripts/python tools/validate_report.py
 """
@@ -14,6 +16,8 @@ import json
 import re
 import sys
 from pathlib import Path
+
+from report_builder import DECORATIVE
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGES = ROOT / "report" / "EnergyTransition.Report" / "definition" / "pages"
@@ -67,6 +71,13 @@ def literal(node):
     return node["expr"]["Literal"]["Value"].strip("'") if node else None
 
 
+def alt_text(visual: dict) -> str:
+    """The visual's altText literal ('' when absent)."""
+    for entry in visual["visual"].get("visualContainerObjects", {}).get("general", []):
+        return literal(entry["properties"].get("altText")) or ""
+    return ""
+
+
 def main() -> int:
     model = parse_model()
     errors: list[str] = []
@@ -110,6 +121,10 @@ def main() -> int:
                 target = literal(entry["properties"].get("section"))
                 if target not in page_dirs:
                     errors.append(f"{where}: tooltip page {target} missing")
+                if set(entry["properties"]) != {"show", "section"}:
+                    errors.append(f"{where}: visualTooltip must have only show and section: {sorted(entry['properties'])}")
+            if n not in DECORATIVE and not alt_text(v).strip():
+                errors.append(f"{where}: no alt text")
             if v["visual"]["visualType"] == "card":
                 h = pos["height"]
                 if h < 40:
@@ -117,6 +132,11 @@ def main() -> int:
         for n, c in names.items():
             if c > 1:
                 errors.append(f"{page_dir.name}: duplicate visual name {n}")
+        if page.get("type") != "Tooltip":
+            if "frame_info" not in visuals:
+                errors.append(f"{page_dir.name}: no ⓘ About button (frame_info)")
+            if any(n.startswith("frame_nav_") and n != "frame_nav_selected" for n in visuals) and "frame_nav_badge" not in visuals:
+                errors.append(f"{page_dir.name}: has a nav rail but no Fail badge (frame_nav_badge)")
         walk(page, {}, errors, page_dir.name, model)
         for it in page.get("visualInteractions", []):
             for end in ("source", "target"):

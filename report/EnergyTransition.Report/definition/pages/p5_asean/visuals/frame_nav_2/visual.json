@@ -7,7 +7,7 @@
     "z": 4,
     "width": 160,
     "height": 44,
-    "tabOrder": 4
+    "tabOrder": 996
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'p3_regions'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Navigation button: Regions page'"
                 }
               }
             }

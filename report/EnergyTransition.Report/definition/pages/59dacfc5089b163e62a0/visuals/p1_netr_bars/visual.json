@@ -7,7 +7,7 @@
     "z": 71,
     "width": 400,
     "height": 200,
-    "tabOrder": 71
+    "tabOrder": 929
   },
   "visual": {
     "visualType": "clusteredBarChart",
@@ -255,6 +255,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Bar chart: renewable share of installed capacity on the Ember grid basis and the official basis, beside the national target'"
                 }
               }
             }

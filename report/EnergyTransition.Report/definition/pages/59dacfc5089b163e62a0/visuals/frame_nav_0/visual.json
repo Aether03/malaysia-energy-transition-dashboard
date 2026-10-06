@@ -7,7 +7,7 @@
     "z": 2,
     "width": 160,
     "height": 44,
-    "tabOrder": 2
+    "tabOrder": 998
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'59dacfc5089b163e62a0'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Navigation button: Overview page (the current page)'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 40,
     "width": 200,
     "height": 56,
-    "tabOrder": 40
+    "tabOrder": 960
   },
   "visual": {
     "visualType": "slicer",
@@ -129,6 +129,21 @@
         }
       ]
     },
-    "drillFilterOtherVisuals": true
+    "drillFilterOtherVisuals": true,
+    "visualContainerObjects": {
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Tile slicer: switch every chart on this page between SAIFI (interruption frequency) and SAIDI (interruption duration)'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }
 }

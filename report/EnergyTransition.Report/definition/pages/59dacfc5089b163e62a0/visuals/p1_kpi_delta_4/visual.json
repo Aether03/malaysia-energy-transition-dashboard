@@ -7,7 +7,7 @@
     "z": 64,
     "width": 198.4,
     "height": 44,
-    "tabOrder": 64
+    "tabOrder": 936
   },
   "visual": {
     "visualType": "card",
@@ -131,6 +131,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Card: change in electricity demand per person against the previous year, coloured by whether the change is good or bad'"
                 }
               }
             }

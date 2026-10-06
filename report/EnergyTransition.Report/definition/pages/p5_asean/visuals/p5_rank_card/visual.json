@@ -7,7 +7,7 @@
     "z": 60,
     "width": 1056,
     "height": 60,
-    "tabOrder": 60
+    "tabOrder": 940
   },
   "visual": {
     "visualType": "shape",
@@ -189,6 +189,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Text card: Malaysia''s rank among the compared countries on renewable share'"
                 }
               }
             }

@@ -7,7 +7,7 @@
     "z": 54,
     "width": 198.4,
     "height": 100,
-    "tabOrder": 54
+    "tabOrder": 946
   },
   "visual": {
     "visualType": "card",
@@ -131,6 +131,19 @@
               "expr": {
                 "Literal": {
                   "Value": "4D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'KPI card: Malaysia''s electricity demand per person in the selected year'"
                 }
               }
             }

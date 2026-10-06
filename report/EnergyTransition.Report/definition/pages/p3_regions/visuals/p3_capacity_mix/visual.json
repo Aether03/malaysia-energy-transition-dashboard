@@ -7,7 +7,7 @@
     "z": 60,
     "width": 520.0,
     "height": 168,
-    "tabOrder": 60
+    "tabOrder": 940
   },
   "visual": {
     "visualType": "hundredPercentStackedBarChart",
@@ -420,6 +420,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'100% stacked bar chart: installed capacity by fuel group for each of the three regions; one colour per fuel group'"
                 }
               }
             }

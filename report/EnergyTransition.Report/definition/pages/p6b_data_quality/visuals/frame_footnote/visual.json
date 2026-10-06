@@ -1,0 +1,77 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "frame_footnote",
+  "position": {
+    "x": 200,
+    "y": 672,
+    "z": 99,
+    "width": 1056,
+    "height": 44,
+    "tabOrder": 901
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Rules run on every pipeline run; the number on the Data quality button counts rules that FAIL. The four WARNs above are expected differences between sources, not pipeline faults (docs/reconciliation.md). Click a source on the left to see only its rules; click it again to clear. Rules with no source check the grid data.",
+                    "textStyle": {
+                      "fontSize": "9pt",
+                      "color": "#6b6a66"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Footnote: sources, licences and caveats for this page'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -71,8 +71,14 @@ def build() -> list[dict]:
             v["position"]["width"] = rb.CONTENT_W
         visuals.append(v)
     visuals = [v for v in visuals if v["name"] != "frame_footnote"]
-    visuals.append(visual("frame_footnote", rb.CONTENT_X, rb.FOOTNOTE_Y, rb.CONTENT_W, 44, 99, rb.footnote(FOOTNOTE)))
-    visuals.append(visual("d1_back", 8, rb.BODY_Y, 160, 44, 2, back_button()))
+    visuals.append(
+        visual("frame_footnote", rb.CONTENT_X, rb.FOOTNOTE_Y, rb.CONTENT_W, 44, 99, rb.footnote(FOOTNOTE),
+               alt="Footnote: sources, licences and caveats for this page")
+    )
+    visuals.append(
+        visual("d1_back", 8, rb.BODY_Y, 160, 44, 2, back_button(),
+               alt="Button: go back to the page you drilled through from, keeping its filters")
+    )
     return visuals
 
 

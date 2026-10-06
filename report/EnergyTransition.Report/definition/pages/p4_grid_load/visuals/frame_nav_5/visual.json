@@ -7,7 +7,7 @@
     "z": 7,
     "width": 160,
     "height": 44,
-    "tabOrder": 7
+    "tabOrder": 993
   },
   "visual": {
     "visualType": "actionButton",
@@ -237,6 +237,19 @@
               "expr": {
                 "Literal": {
                   "Value": "'p4b_forecast'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Navigation button: Forecast page'"
                 }
               }
             }

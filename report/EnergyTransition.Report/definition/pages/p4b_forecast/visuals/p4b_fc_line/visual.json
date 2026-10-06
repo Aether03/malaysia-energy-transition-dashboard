@@ -7,7 +7,7 @@
     "z": 60,
     "width": 840,
     "height": 440,
-    "tabOrder": 60
+    "tabOrder": 940
   },
   "visual": {
     "visualType": "lineChart",
@@ -274,6 +274,19 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "general": [
+        {
+          "properties": {
+            "altText": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Line chart: 24 hours of actual demand, the model forecast and the baseline forecast for the chosen day, in MW'"
                 }
               }
             }
