@@ -19,7 +19,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 | **M2** | Malaysia and ASEAN analysis | FR-06, 07, 08, 09, 10, 11, 12, 15; D1, T1, T2 | M1 | **done 2026-10-03**: [plans/M2_plan.md](plans/M2_plan.md); acceptance passed (T1/T2 as built-in tooltips, report-page tooltips moved to M5) |
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | **done 2026-10-05**: [plans/M3_plan.md](plans/M3_plan.md) (Outcome section) |
 | **M4** | Regions and state reliability | FR-23, 24 | M1 | **done 2026-10-05**: [plans/M4_plan.md](plans/M4_plan.md) (Outcome). P3 split into Regions + State reliability |
-| **M5** | Finish and ship **v1.0.0** | FR-14, 16, 17, 18, 20; NFR-01…08 | M2, M3, M4 | pending |
+| **M5** | Finish and ship **v1.0.0** | FR-14, 16, 17, 18, 20; NFR-01…08 | M2, M3, M4 | **in progress**: [plans/M5_plan.md](plans/M5_plan.md), approved 2026-10-07; task 6.1 (consent email) pulled into M5 |
 | **M6** | Post-v1 | FR-21 (Streamlit), FR-19 (optional), Energy Commission consent, GSO if consented | M5 | pending |
 
 M2, M3 and M4 depend only on M1, so they can run in any order. **Recommended order:** M2 → M3 → M4, because it gets the headline story done first.

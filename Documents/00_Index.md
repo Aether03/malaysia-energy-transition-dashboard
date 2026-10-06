@@ -1,6 +1,6 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-05 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done; **next: M5** (finish and ship v1.0.0; start with `/plan` on doc 06 Phase 5).
+**Updated:** 2026-10-05 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5 IN PROGRESS: plan `plans/M5_plan.md` approved 2026-10-07 (Q1–Q8 as proposed); resume at step 1 (GUI capture round), in a fresh session.**
 
 **M3 COMPLETE (2026-10-05):**
 - **Forecast:** both grids beat the baseline in the locked, once-only 2024 backtest (TH +46.9%, SG +34.5%).
@@ -8,12 +8,18 @@
 - **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
 - **Details:** `plans/M3_plan.md` (Outcome).
 
+**M5 (2026-10-07):** plan approved; nothing built yet. **Resume at step 1** (Desktop capture round: table visual, status chip, alt text, badge, URL button; one report-page tooltip retry). Session plan: 1 = steps 1–4, 2 = steps 5–9, 3 = steps 10–13.
+- **Consent emails sent 2026-10-07** (Amirul's go):
+  - Energy Commission request to `sc@st.gov.my`, asking them to forward it to the Energy Data and Research Unit (`docs/consent/st_request.md`). D5 is now `REQUESTED`, so the page notice reads "permission requested"; `is_publishable` stays 0.
+  - GSO follow-up in the 30 Sep thread (`docs/consent/gso_request.md`).
+  - **Check Gmail for replies at the start of each M5 session.**
+- **Standing M5 decisions:** P3/P3b stay out of every published export until D5 consent (Q2). The history rewrite is only done after a dry run on a clone, and only with Amirul's go (Q1; the forecast replay depends on `protocol_commit`). P6 splits into About + Data quality (Q3).
+
 **M4 COMPLETE (2026-10-05):** plan `plans/M4_plan.md` (step outcome rows + Outcome).
 - **Data:** 12 handbook tables (989 cells) land at runtime only. Blind re-read: 0 differences. The Sarawak year remap is proven by the 2022 edition. 12 D5 rules; twins 31/31; 948 tests.
 - **Pages:** **P3 Regions** + **P3b State reliability** (Shape Map on a registered TopoJSON, Mercator, ISO join; ranked bar; selected-state trend; SAIFI | SAIDI; own year dropdown). Built by `tools/build_p3_page.py` / `build_p3b_page.py`; 2 GUI rounds by Claude via computer use; every doc 03 row passes; credits, consent notice and ODbL credit visible.
 - **Acceptance:** the empty-DB rebuild passes (second run merges 0; only the 4 known WARNs; FINAL replays identical). Docs 01/03/04/05/06 as built; `DATA_LICENSES.md` has the handbook's p.5 terms and the ODbL redistribution.
 - **⚠ For M5 task 5.8 (before the repo goes public):** two real handbook figures were in committed text (doc 05 sample row; a comment in V015/`R__stg_handbook`). They're fixed in the tree, and `tools/scan_handbook_values.py` now guards it, but **they remain in git history**: rewrite history or accept that, deliberately.
-- **D5 consent:** the email stays task 6.1, sent after completion (decided). When it is sent, set D5 `consent_status = REQUESTED` and the page notice updates by itself.
 - **Rules still standing:**
   - Close Desktop before `pipeline run`, and never rebuild pages while it is open.
   - `Start-Process` to launch Desktop; `tools/model_refresh.ps1` to refresh it.

@@ -3,7 +3,7 @@ D1,Ember Yearly Electricity Data,CC BY 4.0,https://ember-energy.org/data/yearly-
 D2,Our World in Data Energy dataset,CC BY 4.0,https://github.com/owid/energy-data,"Our World in Data, Energy dataset, CC BY 4.0 (and underlying sources)",OPEN,1
 D3,Department of Statistics Malaysia via data.gov.my,CC BY 4.0,https://data.gov.my/data-catalogue/electricity_supply,"Department of Statistics Malaysia, data.gov.my, CC BY 4.0",OPEN,1
 D4,Grid System Operator (GSO) System Demand,TNB written consent required,https://www.gso.org.my/SystemData/SystemDemand.aspx,"Source: Grid System Operator (GSO), Tenaga Nasional Berhad",REQUESTED,0
-D5,Energy Commission Malaysia Energy Statistics Handbook,Energy Commission written consent required,https://meih.st.gov.my/,"Energy Commission Malaysia, Malaysia Energy Statistics Handbook",NOT_REQUESTED,0
+D5,Energy Commission Malaysia Energy Statistics Handbook,Energy Commission written consent required,https://meih.st.gov.my/,"Energy Commission Malaysia, Malaysia Energy Statistics Handbook",REQUESTED,0
 D6,National Energy Transition Roadmap targets,Cited facts,https://www.mida.gov.my/national-energy-transition-roadmap-netr-charting-a-path-to-a-sustainable-energy-landscape/,"Ministry of Economy, National Energy Transition Roadmap (2023), via MIDA and IEA",OPEN,1
 DTH,Thai Power System hourly data (Zenodo),CC BY 4.0,https://doi.org/10.5281/zenodo.17109911,"Thai Power System: Hourly Power Generation, Demand, and Cross-Border Flows, Zenodo, CC BY 4.0",OPEN,1
 GEO,geoBoundaries MYS ADM1,ODbL 1.0,https://www.geoboundaries.org/,"Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0)",OPEN,1
