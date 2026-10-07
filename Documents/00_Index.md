@@ -1,6 +1,17 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5 IN PROGRESS: steps 1–5 done (session 1, 2026-10-07); resume at step 6 (walkthrough script), in a fresh session.**
+**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5 IN PROGRESS: steps 1–9 done (sessions 1–2, 2026-10-07); resume at step 10 (history decision, Q1), in a fresh session.**
+
+**M5 session 2 (2026-10-07): steps 6–9 done** (outcome row "6–9" in `plans/M5_plan.md`). **Resume at step 10** (session 3 = steps 10–13, the irreversible ones).
+- **Built:** `docs/walkthrough_script.md` (Amirul records it), the README + `tools/check_readme_numbers.py` (13 claims rebuilt from the showcase queries; run it after every `pipeline run`), CI (ruff check + format, sqlfluff non-blocking, pytest; green), Dependabot, `.sqlfluff`, `ruff format` on 41 files (`pipeline/forecast/` excluded, `.git-blame-ignore-revs`).
+- **Data moved to Ember's 6 Oct 2026 release** (Amirul's call): Thailand revised up, so **Malaysia is 4th of 6 on renewable share** (was 3rd). Finding 3, the README, the P1 box and the exports are updated. Malaysia's own numbers are unchanged.
+- **Fresh clone:** 6.8 min following only the README. Clone into a short path (Windows 260-char limit). `C:\src` holds two throwaway clones: Amirul deletes it (Claude's delete is blocked there).
+- **Open for Amirul:**
+  - Send the Energy Commission resend (Gmail draft to the two officers the Energy Commission named).
+  - The 7 Dependabot PRs (all green; none touches a fingerprinted package): merge or close them. `.github/dependabot.yml` ignores lightgbm, numpy, pandas and holidays, because the forecast replay fingerprints their versions and a bump would make every `pipeline run` refuse the replay.
+  - Record the walkthrough (`docs/walkthrough_script.md`).
+  - From session 1: Ctrl+click one P6 source link and the GitHub button; the Windows high-contrast check (or skip).
+- **Twin-check runbook:** run `tools/model_refresh.ps1` first; a stale Import cache gave 23/35 on 2026-10-07.
 
 **M3 COMPLETE (2026-10-05):**
 - **Forecast:** both grids beat the baseline in the locked, once-only 2024 backtest (TH +46.9%, SG +34.5%).

@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # The forecast replay fingerprints these versions (pipeline/forecast/run.py VERSIONED_PACKAGES):
+    # a bump makes every `pipeline run` refuse the replay. Upgrade them only with a labelled POST_HOC run.
+    ignore:
+      - dependency-name: lightgbm
+      - dependency-name: numpy
+      - dependency-name: pandas
+      - dependency-name: holidays
   - package-ecosystem: github-actions
     directory: /
     schedule:
