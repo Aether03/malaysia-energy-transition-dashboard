@@ -21,6 +21,7 @@ class TestReadCSV:
     def test_read_csv_supply_returns_dataframe_with_3_columns(self):
         """read_csv returns a DataFrame with exactly 3 columns: date, sector, supply."""
         from pipeline.sources.dosm import read_csv
+
         df = read_csv(fixture_supply_path(), "supply")
         assert isinstance(df, pd.DataFrame)
         assert len(df.columns) == 3
@@ -29,6 +30,7 @@ class TestReadCSV:
     def test_read_csv_consumption_returns_dataframe_with_3_columns(self):
         """read_csv returns a DataFrame with exactly 3 columns: date, sector, consumption."""
         from pipeline.sources.dosm import read_csv
+
         df = read_csv(fixture_consumption_path(), "consumption")
         assert isinstance(df, pd.DataFrame)
         assert len(df.columns) == 3
@@ -37,18 +39,21 @@ class TestReadCSV:
     def test_read_csv_supply_returns_12_rows(self):
         """read_csv on the supply fixture returns exactly 12 rows (6 sectors x 2 dates)."""
         from pipeline.sources.dosm import read_csv
+
         df = read_csv(fixture_supply_path(), "supply")
         assert len(df) == 12
 
     def test_read_csv_consumption_returns_12_rows(self):
         """read_csv on the consumption fixture returns exactly 12 rows (6 sectors x 2 dates)."""
         from pipeline.sources.dosm import read_csv
+
         df = read_csv(fixture_consumption_path(), "consumption")
         assert len(df) == 12
 
     def test_read_csv_raises_schema_mismatch_when_measure_column_wrong(self, tmp_path):
         """read_csv raises SchemaMismatchError when the third column name doesn't match measure."""
         from pipeline.sources.dosm import read_csv
+
         # Create a temporary CSV with wrong measure column name
         fixture = pd.read_csv(fixture_supply_path(), dtype=str, keep_default_na=False)
         fixture = fixture.rename(columns={"supply": "wrong_column"})
@@ -63,6 +68,7 @@ class TestReadCSV:
     def test_read_csv_raises_schema_mismatch_when_extra_column(self, tmp_path):
         """read_csv raises SchemaMismatchError when there's an extra column."""
         from pipeline.sources.dosm import read_csv
+
         # Create a temporary CSV with extra column
         fixture = pd.read_csv(fixture_supply_path(), dtype=str, keep_default_na=False)
         fixture["extra_col"] = "value"
@@ -77,6 +83,7 @@ class TestReadCSV:
     def test_read_csv_raises_value_error_when_measure_invalid(self):
         """read_csv raises ValueError when measure is not 'supply' or 'consumption'."""
         from pipeline.sources.dosm import read_csv
+
         with pytest.raises(ValueError) as exc_info:
             read_csv(fixture_supply_path(), "invalid_measure")
         assert "supply" in str(exc_info.value).lower() or "consumption" in str(exc_info.value).lower()
@@ -88,6 +95,7 @@ class TestToRawRecords:
     def test_to_raw_records_supply_returns_list_of_tuples(self):
         """to_raw_records returns a list of tuples for supply data."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         assert isinstance(records, list)
@@ -96,6 +104,7 @@ class TestToRawRecords:
     def test_to_raw_records_supply_returns_12_tuples(self):
         """to_raw_records on supply fixture returns exactly 12 tuples."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         assert len(records) == 12
@@ -103,6 +112,7 @@ class TestToRawRecords:
     def test_to_raw_records_consumption_returns_12_tuples(self):
         """to_raw_records on consumption fixture returns exactly 12 tuples."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_consumption_path(), "consumption")
         records = to_raw_records(df, "consumption")
         assert len(records) == 12
@@ -110,6 +120,7 @@ class TestToRawRecords:
     def test_to_raw_records_tuple_length_is_4(self):
         """Each tuple has exactly 4 elements: (month, sector, measure, value_gwh)."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         for record in records:
@@ -118,6 +129,7 @@ class TestToRawRecords:
     def test_to_raw_records_month_is_date(self):
         """Month field in each tuple is a datetime.date object."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         for record in records:
@@ -126,6 +138,7 @@ class TestToRawRecords:
     def test_to_raw_records_sector_is_str(self):
         """Sector field in each tuple is a string."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         for record in records:
@@ -134,6 +147,7 @@ class TestToRawRecords:
     def test_to_raw_records_measure_is_str(self):
         """Measure field in each tuple is a string."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         for record in records:
@@ -143,6 +157,7 @@ class TestToRawRecords:
     def test_to_raw_records_value_gwh_is_float(self):
         """Value_gwh field in each tuple is a float."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         for record in records:
@@ -151,6 +166,7 @@ class TestToRawRecords:
     def test_to_raw_records_2023_01_01_supply_total_value(self):
         """Supply total for 2023-01-01 equals the fixture value."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_supply_path(), "supply")
         records = to_raw_records(df, "supply")
         # Find 2023-01-01 total
@@ -161,6 +177,7 @@ class TestToRawRecords:
     def test_to_raw_records_2024_06_01_consumption_total_value(self):
         """Consumption total for 2024-06-01 equals the fixture value."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df = read_csv(fixture_consumption_path(), "consumption")
         records = to_raw_records(df, "consumption")
         # Find 2024-06-01 total
@@ -171,6 +188,7 @@ class TestToRawRecords:
     def test_to_raw_records_blank_value_raises_value_error(self, tmp_path):
         """to_raw_records raises ValueError when a value field is blank."""
         from pipeline.sources.dosm import to_raw_records
+
         # Create a DataFrame with a blank value
         fixture = pd.read_csv(fixture_supply_path(), dtype=str, keep_default_na=False)
         fixture.loc[0, "supply"] = ""
@@ -181,7 +199,11 @@ class TestToRawRecords:
         df = pd.read_csv(temp_csv, dtype=str, keep_default_na=False)
         with pytest.raises(ValueError) as exc_info:
             to_raw_records(df, "supply")
-        assert "blank" in str(exc_info.value).lower() or "empty" in str(exc_info.value).lower() or "2023-01-01" in str(exc_info.value)
+        assert (
+            "blank" in str(exc_info.value).lower()
+            or "empty" in str(exc_info.value).lower()
+            or "2023-01-01" in str(exc_info.value)
+        )
 
 
 class TestRecordsFrom:
@@ -228,6 +250,7 @@ class TestAssertUniqueKeys:
     def test_assert_unique_keys_passes_on_unique_records(self):
         """assert_unique_keys passes when records have unique (month, sector, measure) keys."""
         from pipeline.sources.dosm import read_csv, to_raw_records
+
         df_supply = read_csv(fixture_supply_path(), "supply")
         df_consumption = read_csv(fixture_consumption_path(), "consumption")
         records_supply = to_raw_records(df_supply, "supply")

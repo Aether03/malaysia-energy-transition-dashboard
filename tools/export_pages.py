@@ -53,7 +53,9 @@ def consent(seed: Path = ROOT / "seed" / "data_source.csv") -> dict[str, str]:
 
 def keep_flags(pages: list[tuple[str, str]], consent_by_source: dict[str, str]) -> list[bool]:
     """Fails closed: a restricted page is kept only when its source's consent is GRANTED."""
-    return [name not in RESTRICTED_PAGES or consent_by_source.get(RESTRICTED_PAGES[name]) == "GRANTED" for name, _ in pages]
+    return [
+        name not in RESTRICTED_PAGES or consent_by_source.get(RESTRICTED_PAGES[name]) == "GRANTED" for name, _ in pages
+    ]
 
 
 def check_markers(texts: list[str], keep: list[bool], pages: list[tuple[str, str]]) -> list[str]:

@@ -46,7 +46,11 @@ def kept_positions(words: list[handbook.Word], specs: list[handbook.TableSpec]) 
     lines = handbook.group_lines(words)
     for spec in specs:
         for line in lines:  # anchor and sub-heading lines (also outside the region)
-            if (spec.start_after and spec.start_after in line.text) or spec.stop_before in line.text or line.text in spec.ignore_lines:
+            if (
+                (spec.start_after and spec.start_after in line.text)
+                or spec.stop_before in line.text
+                or line.text in spec.ignore_lines
+            ):
                 keep |= {index[id(w)] for w in line.words}
         region = handbook.table_region(lines, spec)
         for line in region[: spec.header_lines]:
@@ -89,7 +93,15 @@ def fixture_for(pdf, page_no: int, specs: list[handbook.TableSpec]) -> dict:
             else:
                 text = scramble(text, rng)
                 replaced += 1
-        words.append({"text": text, "x0": round(w.x0, 2), "x1": round(w.x1, 2), "top": round(w.top, 2), "bottom": round(w.bottom, 2)})
+        words.append(
+            {
+                "text": text,
+                "x0": round(w.x0, 2),
+                "x1": round(w.x1, 2),
+                "top": round(w.top, 2),
+                "bottom": round(w.bottom, 2),
+            }
+        )
     print(f"p{page_no}: {len(words)} words, {replaced} numbers replaced, {kept} heading numbers kept")
     return {"synthetic": True, "note": NOTE, "edition": handbook.EDITION, "page": page_no, "words": words}
 

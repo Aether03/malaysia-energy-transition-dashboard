@@ -87,7 +87,11 @@ def test_cli_command_refuses_while_the_lock_is_held(args):
     with db.pipeline_lock("held by the test"):
         done = subprocess.run(
             [sys.executable, "-m", "pipeline", *args],
-            cwd=config.ROOT, capture_output=True, text=True, timeout=120, check=False,
+            cwd=config.ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=False,
         )
     assert done.returncode == 1
     assert "Another pipeline run or migration is in progress" in done.stdout

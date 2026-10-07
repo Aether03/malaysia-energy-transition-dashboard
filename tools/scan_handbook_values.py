@@ -62,7 +62,11 @@ def main() -> int:
         if name.endswith(SKIP_SUFFIXES) or name.startswith("tests/fixtures/"):
             continue  # fixtures are synthetic by construction and tested for it
         try:
-            lines = _pdf_lines(ROOT / name) if name.lower().endswith(".pdf") else (ROOT / name).read_text(encoding="utf-8").splitlines()
+            lines = (
+                _pdf_lines(ROOT / name)
+                if name.lower().endswith(".pdf")
+                else (ROOT / name).read_text(encoding="utf-8").splitlines()
+            )
         except (UnicodeDecodeError, FileNotFoundError):
             continue
         matched = {i for i, rx in enumerate(regexes) if any(rx.search(line) for line in lines)}

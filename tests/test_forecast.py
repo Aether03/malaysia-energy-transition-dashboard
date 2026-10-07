@@ -504,7 +504,9 @@ def test_bootstrap_ci_brackets_the_point_estimate_and_widens_with_the_level():
     low95, high95 = metrics.day_block_bootstrap_ci(actual, model, base, n_boot=300, seed=11, level=0.95)
     low80, high80 = metrics.day_block_bootstrap_ci(actual, model, base, n_boot=300, seed=11, level=0.80)
     assert low95 < point < high95
-    assert low95 < low80 < high80 < high95  # same replicates, so the quantiles nest, and a wider level reaches further out
+    assert (
+        low95 < low80 < high80 < high95
+    )  # same replicates, so the quantiles nest, and a wider level reaches further out
 
 
 def test_bootstrap_ci_ignores_unscored_hours():
@@ -778,9 +780,7 @@ def test_result_frame_layout_and_values():
         res["naive24_mw"].to_numpy(), s.reindex(res.index - pd.Timedelta(hours=24)).to_numpy()
     )
     # baseline = actual one week earlier
-    np.testing.assert_array_equal(
-        res["baseline_mw"].to_numpy(), s.reindex(res.index - pd.Timedelta(days=7)).to_numpy()
-    )
+    np.testing.assert_array_equal(res["baseline_mw"].to_numpy(), s.reindex(res.index - pd.Timedelta(days=7)).to_numpy())
 
     assert res["is_scored"].dtype == bool
     expected_scored = res["actual_mw"].notna() & res["forecast_mw"].notna() & res["baseline_mw"].notna()

@@ -50,7 +50,11 @@ def _derived(name: str, select: str) -> str:
 def yoy_sql(year: int, kpi: str | None = None) -> str:
     body = _replace_once(_body("02_yoy_lag"), "ORDER BY ch.kpi_code, ch.year", "")
     where = f"WHERE ch.year = {year}" if kpi is None else f"WHERE ch.kpi_code = '{kpi}' AND ch.change IS NOT NULL"
-    return _replace_once(body, "JOIN mart.kpi AS k ON k.kpi_code = ch.kpi_code", f"JOIN mart.kpi AS k ON k.kpi_code = ch.kpi_code\n{where}")
+    return _replace_once(
+        body,
+        "JOIN mart.kpi AS k ON k.kpi_code = ch.kpi_code",
+        f"JOIN mart.kpi AS k ON k.kpi_code = ch.kpi_code\n{where}",
+    )
 
 
 def ranking_sql(names: tuple[str, ...] | None = None, last_year: int | None = None) -> str:
@@ -59,7 +63,9 @@ def ranking_sql(names: tuple[str, ...] | None = None, last_year: int | None = No
         listed = ", ".join(f"'{n}'" for n in names)
         body = _replace_once(body, "WHERE c.is_default_peer = 1", f"WHERE c.name IN ({listed})")
     if last_year is not None:
-        body = _replace_once(body, "SELECT MAX(year) AS last_year FROM mart.dim_year", f"SELECT {last_year} AS last_year")
+        body = _replace_once(
+            body, "SELECT MAX(year) AS last_year FROM mart.dim_year", f"SELECT {last_year} AS last_year"
+        )
     return body
 
 
@@ -75,18 +81,27 @@ def kpis_flat(rows: list[dict]) -> list[dict]:
 
 def rank_card(rows: list[dict]) -> list[dict]:
     my = next((r for r in rows if r["name"] == "Malaysia"), None)
-    return [{
-        "rank": my["re_share_rank"] if my else None,
-        "intensity_rank": my["intensity_rank"] if my else None,
-        "n": len(rows),
-        "year": rows[0]["comparison_year"] if rows else None,
-        "per_capita_year": rows[0]["per_capita_year"] if rows else None,
-    }]
+    return [
+        {
+            "rank": my["re_share_rank"] if my else None,
+            "intensity_rank": my["intensity_rank"] if my else None,
+            "n": len(rows),
+            "year": rows[0]["comparison_year"] if rows else None,
+            "per_capita_year": rows[0]["per_capita_year"] if rows else None,
+        }
+    ]
 
 
 def peer_values(rows: list[dict]) -> list[dict]:
-    return [{"name": r["name"], "re": r["re_share_gen_pct"], "intensity": r["emissions_intensity_gco2e_kwh"],
-             "per_capita": r["demand_per_capita_mwh"]} for r in rows]
+    return [
+        {
+            "name": r["name"],
+            "re": r["re_share_gen_pct"],
+            "intensity": r["emissions_intensity_gco2e_kwh"],
+            "per_capita": r["demand_per_capita_mwh"],
+        }
+        for r in rows
+    ]
 
 
 @dataclass(frozen=True)
@@ -110,18 +125,39 @@ KPI_DAX = """EVALUATE SUMMARIZECOLUMNS ( TREATAS ( {{ {y} }}, dim_year[year] ),
     "TOTAL_GENERATION_chg", [Total Generation YoY (%)] * 100, "RE_SHARE_GEN_chg", [RE Share YoY (pp)],
     "FOSSIL_SHARE_GEN_chg", [Fossil Share YoY (pp)], "CARBON_INTENSITY_chg", [Carbon Intensity YoY (%)] * 100,
     "DEMAND_PER_CAPITA_chg", [Demand per Capita YoY (%)] * 100 )"""
-KPI_COLS = ("TOTAL_GENERATION", "RE_SHARE_GEN", "FOSSIL_SHARE_GEN", "CARBON_INTENSITY", "DEMAND_PER_CAPITA",
-            "TOTAL_GENERATION_chg", "RE_SHARE_GEN_chg", "FOSSIL_SHARE_GEN_chg", "CARBON_INTENSITY_chg", "DEMAND_PER_CAPITA_chg")
+KPI_COLS = (
+    "TOTAL_GENERATION",
+    "RE_SHARE_GEN",
+    "FOSSIL_SHARE_GEN",
+    "CARBON_INTENSITY",
+    "DEMAND_PER_CAPITA",
+    "TOTAL_GENERATION_chg",
+    "RE_SHARE_GEN_chg",
+    "FOSSIL_SHARE_GEN_chg",
+    "CARBON_INTENSITY_chg",
+    "DEMAND_PER_CAPITA_chg",
+)
 RANK_DAX = 'EVALUATE SUMMARIZECOLUMNS ( {filters}"rank", [Focus RE Share Rank], "intensity_rank", [Focus Intensity Rank], "n", [Countries Compared], "year", [Common Latest Year], "per_capita_year", [Common Per Capita Year] )'
 
 TWINS = (
     Twin("P1 KPIs and YoY, Malaysia 2025", KPI_DAX.format(y=2025), yoy_sql(2025), (), KPI_COLS, reshape=kpis_flat),
-    Twin("P1 KPIs and YoY, Malaysia 2015 (slicer honoured, not the default year)", KPI_DAX.format(y=2015), yoy_sql(2015), (), KPI_COLS, reshape=kpis_flat),
+    Twin(
+        "P1 KPIs and YoY, Malaysia 2015 (slicer honoured, not the default year)",
+        KPI_DAX.format(y=2015),
+        yoy_sql(2015),
+        (),
+        KPI_COLS,
+        reshape=kpis_flat,
+    ),
     Twin(
         "P2 mix TWh and share by source, Malaysia 2025",
         'EVALUATE SUMMARIZECOLUMNS ( dim_source[display_name], TREATAS ( { 2025 }, dim_year[year] ), "twh", [Ctx Generation (TWh)], "share", [Ctx Generation Share (%)] )',
-        _derived("01_trends", "SELECT source AS display_name, generation_twh AS twh, share_of_mix_pct AS share FROM {q} WHERE year = 2025"),
-        ("display_name",), ("twh", "share"),
+        _derived(
+            "01_trends",
+            "SELECT source AS display_name, generation_twh AS twh, share_of_mix_pct AS share FROM {q} WHERE year = 2025",
+        ),
+        ("display_name",),
+        ("twh", "share"),
     ),
     Twin(
         "D1 mix share by source, Vietnam 2020 (country in context)",
@@ -129,13 +165,15 @@ TWINS = (
         """SELECT s.display_name, CAST(100.0 * g.generation_twh / SUM(g.generation_twh) OVER () AS DECIMAL(9, 3)) AS share
            FROM mart.generation_annual AS g JOIN mart.dim_source AS s ON s.source_key = g.source_key
            JOIN mart.dim_country AS c ON c.country_key = g.country_key WHERE c.name = 'Vietnam' AND g.year = 2020""",
-        ("display_name",), ("share",),
+        ("display_name",),
+        ("share",),
     ),
     Twin(
         "P2 demand growth, Malaysia, every year",
         'EVALUATE SUMMARIZECOLUMNS ( dim_year[year], "growth", [Ctx Demand Growth (%)] )',
         yoy_sql(0, "DEMAND_GROWTH"),  # a CTE query can't be a derived table, so reshape in Python
-        ("year",), ("growth",),
+        ("year",),
+        ("growth",),
         reshape=lambda rows: [{"year": r["year"], "growth": r["change"]} for r in rows],
     ),
     Twin(
@@ -143,32 +181,78 @@ TWINS = (
         """EVALUATE UNION (
             ADDCOLUMNS ( CALCULATETABLE ( SUMMARIZECOLUMNS ( dim_source[display_name], "cf", [Ctx Capacity Factor (%)] ), dim_year[year] = 2024 ), "year", 2024 ),
             ADDCOLUMNS ( CALCULATETABLE ( SUMMARIZECOLUMNS ( dim_source[display_name], "cf", [Ctx Capacity Factor (%)] ), dim_year[year] = 2025 ), "year", 2025 ) )""",
-        _derived("05_capacity_factor", "SELECT source AS display_name, year, capacity_factor_pct AS cf FROM {q} WHERE name = 'Malaysia' AND year IN (2024, 2025) AND capacity_factor_pct IS NOT NULL"),
-        ("display_name", "year"), ("cf",),
+        _derived(
+            "05_capacity_factor",
+            "SELECT source AS display_name, year, capacity_factor_pct AS cf FROM {q} WHERE name = 'Malaysia' AND year IN (2024, 2025) AND capacity_factor_pct IS NOT NULL",
+        ),
+        ("display_name", "year"),
+        ("cf",),
     ),
     Twin(
         "D1 capacity factor by source, Philippines 2023 (geothermal capacity gap)",
         'EVALUATE CALCULATETABLE ( SUMMARIZECOLUMNS ( dim_source[display_name], TREATAS ( { "Philippines" }, dim_country[name] ), "cf", [Ctx Capacity Factor (%)] ), dim_year[year] = 2023 )',
-        _derived("05_capacity_factor", "SELECT source AS display_name, capacity_factor_pct AS cf FROM {q} WHERE name = 'Philippines' AND year = 2023 AND capacity_factor_pct IS NOT NULL"),
-        ("display_name",), ("cf",),
+        _derived(
+            "05_capacity_factor",
+            "SELECT source AS display_name, capacity_factor_pct AS cf FROM {q} WHERE name = 'Philippines' AND year = 2023 AND capacity_factor_pct IS NOT NULL",
+        ),
+        ("display_name",),
+        ("cf",),
     ),
     Twin(
         "P5 values at the comparison year, 6 default peers (no selection)",
         """EVALUATE FILTER ( SUMMARIZECOLUMNS ( dim_country[name], "re", [RE Share at Comparison Year (%)],
             "intensity", [Intensity at Comparison Year (gCO2e/kWh)], "per_capita", [Demand per Capita at Common Year (MWh)],
             "compared", [Is Compared] ), [compared] = 1 )""",
-        ranking_sql(), ("name",), ("re", "intensity", "per_capita"), reshape=peer_values,
+        ranking_sql(),
+        ("name",),
+        ("re", "intensity", "per_capita"),
+        reshape=peer_values,
     ),
-    Twin("P5 rank card, 6 default peers (no selection)", RANK_DAX.format(filters=""), ranking_sql(), (), (),
-         exact=("rank", "intensity_rank", "n", "year", "per_capita_year"), reshape=rank_card),
-    Twin("P5 rank card, Singapore deselected (5 countries)", RANK_DAX.format(filters=_names(PEERS6[:5]) + ", "),
-         ranking_sql(PEERS6[:5]), (), (), exact=("rank", "intensity_rank", "n", "year"), reshape=rank_card),
-    Twin("P5 rank card, Brunei added (common year falls to 2024)", RANK_DAX.format(filters=_names(PEERS6 + ("Brunei",)) + ", "),
-         ranking_sql(PEERS6 + ("Brunei",)), (), (), exact=("rank", "intensity_rank", "n", "year", "per_capita_year"), reshape=rank_card),
-    Twin("P5 rank card, year range 2015-2020", RANK_DAX.format(filters="TREATAS ( GENERATESERIES ( 2015, 2020, 1 ), dim_year[year] ), "),
-         ranking_sql(last_year=2020), (), (), exact=("rank", "intensity_rank", "n", "year", "per_capita_year"), reshape=rank_card),
-    Twin("P1 rank card, 2024 selected", RANK_DAX.format(filters="TREATAS ( { 2024 }, dim_year[year] ), "),
-         ranking_sql(last_year=2024), (), (), exact=("rank", "intensity_rank", "n", "year"), reshape=rank_card),
+    Twin(
+        "P5 rank card, 6 default peers (no selection)",
+        RANK_DAX.format(filters=""),
+        ranking_sql(),
+        (),
+        (),
+        exact=("rank", "intensity_rank", "n", "year", "per_capita_year"),
+        reshape=rank_card,
+    ),
+    Twin(
+        "P5 rank card, Singapore deselected (5 countries)",
+        RANK_DAX.format(filters=_names(PEERS6[:5]) + ", "),
+        ranking_sql(PEERS6[:5]),
+        (),
+        (),
+        exact=("rank", "intensity_rank", "n", "year"),
+        reshape=rank_card,
+    ),
+    Twin(
+        "P5 rank card, Brunei added (common year falls to 2024)",
+        RANK_DAX.format(filters=_names(PEERS6 + ("Brunei",)) + ", "),
+        ranking_sql(PEERS6 + ("Brunei",)),
+        (),
+        (),
+        exact=("rank", "intensity_rank", "n", "year", "per_capita_year"),
+        reshape=rank_card,
+    ),
+    Twin(
+        "P5 rank card, year range 2015-2020",
+        RANK_DAX.format(filters="TREATAS ( GENERATESERIES ( 2015, 2020, 1 ), dim_year[year] ), "),
+        ranking_sql(last_year=2020),
+        (),
+        (),
+        exact=("rank", "intensity_rank", "n", "year", "per_capita_year"),
+        reshape=rank_card,
+    ),
+    Twin(
+        "P1 rank card, 2024 selected",
+        RANK_DAX.format(filters="TREATAS ( { 2024 }, dim_year[year] ), "),
+        ranking_sql(last_year=2024),
+        (),
+        (),
+        exact=("rank", "intensity_rank", "n", "year"),
+        reshape=rank_card,
+    ),
     Twin(
         "P2 target chart: Ember basis, official and targets, 2000-2050",
         'EVALUATE SUMMARIZECOLUMNS ( \'Target Axis\'[year], "ember", [Axis RE Capacity Share (%)], "official", [Axis Official (%)], "target", [Axis Target (%)] )',
@@ -179,7 +263,8 @@ TWINS = (
            LEFT JOIN mart.re_capacity_official AS o ON o.year = y.year
            LEFT JOIN mart.netr_target AS t ON t.target_year = y.year
            WHERE y.year >= 2000 AND (ca.re_share_capacity_pct IS NOT NULL OR o.year IS NOT NULL OR t.target_year IS NOT NULL)""",
-        ("year",), ("ember", "official", "target"),
+        ("year",),
+        ("ember", "official", "target"),
     ),
 )
 
@@ -199,67 +284,91 @@ def _day_sql(grid: str, date_key: int) -> str:
                WHERE g.grid_code = '{grid}' AND f.date_key = {date_key}"""
 
 
-DAY_COLS = '"actual", [Day Actual (MW)], "model", [Day Model (MW)], "baseline", [Day Baseline (MW)], "day", [Forecast Day Key]'
+DAY_COLS = (
+    '"actual", [Day Actual (MW)], "model", [Day Model (MW)], "baseline", [Day Baseline (MW)], "day", [Forecast Day Key]'
+)
 
 P4_TWINS = (
     Twin(
         "P4 peak and load factor by month, Thailand 2023-24",
         f'EVALUATE SUMMARIZECOLUMNS ( dim_date[year], dim_date[month], {TH}, {YEARS}, "peak", [Peak Load (MW)], "lf", [Load Factor (%)] )',
-        _body("08_grid_load"), ("year", "month"), ("peak", "lf"),
-        reshape=_pick({"peak_mw": "peak", "load_factor_pct": "lf"}, lambda r: r["grid_code"] == "TH_EGAT" and r["month"] is not None),
+        _body("08_grid_load"),
+        ("year", "month"),
+        ("peak", "lf"),
+        reshape=_pick(
+            {"peak_mw": "peak", "load_factor_pct": "lf"},
+            lambda r: r["grid_code"] == "TH_EGAT" and r["month"] is not None,
+        ),
     ),
     Twin(
         "P4 annual peak and load factor, both grids",
         f'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], dim_date[year], {YEARS}, "peak", [Peak Load (MW)], "lf", [Load Factor (%)] )',
-        _body("08_grid_load"), ("grid_code", "year"), ("peak", "lf"),
+        _body("08_grid_load"),
+        ("grid_code", "year"),
+        ("peak", "lf"),
         reshape=_pick({"peak_mw": "peak", "load_factor_pct": "lf"}, lambda r: r["month"] is None),
     ),
     Twin(
         "P4 load curves, both grids, every season x day type x hour (288 points)",
         f'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], grid_hourly[season], grid_hourly[day_type], dim_hour[hour], {YEARS}, "mw", [Avg Load (MW)] )',
         _derived("10_load_curves", "SELECT grid_code, season, day_type, hour, mean_mw AS mw FROM {q}"),
-        ("grid_code", "season", "day_type", "hour"), ("mw",),
+        ("grid_code", "season", "day_type", "hour"),
+        ("mw",),
     ),
     Twin(
         "P4 load-curve season toggle, Thailand Hot season picked (curve only)",
-        f'EVALUATE SUMMARIZECOLUMNS ( grid_hourly[day_type], dim_hour[hour], {TH}, {YEARS}, '
+        f"EVALUATE SUMMARIZECOLUMNS ( grid_hourly[day_type], dim_hour[hour], {TH}, {YEARS}, "
         'TREATAS ( { "Hot (Mar–May)" }, season_pick[season] ), "mw", [Avg Load Curve (MW)] )',
-        _derived("10_load_curves", "SELECT day_type, hour, mean_mw AS mw FROM {q} WHERE grid_code = 'TH_EGAT' AND season_order = 1"),
-        ("day_type", "hour"), ("mw",),
+        _derived(
+            "10_load_curves",
+            "SELECT day_type, hour, mean_mw AS mw FROM {q} WHERE grid_code = 'TH_EGAT' AND season_order = 1",
+        ),
+        ("day_type", "hour"),
+        ("mw",),
     ),
     Twin(
         "P4 backtest metric cards, both grids (SQL recomputes MAPE/MAE from the facts)",
         'EVALUATE SUMMARIZECOLUMNS ( dim_grid[grid_code], "mape_model", [Backtest MAPE Model (%)], "mape_baseline", [Backtest MAPE Baseline (%)], '
         '"mae_model", [Backtest MAE Model (MW)], "mae_baseline", [Backtest MAE Baseline (MW)], "improvement", [Backtest Improvement (%)] )',
-        _body("09_forecast_metrics"), ("grid_code",), ("mape_model", "mape_baseline", "mae_model", "mae_baseline", "improvement"),
+        _body("09_forecast_metrics"),
+        ("grid_code",),
+        ("mape_model", "mape_baseline", "mae_model", "mae_baseline", "improvement"),
         reshape=_pick({"improvement_pct": "improvement"}, lambda r: r["month"] is None),
     ),
     Twin(
         "P4 forecast day, Thailand, no pick (defaults to the 2024 peak day, 29 Apr)",
         f"EVALUATE SUMMARIZECOLUMNS ( dim_hour[hour], {TH}, {DAY_COLS} )",
-        _day_sql("TH_EGAT", 20240429), ("hour",), ("actual", "model", "baseline"), exact=("day",),
+        _day_sql("TH_EGAT", 20240429),
+        ("hour",),
+        ("actual", "model", "baseline"),
+        exact=("day",),
     ),
     Twin(
         "P4 forecast day, Singapore, 10 Feb 2024 picked (Chinese New Year)",
         'EVALUATE SUMMARIZECOLUMNS ( dim_hour[hour], TREATAS ( { "SG_EMA" }, dim_grid[grid_code] ), '
         f"TREATAS ( {{ DATE ( 2024, 2, 10 ) }}, forecast_date[date] ), {DAY_COLS} )",
-        _day_sql("SG_EMA", 20240210), ("hour",), ("actual", "model", "baseline"), exact=("day",),
+        _day_sql("SG_EMA", 20240210),
+        ("hour",),
+        ("actual", "model", "baseline"),
+        exact=("day",),
     ),
     Twin(
         "P4 day MAPE, Thailand 7 Dec 2024 (a published gap hour is left out)",
-        f'EVALUATE SUMMARIZECOLUMNS ( {TH}, TREATAS ( {{ DATE ( 2024, 12, 7 ) }}, forecast_date[date] ), '
+        f"EVALUATE SUMMARIZECOLUMNS ( {TH}, TREATAS ( {{ DATE ( 2024, 12, 7 ) }}, forecast_date[date] ), "
         '"model", [Day MAPE Model (%)], "baseline", [Day MAPE Baseline (%)] )',
         """SELECT 100.0 * AVG(ABS(CAST(f.actual_mw AS FLOAT) - CAST(f.forecast_mw AS FLOAT)) / CAST(f.actual_mw AS FLOAT)) AS model,
                   100.0 * AVG(ABS(CAST(f.actual_mw AS FLOAT) - CAST(f.baseline_mw AS FLOAT)) / CAST(f.actual_mw AS FLOAT)) AS baseline
            FROM mart.load_forecast_current AS f JOIN mart.dim_grid AS g ON g.grid_key = f.grid_key
            WHERE g.grid_code = 'TH_EGAT' AND f.date_key = 20241207 AND f.is_scored = 1""",
-        (), ("model", "baseline"),
+        (),
+        ("model", "baseline"),
     ),
     Twin(
         "P4 Thailand-Malaysia flows by year (export and import GWh)",
         f'EVALUATE SUMMARIZECOLUMNS ( dim_date[year], {TH}, {YEARS}, "exp", [Flow Export (GWh)], "imp", [Flow Import (GWh)] )',
         _derived("11_interconnector_flows", "SELECT year, export_gwh AS exp, import_gwh AS imp FROM {q}"),
-        ("year",), ("exp", "imp"),
+        ("year",),
+        ("exp", "imp"),
     ),
 )
 TWINS = TWINS + P4_TWINS
@@ -287,20 +396,28 @@ P3_TWINS = (
     Twin(
         "P3b default view: SAIFI 2022 by state, value and rank (no picks)",
         'EVALUATE SUMMARIZECOLUMNS ( dim_state[state_code], "saifi", [Reliability Value], "saifi_rank", [Reliability Rank] )',
-        _STATE_SQL.format(year=2022), ("state_code",), (), exact=("saifi", "saifi_rank"),
+        _STATE_SQL.format(year=2022),
+        ("state_code",),
+        (),
+        exact=("saifi", "saifi_rank"),
     ),
     Twin(
         "P3b SAIDI toggle + 2015 picked: value, rank, change since 2015 (zero)",
         'EVALUATE SUMMARIZECOLUMNS ( dim_state[state_code], TREATAS ( { "SAIDI" }, reliability_metric[metric_code] ), '
         'TREATAS ( { 2015 }, reliability_year[year] ), "saidi_min", [Reliability Value], "saidi_rank", [Reliability Rank], '
         '"saidi_chg", [Reliability Change Since 2015] )',
-        _STATE_SQL.format(year=2015), ("state_code",), (), exact=("saidi_min", "saidi_rank", "saidi_chg"),
+        _STATE_SQL.format(year=2015),
+        ("state_code",),
+        (),
+        exact=("saidi_min", "saidi_rank", "saidi_chg"),
     ),
     Twin(
         "P3b SAIDI change since 2015, 2022 picked",
         'EVALUATE SUMMARIZECOLUMNS ( dim_state[state_code], TREATAS ( { "SAIDI" }, reliability_metric[metric_code] ), '
         'TREATAS ( { 2022 }, reliability_year[year] ), "saidi_chg", [Reliability Change Since 2015] )',
-        _STATE_SQL.format(year=2022), ("state_code",), ("saidi_chg",),
+        _STATE_SQL.format(year=2022),
+        ("state_code",),
+        ("saidi_chg",),
     ),
     Twin(
         "P3b trend: Johor clicked vs Peninsular, SAIFI by year",
@@ -310,7 +427,9 @@ P3_TWINS = (
            FROM mart.state_reliability AS f JOIN mart.dim_state AS d ON d.state_key = f.state_key AND d.state_code = 'JHR'
            JOIN mart.region_annual AS p ON p.year = f.year AND p.metric_code = 'SAIFI'
            JOIN mart.dim_region AS g ON g.region_key = p.region_key AND g.region_code = 'PEN'""",
-        ("year",), (), exact=("sel", "pen"),
+        ("year",),
+        (),
+        exact=("sel", "pen"),
     ),
     Twin(
         "P3 region cards: installed and available MW, latest consumption, use per person and SAIFI",
@@ -319,11 +438,13 @@ P3_TWINS = (
         '"saifi_year", [Region SAIFI Year] )',
         f"""SELECT i.region_code, i.inst, a.avail, c.gwh, k.kwh, s.saifi,
                    (SELECT MAX(y.year) FROM ({_REGION_SQL}) AS y WHERE y.metric_code = 'SAIFI' AND y.region_code = i.region_code) AS saifi_year
-            FROM ({_latest('INSTALLED_MW', 'inst')}) AS i JOIN ({_latest('AVAILABLE_MW', 'avail')}) AS a ON a.region_code = i.region_code
-            JOIN ({_latest('ELEC_CONSUMPTION_GWH', 'gwh')}) AS c ON c.region_code = i.region_code
-            JOIN ({_latest('ELEC_PER_CAPITA_KWH', 'kwh')}) AS k ON k.region_code = i.region_code
-            JOIN ({_latest('SAIFI', 'saifi')}) AS s ON s.region_code = i.region_code""",
-        ("region_code",), (), exact=("inst", "avail", "gwh", "kwh", "saifi", "saifi_year"),
+            FROM ({_latest("INSTALLED_MW", "inst")}) AS i JOIN ({_latest("AVAILABLE_MW", "avail")}) AS a ON a.region_code = i.region_code
+            JOIN ({_latest("ELEC_CONSUMPTION_GWH", "gwh")}) AS c ON c.region_code = i.region_code
+            JOIN ({_latest("ELEC_PER_CAPITA_KWH", "kwh")}) AS k ON k.region_code = i.region_code
+            JOIN ({_latest("SAIFI", "saifi")}) AS s ON s.region_code = i.region_code""",
+        ("region_code",),
+        (),
+        exact=("inst", "avail", "gwh", "kwh", "saifi", "saifi_year"),
     ),
     Twin(
         "P3 headline: Sabah vs Peninsular SAIFI in Sabah's latest year",
@@ -332,7 +453,8 @@ P3_TWINS = (
                 ON p.year = s.year AND p.metric_code = 'SAIFI' AND p.region_code = 'PEN'
             WHERE s.metric_code = 'SAIFI' AND s.region_code = 'SAB'
               AND s.year = (SELECT MAX(year) FROM ({_REGION_SQL}) AS y WHERE y.metric_code = 'SAIFI' AND y.region_code = 'SAB')""",
-        (), ("ratio",),
+        (),
+        ("ratio",),
     ),
     Twin(
         "P3 capacity mix: installed MW by region and fuel group (31 Dec 2021)",
@@ -340,7 +462,9 @@ P3_TWINS = (
         """SELECT g.region_code, s.source_code, c.installed_mw AS mw FROM mart.region_capacity AS c
            JOIN mart.dim_region AS g ON g.region_key = c.region_key JOIN mart.dim_source AS s ON s.source_key = c.source_key
            WHERE c.installed_mw IS NOT NULL""",
-        ("region_code", "source_code"), (), exact=("mw",),
+        ("region_code", "source_code"),
+        (),
+        exact=("mw",),
     ),
     Twin(
         "P3 consumption and interruptions by region and year",
@@ -349,7 +473,9 @@ P3_TWINS = (
         f"""SELECT region_code, year, MAX(CASE WHEN metric_code = 'ELEC_CONSUMPTION_GWH' THEN value END) AS gwh,
                    MAX(CASE WHEN metric_code = 'SUPPLY_INTERRUPTIONS' THEN value END) AS cuts
             FROM ({_REGION_SQL}) AS x WHERE metric_code IN ('ELEC_CONSUMPTION_GWH', 'SUPPLY_INTERRUPTIONS') GROUP BY region_code, year""",
-        ("region_code", "year"), (), exact=("gwh", "cuts"),
+        ("region_code", "year"),
+        (),
+        exact=("gwh", "cuts"),
     ),
 )
 _DQ_ROW = 'ROW ( "rules", [DQ Rule Count], "pass", [DQ Pass Count], "warn", [DQ Warn Count], "fail", [DQ Fail Count] )'
@@ -364,15 +490,27 @@ P6_TWINS = (
     Twin(
         "P6b DQ counts ignore the page's source and status filters",
         f'EVALUATE CALCULATETABLE ( {_DQ_ROW}, data_source[data_source_code] = "D1", dq_latest[status] = "PASS" )',
-        _DQ_SQL, (), (), exact=_DQ_COLS,
+        _DQ_SQL,
+        (),
+        (),
+        exact=_DQ_COLS,
     ),
     Twin(
         "P6b rows per source, each source's latest completed load",
         'EVALUATE SUMMARIZECOLUMNS ( data_source[data_source_code], "rows_in", [Source Rows Read], "rows_merged", [Source Rows Changed] )',
         "SELECT data_source_code, rows_in, rows_merged FROM mart.source_load_latest",
-        ("data_source_code",), (), exact=("rows_in", "rows_merged"),
+        ("data_source_code",),
+        (),
+        exact=("rows_in", "rows_merged"),
     ),
-    Twin("P6b latest run", 'EVALUATE ROW ( "run", [Latest Run ID] )', "SELECT run_id AS run FROM mart.run_latest", (), (), exact=("run",)),
+    Twin(
+        "P6b latest run",
+        'EVALUATE ROW ( "run", [Latest Run ID] )',
+        "SELECT run_id AS run FROM mart.run_latest",
+        (),
+        (),
+        exact=("run",),
+    ),
 )
 TWINS = TWINS + P3_TWINS + P6_TWINS
 
@@ -384,9 +522,20 @@ def run_dax(query: str) -> list[dict]:
         path = fh.name
     try:
         out = subprocess.run(
-            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
-             str(config.ROOT / "tools" / "dax_query.ps1"), "-QueryFile", path],
-            capture_output=True, text=True, encoding="utf-8", check=False,
+            [
+                "powershell",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(config.ROOT / "tools" / "dax_query.ps1"),
+                "-QueryFile",
+                path,
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
         )
     finally:
         Path(path).unlink(missing_ok=True)

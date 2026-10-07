@@ -47,7 +47,6 @@ def test_override_with_wrong_header_is_rejected(tmp_path):
         public_holidays.read_overrides(tmp_path)
 
 
-
 def test_years_cover_every_hourly_grid_span():
     from datetime import timedelta
 

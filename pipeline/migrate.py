@@ -145,9 +145,7 @@ def _apply_pending() -> list[str]:
             if previous == script.checksum:
                 continue
             if previous is not None and script.kind == "V":
-                raise MigrationError(
-                    f"{script.name} was edited after being applied; add a new migration instead"
-                )
+                raise MigrationError(f"{script.name} was edited after being applied; add a new migration instead")
             log.info("Applying %s", script.name)
             try:
                 db.run_script(cursor, script.text)

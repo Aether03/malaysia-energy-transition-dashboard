@@ -43,26 +43,49 @@ def build() -> list[dict]:
 
     # --- controls (header slicer, then the right-hand column)
     visuals.append(
-        visual("p2_year_slicer", 1056, rb.HEADER_Y, 200, 64, 40, rb.year_range_slicer(),
-               alt="Range slicer: choose the first and last year shown on this page; it is synced with the other year-range pages")
+        visual(
+            "p2_year_slicer",
+            1056,
+            rb.HEADER_Y,
+            200,
+            64,
+            40,
+            rb.year_range_slicer(),
+            alt="Range slicer: choose the first and last year shown on this page; it is synced with the other year-range pages",
+        )
     )
     visuals.append(
         visual(
-            "p2_unit_slicer", SIDE_X, ROW1_Y, SIDE_W, 56, 41,
+            "p2_unit_slicer",
+            SIDE_X,
+            ROW1_Y,
+            SIDE_W,
+            56,
+            41,
             rb.slicer("Mix Unit", "Mix Unit", "Unit", mode="Basic", single=True, horizontal=True, default=["TWh"]),
             alt="Tile slicer: switch the generation chart between TWh and percent share",
         )
     )
     visuals.append(
         visual(
-            "p2_source_slicer", SIDE_X, ROW1_Y + 60, SIDE_W, 56, 42,
+            "p2_source_slicer",
+            SIDE_X,
+            ROW1_Y + 60,
+            SIDE_W,
+            56,
+            42,
             rb.slicer("dim_source", "display_name", "Source", mode="Dropdown"),
             alt="Dropdown slicer: narrow the page to one energy source",
         )
     )
     visuals.append(
         visual(
-            "p2_empty_state", SIDE_X, ROW1_Y + 120, SIDE_W, 32, 43,
+            "p2_empty_state",
+            SIDE_X,
+            ROW1_Y + 120,
+            SIDE_W,
+            32,
+            43,
             rb.shape(None, {"expr": measure_ref("No Source Generation Message")}, 11, rb.TEXT_SECONDARY, v_align="top"),
             alt="Message: appears when the chosen source has no generation in the selected years",
         )
@@ -85,12 +108,22 @@ def build() -> list[dict]:
             "seriesLabels": [{"properties": {"show": lit("true")}}],
             "dataPoint": rb.series_colours("dim_source", "display_name", colours),
         },
-        "visualContainerObjects": rb.container("Generation by source (TWh or % of the year's total, per the Unit toggle)"),
+        "visualContainerObjects": rb.container(
+            "Generation by source (TWh or % of the year's total, per the Unit toggle)"
+        ),
         "drillFilterOtherVisuals": True,
     }
     visuals.append(
-        visual("p2_mix_area", rb.CONTENT_X, ROW1_Y, AREA_W, ROW1_H, 50, area,
-               alt="Stacked area chart: generation by source over the selected years, in TWh or percent share per the unit toggle; one colour per source")
+        visual(
+            "p2_mix_area",
+            rb.CONTENT_X,
+            ROW1_Y,
+            AREA_W,
+            ROW1_H,
+            50,
+            area,
+            alt="Stacked area chart: generation by source over the selected years, in TWh or percent share per the unit toggle; one colour per source",
+        )
     )
 
     # --- row 2 left: RE share of installed capacity against the national targets
@@ -130,8 +163,16 @@ def build() -> list[dict]:
     }
     # The target sources are in the footnote, so the chart takes the note row too (GUI round 4).
     visuals.append(
-        visual("p2_target_line", rb.CONTENT_X, ROW2_Y, HALF_W, ROW2_H + NOTE_H, 51, target,
-               alt="Line chart: renewable share of installed capacity on the Ember and official bases, with the national targets as dashed markers, 2000 to 2050")
+        visual(
+            "p2_target_line",
+            rb.CONTENT_X,
+            ROW2_Y,
+            HALF_W,
+            ROW2_H + NOTE_H,
+            51,
+            target,
+            alt="Line chart: renewable share of installed capacity on the Ember and official bases, with the national targets as dashed markers, 2000 to 2050",
+        )
     )
 
     # --- row 2 right: capacity factor per source at the last year of the range
@@ -153,12 +194,28 @@ def build() -> list[dict]:
         "drillFilterOtherVisuals": True,
     }
     visuals.append(
-        visual("p2_cf_bar", RIGHT_X, ROW2_Y, HALF_W, ROW2_H, 53, cf,
-               alt="Bar chart: capacity factor of each energy source in the last selected year, as a percent")
+        visual(
+            "p2_cf_bar",
+            RIGHT_X,
+            ROW2_Y,
+            HALF_W,
+            ROW2_H,
+            53,
+            cf,
+            alt="Bar chart: capacity factor of each energy source in the last selected year, as a percent",
+        )
     )
     visuals.append(
-        visual("p2_cf_note", RIGHT_X, ROW2_Y + ROW2_H, HALF_W, NOTE_H, 54, note("Capacity Factor Note"),
-               alt="Note: explains why a capacity factor is blank when capacity is not reported")
+        visual(
+            "p2_cf_note",
+            RIGHT_X,
+            ROW2_Y + ROW2_H,
+            HALF_W,
+            NOTE_H,
+            54,
+            note("Capacity Factor Note"),
+            alt="Note: explains why a capacity factor is blank when capacity is not reported",
+        )
     )
 
     # --- row 3: demand as two aligned single-axis charts on the same year axis (doc 04 F1)
@@ -180,14 +237,28 @@ def build() -> list[dict]:
         }
 
     visuals.append(
-        visual("p2_demand_cols", rb.CONTENT_X, ROW3_Y, HALF_W, ROW3_H, 55,
-               columns("Ctx Demand (TWh)", rb.NAVY, "Electricity demand (TWh)"),
-               alt="Column chart: electricity demand per year in TWh, on the same year axis as the growth chart beside it")
+        visual(
+            "p2_demand_cols",
+            rb.CONTENT_X,
+            ROW3_Y,
+            HALF_W,
+            ROW3_H,
+            55,
+            columns("Ctx Demand (TWh)", rb.NAVY, "Electricity demand (TWh)"),
+            alt="Column chart: electricity demand per year in TWh, on the same year axis as the growth chart beside it",
+        )
     )
     visuals.append(
-        visual("p2_growth_cols", RIGHT_X, ROW3_Y, HALF_W, ROW3_H, 56,
-               columns("Ctx Demand Growth (%)", rb.ACCENT_BLUE, "Demand growth, year on year (%)"),
-               alt="Column chart: year-on-year growth in electricity demand, in percent, on the same year axis as the demand chart beside it")
+        visual(
+            "p2_growth_cols",
+            RIGHT_X,
+            ROW3_Y,
+            HALF_W,
+            ROW3_H,
+            56,
+            columns("Ctx Demand Growth (%)", rb.ACCENT_BLUE, "Demand growth, year on year (%)"),
+            alt="Column chart: year-on-year growth in electricity demand, in percent, on the same year axis as the demand chart beside it",
+        )
     )
     return visuals
 

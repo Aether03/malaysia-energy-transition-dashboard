@@ -101,7 +101,7 @@ def test_run_final_records_then_stores_a_current_final_run(env):
     assert entry["fingerprint"] == run.input_fingerprint(env["demand"].loc[:"2024-04-30 23:00"], HOLIDAYS)
     assert set(entry["metrics"]) == set(run.COMPARED)
 
-    (row, results), = env["saved"]
+    ((row, results),) = env["saved"]
     assert row["run_kind"] == "FINAL"
     assert row["is_current"] == 1
     assert row["protocol_commit"] == HASH_P
@@ -195,7 +195,7 @@ def test_replay_into_an_empty_database_stores_the_final_run(env):
     entry = _recorded(env)
     message = run.replay("TH_EGAT", entry, 12)
     assert "stored as FINAL run" in message
-    (row, _), = env["saved"]
+    ((row, _),) = env["saved"]
     assert row["run_kind"] == "FINAL" and row["is_current"] == 1
     assert row["protocol_commit"] == HASH_P and row["git_commit"] == HASH_H  # the record's commits
     assert {c: str(row[c]) for c in run.COMPARED} == entry["metrics"]
@@ -273,7 +273,7 @@ def test_a_dev_run_inside_2023_reads_only_up_to_its_last_dev_hour(env):
     env["demand"] = pd.Series(20000 + 3000 * np.sin(2 * np.pi * idx.hour / 24) + 500 * idx.weekday + noise, index=idx)
     run.run_dev("TH_EGAT", None)
     assert env["untils"] == [pd.Timestamp("2023-02-28 23:00")]
-    (row, _), = env["saved"]
+    ((row, _),) = env["saved"]
     assert row["run_kind"] == "DEV" and row["is_current"] == 0 and row["protocol_commit"] is None
 
 

@@ -33,7 +33,10 @@ def back_button() -> dict:
         "visualType": "actionButton",
         "objects": {
             "icon": [
-                {"properties": {"shapeType": text("back"), "lineColor": rb.solid(rb.NAV_TEXT)}, "selector": {"id": "default"}},
+                {
+                    "properties": {"shapeType": text("back"), "lineColor": rb.solid(rb.NAV_TEXT)},
+                    "selector": {"id": "default"},
+                },
             ],
             "text": [
                 {"properties": {"show": lit("true")}},
@@ -72,12 +75,28 @@ def build() -> list[dict]:
         visuals.append(v)
     visuals = [v for v in visuals if v["name"] != "frame_footnote"]
     visuals.append(
-        visual("frame_footnote", rb.CONTENT_X, rb.FOOTNOTE_Y, rb.CONTENT_W, 44, 99, rb.footnote(FOOTNOTE),
-               alt="Footnote: sources, licences and caveats for this page")
+        visual(
+            "frame_footnote",
+            rb.CONTENT_X,
+            rb.FOOTNOTE_Y,
+            rb.CONTENT_W,
+            44,
+            99,
+            rb.footnote(FOOTNOTE),
+            alt="Footnote: sources, licences and caveats for this page",
+        )
     )
     visuals.append(
-        visual("d1_back", 8, rb.BODY_Y, 160, 44, 2, back_button(),
-               alt="Button: go back to the page you drilled through from, keeping its filters")
+        visual(
+            "d1_back",
+            8,
+            rb.BODY_Y,
+            160,
+            44,
+            2,
+            back_button(),
+            alt="Button: go back to the page you drilled through from, keeping its filters",
+        )
     )
     return visuals
 
@@ -86,7 +105,9 @@ def drillthrough_page() -> dict:
     field = column_ref("dim_country", "name")
     return {
         "visibility": "HiddenInViewMode",
-        "filterConfig": {"filters": [{"name": FILTER_NAME, "field": field, "type": "Categorical", "howCreated": "Drillthrough"}]},
+        "filterConfig": {
+            "filters": [{"name": FILTER_NAME, "field": field, "type": "Categorical", "howCreated": "Drillthrough"}]
+        },
         "pageBinding": {
             "name": BINDING_NAME,
             "type": "Drillthrough",

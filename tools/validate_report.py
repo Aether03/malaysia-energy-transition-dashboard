@@ -109,7 +109,12 @@ def main() -> int:
             if len(n) > 50:
                 errors.append(f"{where}: name longer than 50 chars")
             pos = v["position"]
-            if pos["x"] < 0 or pos["y"] < 0 or pos["x"] + pos["width"] > pw + 1e-6 or pos["y"] + pos["height"] > ph + 1e-6:
+            if (
+                pos["x"] < 0
+                or pos["y"] < 0
+                or pos["x"] + pos["width"] > pw + 1e-6
+                or pos["y"] + pos["height"] > ph + 1e-6
+            ):
                 errors.append(f"{where}: outside {pw}x{ph}: {pos}")
             walk(v, {}, errors, where, model)
             vco = v["visual"].get("visualContainerObjects", {})
@@ -122,7 +127,9 @@ def main() -> int:
                 if target not in page_dirs:
                     errors.append(f"{where}: tooltip page {target} missing")
                 if set(entry["properties"]) != {"show", "section"}:
-                    errors.append(f"{where}: visualTooltip must have only show and section: {sorted(entry['properties'])}")
+                    errors.append(
+                        f"{where}: visualTooltip must have only show and section: {sorted(entry['properties'])}"
+                    )
             if n not in DECORATIVE and not alt_text(v).strip():
                 errors.append(f"{where}: no alt text")
             if v["visual"]["visualType"] == "card":
@@ -135,7 +142,10 @@ def main() -> int:
         if page.get("type") != "Tooltip":
             if "frame_info" not in visuals:
                 errors.append(f"{page_dir.name}: no ⓘ About button (frame_info)")
-            if any(n.startswith("frame_nav_") and n != "frame_nav_selected" for n in visuals) and "frame_nav_badge" not in visuals:
+            if (
+                any(n.startswith("frame_nav_") and n != "frame_nav_selected" for n in visuals)
+                and "frame_nav_badge" not in visuals
+            ):
                 errors.append(f"{page_dir.name}: has a nav rail but no Fail badge (frame_nav_badge)")
         walk(page, {}, errors, page_dir.name, model)
         for it in page.get("visualInteractions", []):

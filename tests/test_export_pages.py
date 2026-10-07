@@ -28,7 +28,12 @@ def test_a_missing_consent_row_does_not_publish_a_restricted_page():
 
 
 def test_marker_check_passes_when_mapping_and_content_agree():
-    texts = ["Renewables supplied", "SAIFI by region: Sabah", "SAIDI by state, 2022 (darker = less reliable)", "34 rules"]
+    texts = [
+        "Renewables supplied",
+        "SAIFI by region: Sabah",
+        "SAIDI by state, 2022 (darker = less reliable)",
+        "34 rules",
+    ]
     assert ep.check_markers(texts, [True, False, False, True], PAGES) == []
 
 

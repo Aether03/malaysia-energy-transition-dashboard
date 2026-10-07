@@ -255,7 +255,8 @@ def test_value_token_accepts_printed_numbers(token):
 
 
 @pytest.mark.parametrize(
-    "token", ["", "n/a", "N/A", "1,23", "1,2345", "1e5", "--", "1.", ".5", "5-", "$5", "(5)", "12 %", "1 234", "1.2.3", "x"]
+    "token",
+    ["", "n/a", "N/A", "1,23", "1,2345", "1e5", "--", "1.", ".5", "5-", "$5", "(5)", "12 %", "1 234", "1.2.3", "x"],
 )
 def test_value_token_rejects_everything_else(token):
     assert not handbook.VALUE_TOKEN.match(token)
@@ -305,7 +306,9 @@ def test_table_has_rows_times_columns_cells_in_row_then_column_order(code):
     n_rows, n_cols = SHAPE[code]
     cells = _parse(code)
     assert len(cells) == n_rows * n_cols
-    assert [(c.row_pos, c.col_pos) for c in cells] == [(r, c) for r in range(1, n_rows + 1) for c in range(1, n_cols + 1)]
+    assert [(c.row_pos, c.col_pos) for c in cells] == [
+        (r, c) for r in range(1, n_rows + 1) for c in range(1, n_cols + 1)
+    ]
 
 
 @pytest.mark.parametrize("code", ALL_CODES)
@@ -604,7 +607,15 @@ def test_a_stray_non_numeric_word_in_the_value_zone_is_rejected_not_skipped(code
     raw = _raw(spec.page)
     row = _expected_row(raw, spec, *TRAP_ROWS[code])
     anchor = row[1]
-    raw.append({"text": "n/a", "x0": anchor["x1"] + 1.0, "x1": anchor["x1"] + 12.0, "top": anchor["top"], "bottom": anchor["bottom"]})
+    raw.append(
+        {
+            "text": "n/a",
+            "x0": anchor["x1"] + 1.0,
+            "x1": anchor["x1"] + 12.0,
+            "top": anchor["top"],
+            "bottom": anchor["bottom"],
+        }
+    )
     _reject(code, raw)
 
 
@@ -787,7 +798,9 @@ def test_a_renamed_subtotal_label_is_rejected():
     _reject("INSTALLED_CAPACITY", raw)
 
 
-@pytest.mark.parametrize("groups", [("Peninsular Malaysia", "Sabah"), ("A", "B", "C", "D"), ("Peninsular Malaysia",), ()])
+@pytest.mark.parametrize(
+    "groups", [("Peninsular Malaysia", "Sabah"), ("A", "B", "C", "D"), ("Peninsular Malaysia",), ()]
+)
 def test_a_wrong_number_of_row_groups_for_the_subtotal_rows_is_rejected_or_ungrouped(groups):
     spec = replace(SPEC_BY_CODE["INSTALLED_CAPACITY"], row_groups=groups)
     if groups == ():
@@ -951,10 +964,24 @@ def test_table_region_stop_is_searched_strictly_below_the_start_line_itself():
 
 
 def test_table_region_ignore_lines_match_the_whole_line_exactly():
-    texts = ["Title", "head", "Energy Intensity", "Final Energy Intensity", "Per Capita", "GDP per Capita", "Per Capita x", "Notes"]
+    texts = [
+        "Title",
+        "head",
+        "Energy Intensity",
+        "Final Energy Intensity",
+        "Per Capita",
+        "GDP per Capita",
+        "Per Capita x",
+        "Notes",
+    ]
     lines = [_line(t, 10.0 * i) for i, t in enumerate(texts)]
     spec = _mini_spec(start_after="Title", ignore_lines=("Energy Intensity", "Per Capita"))
-    assert _texts(handbook.table_region(lines, spec)) == ["head", "Final Energy Intensity", "GDP per Capita", "Per Capita x"]
+    assert _texts(handbook.table_region(lines, spec)) == [
+        "head",
+        "Final Energy Intensity",
+        "GDP per Capita",
+        "Per Capita x",
+    ]
 
 
 def test_table_region_ignore_lines_apply_in_the_header_too():
@@ -1217,7 +1244,9 @@ def test_load_judges_duplicates_on_the_key_columns_only(monkeypatch):
     seen = {}
 
     def fake_merge(conn, table, columns, key_columns, records, run_id, source_file):
-        seen.update(conn=conn, table=table, columns=columns, key=key_columns, n=len(records), run=run_id, file=source_file)
+        seen.update(
+            conn=conn, table=table, columns=columns, key=key_columns, n=len(records), run=run_id, file=source_file
+        )
         return 7
 
     monkeypatch.setattr(handbook._common, "merge_into", fake_merge)

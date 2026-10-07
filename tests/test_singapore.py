@@ -190,7 +190,13 @@ def test_to_raw_records_field_types(path):
 
 def test_to_raw_records_tuple_order_follows_raw_columns():
     first = _records(F0102)[0]
-    assert first == ("SG_EMA", "20230102.xls", "2023-01-02|00:30", "System Demand (Actual)", pytest.approx(5760.359344156905, abs=1e-9))
+    assert first == (
+        "SG_EMA",
+        "20230102.xls",
+        "2023-01-02|00:30",
+        "System Demand (Actual)",
+        pytest.approx(5760.359344156905, abs=1e-9),
+    )
     assert singapore.RAW_COLUMNS.index("value") == 4
 
 
@@ -214,10 +220,7 @@ def test_series_names_are_the_trimmed_published_names(path):
 def test_records_come_out_in_day_period_series_order(path):
     records = _records(path)
     expected = [
-        (_ts(path, d, p), SERIES[s])
-        for d in range(DAYS)
-        for p in range(PERIODS_PER_DAY)
-        for s in range(len(SERIES))
+        (_ts(path, d, p), SERIES[s]) for d in range(DAYS) for p in range(PERIODS_PER_DAY) for s in range(len(SERIES))
     ]
     assert [(r[2], r[3]) for r in records] == expected
 
@@ -299,7 +302,10 @@ def test_midnight_trap_applies_to_all_three_series_and_all_days():
         for s, name in enumerate(SERIES):
             expected = _raw(df, ROW_LAST_PERIOD, d, s)
             assert values[(_ts(F0102, d, PERIODS_PER_DAY - 1), name)] == pytest.approx(expected, abs=1e-9), (d, name)
-            assert values[(_ts(F0102, d, 0), name)] == pytest.approx(_raw(df, ROW_FIRST_PERIOD, d, s), abs=1e-9), (d, name)
+            assert values[(_ts(F0102, d, 0), name)] == pytest.approx(_raw(df, ROW_FIRST_PERIOD, d, s), abs=1e-9), (
+                d,
+                name,
+            )
 
 
 def test_midnight_trap_monday_other_series_values():
@@ -371,7 +377,9 @@ def test_20221226_sunday_values_come_from_the_seventh_day_columns():
     assert values[("2023-01-01|00:00", "System Demand (Actual)")] == pytest.approx(5831.513656573605, abs=1e-9)
     assert values[("2023-01-01|00:00", "NEM Demand (Actual)")] == pytest.approx(5705.9)
     assert values[("2023-01-01|00:00", "NEM Demand (Forecast)")] == pytest.approx(5685.2)
-    assert values[("2023-01-01|00:00", "System Demand (Actual)")] == pytest.approx(_raw(df, ROW_LAST_PERIOD, 6), abs=1e-9)
+    assert values[("2023-01-01|00:00", "System Demand (Actual)")] == pytest.approx(
+        _raw(df, ROW_LAST_PERIOD, 6), abs=1e-9
+    )
 
 
 def test_the_two_weeks_do_not_overlap_in_ts_text():
@@ -583,7 +591,9 @@ def test_blank_date_cell_raises_schema_mismatch():
         singapore.parse_sheet(df, "20230102.xls")
 
 
-@pytest.mark.parametrize("file_name", ["20230109.xls", "20221226.xls", "20230103.xls"], ids=["next-Mon", "prev-Mon", "Tue"])
+@pytest.mark.parametrize(
+    "file_name", ["20230109.xls", "20221226.xls", "20230103.xls"], ids=["next-Mon", "prev-Mon", "Tue"]
+)
 def test_file_name_monday_that_mismatches_the_sheet_dates_raises_schema_mismatch(file_name):
     # The sheet is the 2023-01-02 week; the name claims a different Monday (or not a Monday at all).
     with pytest.raises(SchemaMismatchError):

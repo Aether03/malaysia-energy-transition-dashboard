@@ -21,8 +21,32 @@ import build_p6b_page
 import build_tooltips
 import report_builder as rb
 
-BUILDERS = (build_overview_page, build_p2_page, build_p3_page, build_p3b_page, build_p4_page, build_p4b_page, build_p5_page, build_p6_page, build_p6b_page, build_d1_page, build_tooltips)
-ORDER = [rb.OVERVIEW_PAGE, build_p2_page.PAGE, build_p3_page.PAGE, build_p3b_page.PAGE, build_p4_page.PAGE, build_p4b_page.PAGE, build_p5_page.PAGE, build_p6_page.PAGE, build_p6b_page.PAGE, build_d1_page.PAGE, build_tooltips.T2_PAGE]
+BUILDERS = (
+    build_overview_page,
+    build_p2_page,
+    build_p3_page,
+    build_p3b_page,
+    build_p4_page,
+    build_p4b_page,
+    build_p5_page,
+    build_p6_page,
+    build_p6b_page,
+    build_d1_page,
+    build_tooltips,
+)
+ORDER = [
+    rb.OVERVIEW_PAGE,
+    build_p2_page.PAGE,
+    build_p3_page.PAGE,
+    build_p3b_page.PAGE,
+    build_p4_page.PAGE,
+    build_p4b_page.PAGE,
+    build_p5_page.PAGE,
+    build_p6_page.PAGE,
+    build_p6b_page.PAGE,
+    build_d1_page.PAGE,
+    build_tooltips.T2_PAGE,
+]
 
 
 def main() -> None:

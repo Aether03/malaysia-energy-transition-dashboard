@@ -95,7 +95,12 @@ def reported_states_filter(name: str) -> dict:
                             "Condition": {
                                 "In": {
                                     "Expressions": [
-                                        {"Column": {"Expression": {"SourceRef": {"Source": "d"}}, "Property": "is_reported_by_state"}}
+                                        {
+                                            "Column": {
+                                                "Expression": {"SourceRef": {"Source": "d"}},
+                                                "Property": "is_reported_by_state",
+                                            }
+                                        }
                                     ],
                                     "Values": [[{"Literal": {"Value": "true"}}]],
                                 }
@@ -153,7 +158,9 @@ def shape_map() -> dict:
         "visualType": "shapeMap",
         "query": {
             "queryState": {
-                "Category": {"projections": [{**projection(column_ref("dim_state", "iso_3166_2")), "displayName": "ISO code"}]},
+                "Category": {
+                    "projections": [{**projection(column_ref("dim_state", "iso_3166_2")), "displayName": "ISO code"}]
+                },
                 "Value": {"projections": [{**projection(measure_ref("Reliability Value")), "displayName": "Value"}]},
             }
         },
@@ -251,33 +258,76 @@ def build() -> list[dict]:
 
     # --- row 0: controls and the note moved out of the footnote
     visuals.append(
-        visual("p3b_metric_slicer", rb.CONTENT_X, ROW0_Y, TOGGLE_W, ROW0_H, 40, metric_toggle(),
-               alt="Tile slicer: switch every chart on this page between SAIFI (interruption frequency) and SAIDI (interruption duration)")
+        visual(
+            "p3b_metric_slicer",
+            rb.CONTENT_X,
+            ROW0_Y,
+            TOGGLE_W,
+            ROW0_H,
+            40,
+            metric_toggle(),
+            alt="Tile slicer: switch every chart on this page between SAIFI (interruption frequency) and SAIDI (interruption duration)",
+        )
     )
     visuals.append(
-        visual("p3b_year_slicer", YEAR_X, ROW0_Y, YEAR_W, ROW0_H, 41, year_dropdown(),
-               alt="Dropdown slicer: choose the year; nothing picked shows the latest year")
+        visual(
+            "p3b_year_slicer",
+            YEAR_X,
+            ROW0_Y,
+            YEAR_W,
+            ROW0_H,
+            41,
+            year_dropdown(),
+            alt="Dropdown slicer: choose the year; nothing picked shows the latest year",
+        )
     )
     visuals.append(
-        visual("p3b_note", NOTE_X, ROW0_Y, NOTE_W, ROW0_H, 42, p4.note("P3b Note"),
-               alt="Note: how the chosen metric relates to CAIDI, and which year is shown")
+        visual(
+            "p3b_note",
+            NOTE_X,
+            ROW0_Y,
+            NOTE_W,
+            ROW0_H,
+            42,
+            p4.note("P3b Note"),
+            alt="Note: how the chosen metric relates to CAIDI, and which year is shown",
+        )
     )
 
     # --- left: map with its note underneath | right: ranked bar of the 13 reported states
     visuals.append(
-        visual("p3b_map", rb.CONTENT_X, BODY2_Y, MAP_W, MAP_H, 50, shape_map(),
-               alt="Shape map: Peninsular Malaysian states shaded blue by the chosen reliability metric, darker is less reliable; Sabah, Sarawak and Labuan are grey because they are not reported by state; click a state to see its trend")
+        visual(
+            "p3b_map",
+            rb.CONTENT_X,
+            BODY2_Y,
+            MAP_W,
+            MAP_H,
+            50,
+            shape_map(),
+            alt="Shape map: Peninsular Malaysian states shaded blue by the chosen reliability metric, darker is less reliable; Sabah, Sarawak and Labuan are grey because they are not reported by state; click a state to see its trend",
+        )
     )
     visuals.append(
         visual(
-            "p3b_map_note", rb.CONTENT_X + 12, BODY2_Y + MAP_H + 4, MAP_W - 12, MAP_NOTE_H, 51,
+            "p3b_map_note",
+            rb.CONTENT_X + 12,
+            BODY2_Y + MAP_H + 4,
+            MAP_W - 12,
+            MAP_NOTE_H,
+            51,
             rb.shape(None, text(MAP_NOTE), 9, rb.TEXT_SECONDARY, v_align="top"),
             alt="Note under the map: the grey shapes are not reported by state",
         )
     )
     visuals.append(
         visual(
-            "p3b_rank_bar", BAR_X, BODY2_Y, BAR_W, BAR_H, 52, ranked_bar(),
+            "p3b_rank_bar",
+            BAR_X,
+            BODY2_Y,
+            BAR_W,
+            BAR_H,
+            52,
+            ranked_bar(),
             filter_config=reported_states_filter("p3b_rank_bar"),
             alt="Ranked bar chart: the 13 reported states by the chosen metric, most reliable at the top, each labelled with its value",
         )
@@ -285,8 +335,16 @@ def build() -> list[dict]:
 
     # --- left column, under the map: selected-state trend
     visuals.append(
-        visual("p3b_trend", rb.CONTENT_X, TREND_Y, MAP_W, TREND_H, 53, trend_line(),
-               alt="Line chart: the chosen reliability metric over the years for the state picked on the map or bar (navy), against Peninsular Malaysia (dashed grey)")
+        visual(
+            "p3b_trend",
+            rb.CONTENT_X,
+            TREND_Y,
+            MAP_W,
+            TREND_H,
+            53,
+            trend_line(),
+            alt="Line chart: the chosen reliability metric over the years for the state picked on the map or bar (navy), against Peninsular Malaysia (dashed grey)",
+        )
     )
     return visuals
 

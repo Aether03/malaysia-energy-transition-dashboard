@@ -5,3 +5,7 @@
 required-version = "==0.16.9"
 target-version = "py313"
 line-length = 120  # the code base is written to ~120 columns
+
+[format]
+# The code behind the locked FINAL 2024 forecast runs stays byte-identical to what produced them (M5 step 8).
+exclude = ["pipeline/forecast/**"]

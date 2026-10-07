@@ -187,7 +187,10 @@ def download(refresh: bool = False, retries: int = 3) -> tuple[Path, str]:
                 folder=folder, validate=verify_signature, session=session,
             )  # fmt: skip
             digest.update(path.read_bytes())
-    return folder, f"EMA half-hourly, {len(file_names())} weekly files {FIRST_WEEK}..{LAST_WEEK}; sha256 {digest.hexdigest()[:12]}"
+    return (
+        folder,
+        f"EMA half-hourly, {len(file_names())} weekly files {FIRST_WEEK}..{LAST_WEEK}; sha256 {digest.hexdigest()[:12]}",
+    )
 
 
 def load(conn, records: list[tuple], run_id: int, source_file: str) -> int:

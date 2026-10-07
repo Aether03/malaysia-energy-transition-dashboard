@@ -183,7 +183,9 @@ def measure_filter(visual_name: str, measure: str, value: int = 1) -> dict:
                             "Condition": {
                                 "Comparison": {
                                     "ComparisonKind": 0,
-                                    "Left": {"Measure": {"Expression": {"SourceRef": {"Source": "m"}}, "Property": measure}},
+                                    "Left": {
+                                        "Measure": {"Expression": {"SourceRef": {"Source": "m"}}, "Property": measure}
+                                    },
                                     "Right": {"Literal": {"Value": f"{value}L"}},
                                 }
                             }
@@ -261,7 +263,10 @@ def card(measure: str, size: int, colour: dict, show_label: bool, title: str | N
             ],
         },
         # Narrow side padding so long labels such as "Carbon Intensity (gCO2e/kWh)" fit a 198 px card.
-        "visualContainerObjects": {**container(title), "padding": [{"properties": {"left": lit("4D"), "right": lit("4D")}}]},
+        "visualContainerObjects": {
+            **container(title),
+            "padding": [{"properties": {"left": lit("4D"), "right": lit("4D")}}],
+        },
         "drillFilterOtherVisuals": True,
     }
 
@@ -345,7 +350,7 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
                         "horizontalAlignment": text("left"),
                     },
                     "selector": {"id": "default"},
-                }
+                },
             ],
             "fill": CLEAR_BUTTON_FILL,
             "outline": [{"properties": {"show": lit("false")}}],
@@ -360,7 +365,7 @@ def nav_button(label: str, page_name: str, selected: bool) -> dict:
                         "navigationSection": text(page_name),
                     }
                 }
-            ]
+            ],
         },
         "drillFilterOtherVisuals": True,
     }
@@ -419,7 +424,9 @@ def fail_badge(page_name: str) -> dict:
     )
     body["visualContainerObjects"] = {
         **BARE,
-        "visualLink": [{"properties": {"show": lit("true"), "type": text("PageNavigation"), "navigationSection": text(page_name)}}],
+        "visualLink": [
+            {"properties": {"show": lit("true"), "type": text("PageNavigation"), "navigationSection": text(page_name)}}
+        ],
     }
     return body
 
@@ -468,7 +475,10 @@ def table(
             ],
             "columnHeaders": [{"properties": {"fontSize": lit(f"{font_size}D")}}],
             # `urlIcon` shows a WebUrl column as a link icon (a long URL would wrap over many lines).
-            "values": [{"properties": {"fontSize": lit(f"{font_size}D"), "urlIcon": lit("true")}}, *(extra_values or [])],
+            "values": [
+                {"properties": {"fontSize": lit(f"{font_size}D"), "urlIcon": lit("true")}},
+                *(extra_values or []),
+            ],
             "grid": [{"properties": {"rowPadding": lit("3D")}}],
             "total": [{"properties": {"totals": lit("false")}}],
         },
@@ -515,7 +525,9 @@ def series_colours(table: str, column: str, colours: dict[str, str]) -> list[dic
     ]
 
 
-def highlight_colours(table: str, column: str, value: str, highlight: str = NAVY, others: str = PEER_MUTED) -> list[dict]:
+def highlight_colours(
+    table: str, column: str, value: str, highlight: str = NAVY, others: str = PEER_MUTED
+) -> list[dict]:
     """Default fill for every series/category (muted) plus one highlighted value (doc 04 §3.3).
 
     Line series ignore the selector-free default (GUI round 5), so every country in the seed
@@ -547,7 +559,9 @@ def param_role(table: str, default_measure: str, default_label: str) -> dict:
     fails with "Can't determine relationships between the fields".
     """
     return {
-        "projections": [{**projection(measure_ref(default_measure)), "nativeQueryRef": default_label, "displayName": default_label}],
+        "projections": [
+            {**projection(measure_ref(default_measure)), "nativeQueryRef": default_label, "displayName": default_label}
+        ],
         "fieldParameters": [{"parameterExpr": column_ref(table, table), "index": 0, "length": 1}],
     }
 
@@ -570,7 +584,9 @@ def in_filter(table: str, column: str, values: list[str], name_seed: str) -> dic
                                     "Expressions": [
                                         {"Column": {"Expression": {"SourceRef": {"Source": "s"}}, "Property": column}}
                                     ],
-                                    "Values": [[{"Literal": {"Value": "'" + v.replace("'", "''") + "'"}}] for v in values],
+                                    "Values": [
+                                        [{"Literal": {"Value": "'" + v.replace("'", "''") + "'"}}] for v in values
+                                    ],
                                 }
                             }
                         }
@@ -632,7 +648,10 @@ def page_bookmark(page_name: str) -> str | None:
     """Name of the "Reset ..." bookmark Amirul created in Desktop for this page (doc 03 A4), if any."""
     for path in sorted(BOOKMARKS.glob("*.bookmark.json")):
         b = json.loads(path.read_text(encoding="utf-8"))
-        if b.get("displayName", "").startswith("Reset") and b.get("explorationState", {}).get("activeSection") == page_name:
+        if (
+            b.get("displayName", "").startswith("Reset")
+            and b.get("explorationState", {}).get("activeSection") == page_name
+        ):
             return b["name"]
     return None
 
@@ -686,14 +705,29 @@ def frame(
     if bookmark:
         y = BODY_Y + len(existing) * 48 + 24
         visuals.append(
-            visual("frame_reset", 8, y, 160, 44, 15, reset_button(bookmark), alt="Button: reset this page's filters and slicers to their defaults")
+            visual(
+                "frame_reset",
+                8,
+                y,
+                160,
+                44,
+                15,
+                reset_button(bookmark),
+                alt="Button: reset this page's filters and slicers to their defaults",
+            )
         )
     for i, (label, name) in enumerate(existing):
         y = BODY_Y + i * 48
         here = name == page_name
         visuals.append(
             visual(
-                f"frame_nav_{i}", 8, y, 160, 44, 2 + i, nav_button(label, name, here),
+                f"frame_nav_{i}",
+                8,
+                y,
+                160,
+                44,
+                2 + i,
+                nav_button(label, name, here),
                 alt=f"Navigation button: {label} page" + (" (the current page)" if here else ""),
             )
         )
@@ -702,8 +736,14 @@ def frame(
         if name == DQ_PAGE:
             visuals.append(
                 visual(
-                    "frame_nav_badge", 8 + 160 - BADGE_SIZE - 4, y + (44 - BADGE_SIZE) / 2, BADGE_SIZE, BADGE_SIZE, 16,
-                    fail_badge(name), tab=False,
+                    "frame_nav_badge",
+                    8 + 160 - BADGE_SIZE - 4,
+                    y + (44 - BADGE_SIZE) / 2,
+                    BADGE_SIZE,
+                    BADGE_SIZE,
+                    16,
+                    fail_badge(name),
+                    tab=False,
                     alt="Badge on the Data quality button: how many data-quality rules failed in the latest run; empty when none failed",
                 )
             )
@@ -737,11 +777,23 @@ def frame(
             alt="Page scope line: what this page covers and when the data was refreshed",
         ),
         visual(
-            "frame_info", INFO_X, INFO_Y, INFO_SIZE, INFO_SIZE, 32, info_button(ABOUT_PAGE, INFO_TOOLTIP),
+            "frame_info",
+            INFO_X,
+            INFO_Y,
+            INFO_SIZE,
+            INFO_SIZE,
+            32,
+            info_button(ABOUT_PAGE, INFO_TOOLTIP),
             alt="Button: open the About page, with sources, licences and data quality",
         ),
         visual(
-            "frame_footnote", CONTENT_X, FOOTNOTE_Y, CONTENT_W, 44, 99, footnote_body,
+            "frame_footnote",
+            CONTENT_X,
+            FOOTNOTE_Y,
+            CONTENT_W,
+            44,
+            99,
+            footnote_body,
             alt="Footnote: sources, licences and caveats for this page",
         ),
     ]
@@ -768,7 +820,9 @@ def write_page(
 
     page_file = page_dir / "page.json"
     page = json.loads(page_file.read_text(encoding="utf-8")) if page_file.exists() else {"$schema": PAGE_SCHEMA}
-    page.update({"name": page_name, "displayName": display_name, "displayOption": "FitToPage", "width": width, "height": height})
+    page.update(
+        {"name": page_name, "displayName": display_name, "displayOption": "FitToPage", "width": width, "height": height}
+    )
     page.update(page_extra or {})
     page_file.write_text(json.dumps(page, indent=2, ensure_ascii=False), encoding="utf-8")
 

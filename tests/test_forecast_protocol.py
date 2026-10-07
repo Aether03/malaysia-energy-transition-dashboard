@@ -101,7 +101,9 @@ def test_parse_protocol_section_continues_through_a_level_three_heading():
     assert protocol.parse_protocol(text).seed == 20231008
     # and a block that only appears under that sub-heading still counts
     sub_only = (
-        "# Forecast\n\n## Protocol\n\nProse.\n\n### Settings\n\n```json\n" + json.dumps(_raw()) + "\n```\n\n## Results\n"
+        "# Forecast\n\n## Protocol\n\nProse.\n\n### Settings\n\n```json\n"
+        + json.dumps(_raw())
+        + "\n```\n\n## Results\n"
     )
     assert protocol.parse_protocol(sub_only).es_days == 28
 
@@ -201,7 +203,8 @@ def test_features_must_equal_the_code_feature_columns(mutate):
 
 @pytest.mark.parametrize("bad", ["2024-1", "2024-13", "2024-00", "24-01", "2024/01", "Jan 2024", ""])
 @pytest.mark.parametrize(
-    ("section", "key"), [("final", "first_month"), ("final", "last_month"), ("dev", "first_month"), ("dev", "last_month")]
+    ("section", "key"),
+    [("final", "first_month"), ("final", "last_month"), ("dev", "first_month"), ("dev", "last_month")],
 )
 def test_a_month_must_be_yyyy_mm(section, key, bad):
     with pytest.raises(ProtocolError):

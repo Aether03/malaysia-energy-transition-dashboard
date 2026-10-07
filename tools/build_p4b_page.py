@@ -106,37 +106,84 @@ def build() -> list[dict]:
 
     # --- left column: day picker, then the three result texts
     visuals.append(
-        visual("p4b_date_slicer", rb.CONTENT_X, BODY_Y, LEFT_W, DATE_H, 50, date_dropdown(),
-               alt="Dropdown date slicer: choose a 2024 backtest day; nothing picked shows the grid's peak day")
+        visual(
+            "p4b_date_slicer",
+            rb.CONTENT_X,
+            BODY_Y,
+            LEFT_W,
+            DATE_H,
+            50,
+            date_dropdown(),
+            alt="Dropdown date slicer: choose a 2024 backtest day; nothing picked shows the grid's peak day",
+        )
     )
     y = BODY_Y + DATE_H + 8
     for name, measure, size, colour, h, z, alt in (
-        ("p4b_verdict", "Forecast Verdict", 10, rb.TEXT_PRIMARY, 112, 51,
-         "Text: verdict on whether the model beats the seasonal-naive baseline, with its confidence interval"),
-        ("p4b_secondary", "Forecast Secondary", 9, rb.TEXT_SECONDARY, 96, 52,
-         "Text: how the model compares with the weekday-aware naive reference"),
-        ("p4b_window", "Backtest Window", 9, rb.TEXT_SECONDARY, 72, 53,
-         "Text: the dates and hours the backtest covers"),
+        (
+            "p4b_verdict",
+            "Forecast Verdict",
+            10,
+            rb.TEXT_PRIMARY,
+            112,
+            51,
+            "Text: verdict on whether the model beats the seasonal-naive baseline, with its confidence interval",
+        ),
+        (
+            "p4b_secondary",
+            "Forecast Secondary",
+            9,
+            rb.TEXT_SECONDARY,
+            96,
+            52,
+            "Text: how the model compares with the weekday-aware naive reference",
+        ),
+        (
+            "p4b_window",
+            "Backtest Window",
+            9,
+            rb.TEXT_SECONDARY,
+            72,
+            53,
+            "Text: the dates and hours the backtest covers",
+        ),
     ):
         visuals.append(visual(name, rb.CONTENT_X, y, LEFT_W, h, z, p4.note(measure, size, colour), alt=alt))
         y += h + 8
 
     # --- main: forecast chart with the empty / error messages over the plot area (blank normally)
     visuals.append(
-        visual("p4b_fc_line", MAIN_X, BODY_Y, MAIN_W, CHART_H, 60, forecast_chart(),
-               alt="Line chart: 24 hours of actual demand, the model forecast and the baseline forecast for the chosen day, in MW")
+        visual(
+            "p4b_fc_line",
+            MAIN_X,
+            BODY_Y,
+            MAIN_W,
+            CHART_H,
+            60,
+            forecast_chart(),
+            alt="Line chart: 24 hours of actual demand, the model forecast and the baseline forecast for the chosen day, in MW",
+        )
     )
     mid = BODY_Y + CHART_H / 2
     visuals.append(
         visual(
-            "p4b_fc_empty", MAIN_X + 12, mid - 26, MAIN_W - 24, 26, 61,
+            "p4b_fc_empty",
+            MAIN_X + 12,
+            mid - 26,
+            MAIN_W - 24,
+            26,
+            61,
             rb.shape(None, {"expr": measure_ref("Forecast Empty State")}, 12, rb.TEXT_SECONDARY, align="center"),
             alt="Message over the chart: shown when the chosen day is outside the backtest window",
         )
     )
     visuals.append(
         visual(
-            "p4b_fc_error", MAIN_X + 12, mid, MAIN_W - 24, 26, 62,
+            "p4b_fc_error",
+            MAIN_X + 12,
+            mid,
+            MAIN_W - 24,
+            26,
+            62,
             rb.shape(None, {"expr": measure_ref("Forecast Error State")}, 12, rb.STATUS_FAIL, align="center"),
             alt="Message over the chart: shown when the forecast was not generated in the latest run",
         )
@@ -153,8 +200,16 @@ def build() -> list[dict]:
     card_w = (MAIN_W - (len(cards) - 1) * CARD_GAP) / len(cards)
     for i, (name, measure, label) in enumerate(cards):
         visuals.append(
-            visual(name, MAIN_X + i * (card_w + CARD_GAP), CARDS_Y, card_w, CARD_H, 70 + i, metric_card(measure, label),
-                   alt=f"Card: {label}, a backtest result for the chosen grid")
+            visual(
+                name,
+                MAIN_X + i * (card_w + CARD_GAP),
+                CARDS_Y,
+                card_w,
+                CARD_H,
+                70 + i,
+                metric_card(measure, label),
+                alt=f"Card: {label}, a backtest result for the chosen grid",
+            )
         )
     return visuals
 

@@ -29,7 +29,10 @@ KPI_W = 500  # 540 left the method notes too narrow: their last line clipped (ro
 NOTES_X = rb.CONTENT_X + KPI_W + rb.GAP  # 756
 NOTES_W = rb.CONTENT_X + rb.CONTENT_W - NOTES_X  # 500
 NOTES_H = 180  # about 10 lines of 9 pt at 4 px padding
-LOWER_Y, LOWER_H = ROW2_Y + NOTES_H + 8, ROW2_END - (ROW2_Y + NOTES_H + 8)  # 608, 56: 3 lines (40 px clipped the 2nd, round 1)
+LOWER_Y, LOWER_H = (
+    ROW2_Y + NOTES_H + 8,
+    ROW2_END - (ROW2_Y + NOTES_H + 8),
+)  # 608, 56: 3 lines (40 px clipped the 2nd, round 1)
 CONSENT_W = 340  # [Consent Summary] is about 140 characters: 3 lines at 9 pt
 BUTTON_X = NOTES_X + CONSENT_W + 8  # 1104
 BUTTON_W = rb.CONTENT_X + rb.CONTENT_W - BUTTON_X  # 152: 112 cut the label to "Source code.." (round 1)
@@ -60,28 +63,46 @@ FOOTNOTE = (
 NOTES = [
     ("Method notes", 10, rb.TEXT_PRIMARY, True),
     (
-        ("Forecast: LightGBM issued at local midnight, scored once on a locked 2024 backtest against a seasonal-naive "
-         "baseline (the same hour last week). The verdict is on the Forecast page."),
-        9, rb.TEXT_PRIMARY, False,
+        (
+            "Forecast: LightGBM issued at local midnight, scored once on a locked 2024 backtest against a seasonal-naive "
+            "baseline (the same hour last week). The verdict is on the Forecast page."
+        ),
+        9,
+        rb.TEXT_PRIMARY,
+        False,
     ),
     (
         "Capacity factor = generation ÷ (capacity × hours in the year); blank if capacity is unreported.",
-        9, rb.TEXT_PRIMARY, False,
+        9,
+        rb.TEXT_PRIMARY,
+        False,
     ),
     (
-        ("States: handbook labels map to states through a reference table; reliability by state covers Peninsular "
-         "states only, and Sabah includes Labuan."),
-        9, rb.TEXT_PRIMARY, False,
+        (
+            "States: handbook labels map to states through a reference table; reliability by state covers Peninsular "
+            "states only, and Sabah includes Labuan."
+        ),
+        9,
+        rb.TEXT_PRIMARY,
+        False,
     ),
     (
-        ("Sarawak: the 2023 handbook prints each Sarawak reliability year one year early, so the years are remapped "
-         "(see docs/reconciliation.md)."),
-        9, rb.TEXT_PRIMARY, False,
+        (
+            "Sarawak: the 2023 handbook prints each Sarawak reliability year one year early, so the years are remapped "
+            "(see docs/reconciliation.md)."
+        ),
+        9,
+        rb.TEXT_PRIMARY,
+        False,
     ),
     (
-        ("Data lag: Ember runs to 2025 (Brunei, Laos and Myanmar to 2024); grid load covers 2023-24; DOSM supply ends "
-         "in June 2024 and is a cross-check only."),
-        9, rb.TEXT_PRIMARY, False,
+        (
+            "Data lag: Ember runs to 2025 (Brunei, Laos and Myanmar to 2024); grid load covers 2023-24; DOSM supply ends "
+            "in June 2024 and is a cross-check only."
+        ),
+        9,
+        rb.TEXT_PRIMARY,
+        False,
     ),
 ]
 
@@ -142,40 +163,72 @@ def notes_box() -> dict:
 
 def build() -> list[dict]:
     visuals = rb.frame(
-        PAGE, None, "Run Summary", FOOTNOTE,
+        PAGE,
+        None,
+        "Run Summary",
+        FOOTNOTE,
         title_text="Where the data comes from, and on what terms",
     )
     sort_name = [(column_ref("data_source", "name"), "Ascending")]
     visuals.append(
         visual(
-            "p6_sources", rb.CONTENT_X, ROW1_Y, rb.CONTENT_W, ROW1_H, 40,
+            "p6_sources",
+            rb.CONTENT_X,
+            ROW1_Y,
+            rb.CONTENT_W,
+            ROW1_H,
+            40,
             rb.table("Sources and licences", SOURCE_COLUMNS, sort=sort_name),
             alt="Table: one row per data source with what it provides, its licence, the credit wording, its consent status and a link to the source",
         )
     )
     visuals.append(
         visual(
-            "p6_kpis", rb.CONTENT_X, ROW2_Y, KPI_W, ROW2_H, 41,
+            "p6_kpis",
+            rb.CONTENT_X,
+            ROW2_Y,
+            KPI_W,
+            ROW2_H,
+            41,
             rb.table("KPI definitions", KPI_COLUMNS, sort=[(column_ref("kpi", "name"), "Ascending")]),
             alt="Table: each KPI with its definition, formula and unit; scrolls",
         )
     )
     visuals.append(
         visual(
-            "p6_notes", NOTES_X, ROW2_Y, NOTES_W, NOTES_H, 42, notes_box(),
+            "p6_notes",
+            NOTES_X,
+            ROW2_Y,
+            NOTES_W,
+            NOTES_H,
+            42,
+            notes_box(),
             alt="Text box: method notes on the forecast, the capacity factor, the state mapping, the Sarawak year remap and data lag",
         )
     )
     visuals.append(
         visual(
-            "p6_consent", NOTES_X, LOWER_Y, CONSENT_W, LOWER_H, 43,
-            rb.shape(None, {"expr": rb.measure_ref("Consent Summary")}, 9, rb.TEXT_SECONDARY, boxed=True, left_margin=8),
+            "p6_consent",
+            NOTES_X,
+            LOWER_Y,
+            CONSENT_W,
+            LOWER_H,
+            43,
+            rb.shape(
+                None, {"expr": rb.measure_ref("Consent Summary")}, 9, rb.TEXT_SECONDARY, boxed=True, left_margin=8
+            ),
             alt="Text: the sources that need written permission, and the status of each request",
         )
     )
     visuals.append(
         visual(
-            "p6_github", BUTTON_X, LOWER_Y, BUTTON_W, LOWER_H, 44, github_button(),
+            "p6_github",
+            BUTTON_X,
+            LOWER_Y,
+            BUTTON_W,
+            LOWER_H,
+            44,
+            github_button(),
             alt="Button: open the project's source code on GitHub in your browser",
         )
     )

@@ -27,9 +27,7 @@ def tracked():
     if shutil.which("git") is None:
         pytest.skip("git is not available")
     try:
-        out = subprocess.run(
-            ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True, timeout=60
-        ).stdout
+        out = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True, timeout=60).stdout
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
         pytest.skip("not inside a git work tree")
     paths = [p for p in out.decode("utf-8").split("\0") if p]

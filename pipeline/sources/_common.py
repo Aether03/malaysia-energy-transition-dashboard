@@ -172,8 +172,7 @@ def merge_into(
     non_keys = [c for c in columns if c not in key_columns]
     on = " AND ".join(f"t.{c} = s.{c}" for c in key_columns)
     changed = (
-        f"EXISTS (SELECT {', '.join('s.' + c for c in non_keys)} "
-        f"EXCEPT SELECT {', '.join('t.' + c for c in non_keys)})"
+        f"EXISTS (SELECT {', '.join('s.' + c for c in non_keys)} EXCEPT SELECT {', '.join('t.' + c for c in non_keys)})"
     )
     updates = ", ".join(f"{c} = s.{c}" for c in non_keys)
     cursor.execute(
@@ -185,7 +184,7 @@ def merge_into(
         WHEN MATCHED AND {changed} THEN
             UPDATE SET {updates}, _run_id = ?, _source_file = ?, _loaded_at = SYSUTCDATETIME()
         WHEN NOT MATCHED BY TARGET THEN
-            INSERT ({cols}, _run_id, _source_file) VALUES ({', '.join('s.' + c for c in columns)}, ?, ?)
+            INSERT ({cols}, _run_id, _source_file) VALUES ({", ".join("s." + c for c in columns)}, ?, ?)
         OUTPUT $action INTO @changes;
         SELECT COUNT(*) FROM @changes;
         """,

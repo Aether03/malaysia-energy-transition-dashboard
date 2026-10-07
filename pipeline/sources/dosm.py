@@ -134,4 +134,14 @@ def load(conn, records: list[tuple], run_id: int, source_file: str) -> int:
     return _common.merge_into(conn, "raw.dosm_electricity", RAW_COLUMNS, KEY_COLUMNS, records, run_id, source_file)
 
 
-__all__ = ["FILES", "KEY_COLUMNS", "RAW_COLUMNS", "SchemaMismatchError", "download", "load", "read_csv", "records_from", "to_raw_records"]
+__all__ = [
+    "FILES",
+    "KEY_COLUMNS",
+    "RAW_COLUMNS",
+    "SchemaMismatchError",
+    "download",
+    "load",
+    "read_csv",
+    "records_from",
+    "to_raw_records",
+]

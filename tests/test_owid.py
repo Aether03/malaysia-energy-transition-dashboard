@@ -23,11 +23,23 @@ def test_required_columns_tuple():
     assert isinstance(REQUIRED_COLUMNS, tuple)
     assert len(REQUIRED_COLUMNS) == 18
     assert REQUIRED_COLUMNS == (
-        "country", "year", "iso_code", "population", "per_capita_electricity",
-        "electricity_demand", "electricity_generation", "carbon_intensity_elec",
-        "renewables_share_elec", "coal_electricity", "gas_electricity",
-        "oil_electricity", "hydro_electricity", "solar_electricity",
-        "wind_electricity", "biofuel_electricity", "other_renewable_electricity",
+        "country",
+        "year",
+        "iso_code",
+        "population",
+        "per_capita_electricity",
+        "electricity_demand",
+        "electricity_generation",
+        "carbon_intensity_elec",
+        "renewables_share_elec",
+        "coal_electricity",
+        "gas_electricity",
+        "oil_electricity",
+        "hydro_electricity",
+        "solar_electricity",
+        "wind_electricity",
+        "biofuel_electricity",
+        "other_renewable_electricity",
         "greenhouse_gas_emissions",
     )
 
@@ -211,8 +223,9 @@ def test_to_raw_records_types_floats_are_float_or_none():
     for record in records:
         for idx in range(4, len(record)):
             value = record[idx]
-            assert value is None or isinstance(value, float), \
+            assert value is None or isinstance(value, float), (
                 f"Field {REQUIRED_COLUMNS[idx]} should be float or None, got {type(value)}"
+            )
 
 
 def test_to_raw_records_malaysia_2025_year_is_int():
@@ -309,10 +322,46 @@ def test_assert_unique_keys_raises_on_duplicate():
     """assert_unique_keys raises ValueError on duplicate keys."""
     # Create records with duplicate (iso_code, year)
     records = [
-        ("Malaysia", 2024, "MYS", 35557670, 5400.0, 185.0, 190.0, 600.0, 20.0,
-         85.0, 65.0, 2.0, 35.0, 4.0, 0.0, 1.5, 1.5, 120.0),
-        ("Malaysia", 2024, "MYS", 35600000, 5500.0, 190.0, 195.0, 610.0, 21.0,
-         90.0, 68.0, 2.5, 36.0, 5.0, 0.5, 2.0, 2.0, 125.0),
+        (
+            "Malaysia",
+            2024,
+            "MYS",
+            35557670,
+            5400.0,
+            185.0,
+            190.0,
+            600.0,
+            20.0,
+            85.0,
+            65.0,
+            2.0,
+            35.0,
+            4.0,
+            0.0,
+            1.5,
+            1.5,
+            120.0,
+        ),
+        (
+            "Malaysia",
+            2024,
+            "MYS",
+            35600000,
+            5500.0,
+            190.0,
+            195.0,
+            610.0,
+            21.0,
+            90.0,
+            68.0,
+            2.5,
+            36.0,
+            5.0,
+            0.5,
+            2.0,
+            2.0,
+            125.0,
+        ),
     ]
 
     with pytest.raises(ValueError):
@@ -323,10 +372,46 @@ def test_assert_unique_keys_on_different_key_positions():
     """assert_unique_keys works with different key position tuples."""
     # Create records where (iso_code, country) is unique but (country, year) is not
     records = [
-        ("Malaysia", 2024, "MYS", 35557670, 5400.0, 185.0, 190.0, 600.0, 20.0,
-         85.0, 65.0, 2.0, 35.0, 4.0, 0.0, 1.5, 1.5, 120.0),
-        ("Malaysia", 2024, "MYS", 35600000, 5500.0, 190.0, 195.0, 610.0, 21.0,
-         90.0, 68.0, 2.5, 36.0, 5.0, 0.5, 2.0, 2.0, 125.0),
+        (
+            "Malaysia",
+            2024,
+            "MYS",
+            35557670,
+            5400.0,
+            185.0,
+            190.0,
+            600.0,
+            20.0,
+            85.0,
+            65.0,
+            2.0,
+            35.0,
+            4.0,
+            0.0,
+            1.5,
+            1.5,
+            120.0,
+        ),
+        (
+            "Malaysia",
+            2024,
+            "MYS",
+            35600000,
+            5500.0,
+            190.0,
+            195.0,
+            610.0,
+            21.0,
+            90.0,
+            68.0,
+            2.5,
+            36.0,
+            5.0,
+            0.5,
+            2.0,
+            2.0,
+            125.0,
+        ),
     ]
 
     # Using key (2, 0) = (iso_code, country) should raise because both rows have same iso_code + country

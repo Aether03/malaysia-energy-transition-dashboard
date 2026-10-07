@@ -68,7 +68,9 @@ WARN_NOTE = [  # (text, size pt, colour, bold); from docs/reconciliation.md "Kno
     ("OWID_GEN_WITHIN_5PCT: OWID uses a different upstream vintage than Ember.", 9, rb.TEXT_PRIMARY, False),
     (
         "DOSM_SUPPLY_WITHIN_10PCT: DOSM's supply is a net balance below Ember's gross generation, and Ember revised 2021 on.",
-        9, rb.TEXT_PRIMARY, False,
+        9,
+        rb.TEXT_PRIMARY,
+        False,
     ),
     ("CF_AT_MOST_1: Ember's capacity is too small for the generation it reports.", 9, rb.TEXT_PRIMARY, False),
     ("STALE_COUNTRY_YEARS: Brunei, Laos and Myanmar end in 2024.", 9, rb.TEXT_PRIMARY, False),
@@ -78,6 +80,7 @@ WARN_NOTE = [  # (text, size pt, colour, bold); from docs/reconciliation.md "Kno
 # ---------- status chip ----------
 def luminance(hex_colour: str) -> float:
     """WCAG relative luminance of #rrggbb."""
+
     def channel(i: int) -> float:
         c = int(hex_colour[1 + 2 * i : 3 + 2 * i], 16) / 255
         return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
@@ -105,7 +108,10 @@ def status_cases(values: dict[str, str]) -> list[dict]:
                 "Comparison": {
                     "ComparisonKind": 0,
                     "Left": {
-                        "Aggregation": {"Expression": {"Column": column_ref("dq_latest", "status")["Column"]}, "Function": 3}
+                        "Aggregation": {
+                            "Expression": {"Column": column_ref("dq_latest", "status")["Column"]},
+                            "Function": 3,
+                        }
                     },
                     "Right": {"Literal": {"Value": f"'{status}'"}},
                 },
@@ -119,6 +125,7 @@ def status_cases(values: dict[str, str]) -> list[dict]:
 
 def chip_format() -> dict:
     """Conditional background and font colour on the [DQ Status Label] cells (icon + word, never colour alone)."""
+
     def rule(values: dict[str, str]) -> dict:
         return {"solid": {"color": {"expr": {"Conditional": {"Cases": status_cases(values)}}}}}
 
@@ -156,51 +163,93 @@ def warn_note() -> dict:
 
 def build() -> list[dict]:
     visuals = rb.frame(
-        PAGE, None, None, FOOTNOTE,
+        PAGE,
+        None,
+        None,
+        FOOTNOTE,
         title_text="Every data-quality rule, checked on each pipeline run",
         subtitle_text="Results of the most recent run · pass, warn or fail · click a source to see its rules",
     )
     box = {"boxed": True, "left_margin": 12}
     visuals.append(
         visual(
-            "p6b_run_summary", rb.CONTENT_X, SUMMARY_Y, RUN_W, SUMMARY_H, 40,
+            "p6b_run_summary",
+            rb.CONTENT_X,
+            SUMMARY_Y,
+            RUN_W,
+            SUMMARY_H,
+            40,
             rb.shape(None, {"expr": measure_ref("Run Summary")}, 10, rb.TEXT_PRIMARY, **box),
             alt="Text card: the latest pipeline run, with its status and start and finish times",
         )
     )
     visuals.append(
         visual(
-            "p6b_dq_summary", DQ_SUM_X, SUMMARY_Y, DQ_SUM_W, SUMMARY_H, 41,
+            "p6b_dq_summary",
+            DQ_SUM_X,
+            SUMMARY_Y,
+            DQ_SUM_W,
+            SUMMARY_H,
+            41,
             rb.shape(None, {"expr": measure_ref("DQ Summary")}, 11, rb.TEXT_PRIMARY, "Segoe UI Semibold", **box),
             alt="Text card: how many data-quality rules passed, warned and failed in the latest run",
         )
     )
     visuals.append(
         visual(
-            "p6b_status_slicer", rb.CONTENT_X, BODY_Y, LEFT_W, TILES_H, 42, status_tiles(),
+            "p6b_status_slicer",
+            rb.CONTENT_X,
+            BODY_Y,
+            LEFT_W,
+            TILES_H,
+            42,
+            status_tiles(),
             alt="Tile slicer: show only the rules that passed, warned or failed; none picked shows all",
         )
     )
     visuals.append(
         visual(
-            "p6b_sources", rb.CONTENT_X, SOURCES_Y, LEFT_W, SOURCES_H, 43,
-            rb.table("Rows per source (click one to filter the rules)", SOURCE_COLUMNS,
-                     sort=[(column_ref("data_source", "name"), "Ascending")]),
+            "p6b_sources",
+            rb.CONTENT_X,
+            SOURCES_Y,
+            LEFT_W,
+            SOURCES_H,
+            43,
+            rb.table(
+                "Rows per source (click one to filter the rules)",
+                SOURCE_COLUMNS,
+                sort=[(column_ref("data_source", "name"), "Ascending")],
+            ),
             alt="Table: each source with the rows read and changed in its latest load and the date it was loaded; clicking a row filters the rules table to that source",
         )
     )
     visuals.append(
         visual(
-            "p6b_warn_note", rb.CONTENT_X, WARN_NOTE_Y, LEFT_W, WARN_NOTE_H, 44, warn_note(),
+            "p6b_warn_note",
+            rb.CONTENT_X,
+            WARN_NOTE_Y,
+            LEFT_W,
+            WARN_NOTE_H,
+            44,
+            warn_note(),
             alt="Text box: the four warnings that are expected, and why each fires",
         )
     )
     visuals.append(
         visual(
-            "p6b_dq_table", RIGHT_X, BODY_Y, RIGHT_W, DQ_H, 45,
+            "p6b_dq_table",
+            RIGHT_X,
+            BODY_Y,
+            RIGHT_W,
+            DQ_H,
+            45,
             rb.table(
-                "Data-quality rules", DQ_COLUMNS,
-                sort=[(column_ref("dq_latest", "rows_affected"), "Descending"), (column_ref("dq_latest", "rule_code"), "Ascending")],
+                "Data-quality rules",
+                DQ_COLUMNS,
+                sort=[
+                    (column_ref("dq_latest", "rows_affected"), "Descending"),
+                    (column_ref("dq_latest", "rule_code"), "Ascending"),
+                ],
                 extra_values=[chip_format()],
             ),
             alt="Table: every data-quality rule with its source, severity, result (icon and word, coloured green, amber or red) and the number of rows affected; scrolls, and rules with problems come first",
@@ -208,7 +257,13 @@ def build() -> list[dict]:
     )
     visuals.append(
         visual(
-            "p6b_dq_empty", RIGHT_X + 12, EMPTY_Y, RIGHT_W - 36, EMPTY_H, 46, empty_message(),
+            "p6b_dq_empty",
+            RIGHT_X + 12,
+            EMPTY_Y,
+            RIGHT_W - 36,
+            EMPTY_H,
+            46,
+            empty_message(),
             alt="Message over the rules table: reads No pipeline run recorded when no rule has been checked yet, otherwise blank",
         )
     )

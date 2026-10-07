@@ -85,10 +85,7 @@ def _convert(column: str, value: str):
 
 
 def to_raw_records(df: pd.DataFrame) -> list[tuple]:
-    return [
-        tuple(_convert(column, row[column]) for column in EXPECTED_COLUMNS)
-        for _, row in df.iterrows()
-    ]
+    return [tuple(_convert(column, row[column]) for column in EXPECTED_COLUMNS) for _, row in df.iterrows()]
 
 
 def records_from(path: Path) -> list[tuple]:

@@ -68,20 +68,40 @@ def build() -> list[dict]:
 
     # --- controls
     visuals.append(
-        visual("p5_year_slicer", 1056, rb.HEADER_Y, 200, 64, 40, rb.year_range_slicer(),
-               alt="Range slicer: choose the first and last year shown on this page; it is synced with the other year-range pages")
+        visual(
+            "p5_year_slicer",
+            1056,
+            rb.HEADER_Y,
+            200,
+            64,
+            40,
+            rb.year_range_slicer(),
+            alt="Range slicer: choose the first and last year shown on this page; it is synced with the other year-range pages",
+        )
     )
     visuals.append(
         visual(
-            "p5_country_slicer", SIDE_X, ROW1_Y, SIDE_W, 340, 41,
+            "p5_country_slicer",
+            SIDE_X,
+            ROW1_Y,
+            SIDE_W,
+            340,
+            41,
             rb.slicer("Compare Country", "name", "Countries (none ticked = 6 default peers)", mode="Basic"),
             alt="List slicer: tick the ASEAN countries to compare; none ticked compares the six default peers",
         )
     )
     visuals.append(
         visual(
-            "p5_metric_slicer", SIDE_X, ROW1_Y + 356, SIDE_W, 120, 42,
-            rb.slicer("ASEAN Metric", "ASEAN Metric", "Trend metric", mode="Basic", single=True, default=["RE share (%)"]),
+            "p5_metric_slicer",
+            SIDE_X,
+            ROW1_Y + 356,
+            SIDE_W,
+            120,
+            42,
+            rb.slicer(
+                "ASEAN Metric", "ASEAN Metric", "Trend metric", mode="Basic", single=True, default=["RE share (%)"]
+            ),
             alt="Tile slicer: choose which metric the trend chart shows",
         )
     )
@@ -113,13 +133,24 @@ def build() -> list[dict]:
     }
     visuals.append(
         country_visual(
-            "p5_trend_line", MAIN_X, ROW1_Y, COL_W, ROW1_H, 50, trend,
+            "p5_trend_line",
+            MAIN_X,
+            ROW1_Y,
+            COL_W,
+            ROW1_H,
+            50,
+            trend,
             alt="Line chart: the chosen metric over the years for each compared country; Malaysia is the thick navy line, peers are muted grey; hover a line for the country's details",
         )
     )
     visuals.append(
         country_visual(
-            "p5_intensity_bar", COL2_X, ROW1_Y, COL_W, ROW1_H, 51,
+            "p5_intensity_bar",
+            COL2_X,
+            ROW1_Y,
+            COL_W,
+            ROW1_H,
+            51,
             bar(INTENSITY, "Carbon intensity at the comparison year (gCO2e/kWh), lowest first", "Ascending"),
             alt="Bar chart: carbon intensity of electricity at the comparison year for each compared country, lowest first; Malaysia in navy",
         )
@@ -146,13 +177,24 @@ def build() -> list[dict]:
     }
     visuals.append(
         country_visual(
-            "p5_scatter", MAIN_X, ROW2_Y, COL_W, ROW2_H, 52, scatter,
+            "p5_scatter",
+            MAIN_X,
+            ROW2_Y,
+            COL_W,
+            ROW2_H,
+            52,
+            scatter,
             alt="Scatter chart: renewable share of generation (horizontal) against carbon intensity (vertical) for each compared country, bubble size is demand; Malaysia in navy",
         )
     )
     visuals.append(
         country_visual(
-            "p5_percapita_bar", COL2_X, ROW2_Y, COL_W, ROW2_H, 53,
+            "p5_percapita_bar",
+            COL2_X,
+            ROW2_Y,
+            COL_W,
+            ROW2_H,
+            53,
             bar("Demand per Capita at Common Year (MWh)", "Demand per capita at the common year (MWh)", "Descending"),
             alt="Bar chart: electricity demand per person at the common year for each compared country, highest first; Malaysia in navy",
         )
@@ -161,9 +203,21 @@ def build() -> list[dict]:
     # --- rank card (the doc 03 P5 rank card; the same measure is also the page title)
     visuals.append(
         visual(
-            "p5_rank_card", rb.CONTENT_X, RANK_Y, rb.CONTENT_W, RANK_H, 60,
-            rb.shape(None, {"expr": measure_ref("Rank Label")}, 16, rb.TEXT_PRIMARY, "Segoe UI Semibold",
-                     boxed=True, left_margin=12),
+            "p5_rank_card",
+            rb.CONTENT_X,
+            RANK_Y,
+            rb.CONTENT_W,
+            RANK_H,
+            60,
+            rb.shape(
+                None,
+                {"expr": measure_ref("Rank Label")},
+                16,
+                rb.TEXT_PRIMARY,
+                "Segoe UI Semibold",
+                boxed=True,
+                left_margin=12,
+            ),
             alt="Text card: Malaysia's rank among the compared countries on renewable share",
         )
     )

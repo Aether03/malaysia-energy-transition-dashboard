@@ -302,7 +302,9 @@ def table_region(lines: list[Line], spec: TableSpec) -> list[Line]:
     if spec.start_after is not None:
         found = next((i for i, line in enumerate(lines) if spec.start_after in line.text), None)
         if found is None:
-            raise SchemaMismatchError(f"{spec.table_code}: start anchor {spec.start_after!r} not found on p.{spec.page}")
+            raise SchemaMismatchError(
+                f"{spec.table_code}: start anchor {spec.start_after!r} not found on p.{spec.page}"
+            )
         start = found + 1
     stop = next((i for i in range(start, len(lines)) if spec.stop_before in lines[i].text), None)
     if stop is None:
@@ -387,7 +389,9 @@ def _column_centres(data: list[tuple[Line, list[Word]]], spec: TableSpec) -> lis
         for c, w in enumerate(values):
             offset = _x_centre(w) - centres[c]
             if abs(offset) > COLUMN_TOLERANCE_PT:
-                raise SchemaMismatchError(f"{spec.table_code}: data row {r} column {c + 1} is {offset:+.1f} pt off its column")
+                raise SchemaMismatchError(
+                    f"{spec.table_code}: data row {r} column {c + 1} is {offset:+.1f} pt off its column"
+                )
     return centres
 
 
@@ -468,7 +472,9 @@ def records_from(path: Path, edition: int = EDITION) -> list[tuple]:
         words_by_page: dict[int, list[Word]] = {}
         for spec in specs:
             if spec.page > len(pdf.pages):
-                raise SchemaMismatchError(f"{spec.table_code}: p.{spec.page} is beyond the {len(pdf.pages)}-page document")
+                raise SchemaMismatchError(
+                    f"{spec.table_code}: p.{spec.page} is beyond the {len(pdf.pages)}-page document"
+                )
             if spec.page not in words_by_page:
                 words_by_page[spec.page] = words_from_page(pdf.pages[spec.page - 1])
             records.extend(cell.as_record() for cell in cells_from_words(words_by_page[spec.page], spec, edition))

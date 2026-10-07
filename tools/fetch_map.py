@@ -24,7 +24,9 @@ ROOT = Path(__file__).resolve().parent.parent
 MAP_PATH = ROOT / "report" / "maps" / "mys_adm1.topojson"
 DIM_STATE_CSV = ROOT / "seed" / "dim_state.csv"
 
-URL = "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MYS/ADM1/geoBoundaries-MYS-ADM1.topojson"
+URL = (
+    "https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/MYS/ADM1/geoBoundaries-MYS-ADM1.topojson"
+)
 SHA256 = "b358676a9a2f85e2a713670dcda51564e0d492790cec6b3d7fd359c07dbbb0bd"
 SIZE_BYTES = 795_812
 OBJECT_NAME = "MYSADM1gbOpen"

@@ -31,9 +31,7 @@ class StepRecord:
 
 def _git_commit() -> str | None:
     try:
-        out = subprocess.run(
-            ["git", "rev-parse", "HEAD"], cwd=config.ROOT, capture_output=True, text=True, check=True
-        )
+        out = subprocess.run(["git", "rev-parse", "HEAD"], cwd=config.ROOT, capture_output=True, text=True, check=True)
         return out.stdout.strip() or None
     except (OSError, subprocess.CalledProcessError):
         return None
@@ -86,8 +84,7 @@ class RunLog:
         cursor = self._conn.cursor()
         for r in results:
             cursor.execute(
-                "INSERT INTO meta.dq_result (run_id, rule_code, status, rows_affected, detail) "
-                "VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO meta.dq_result (run_id, rule_code, status, rows_affected, detail) VALUES (?, ?, ?, ?, ?)",
                 (self.run_id, r.rule_code, r.status, r.rows_affected, r.detail),
             )
 

@@ -48,7 +48,14 @@ def _extract_and_load(run, refresh: bool) -> None:
     from pipeline import db
     from pipeline.sources import dosm, ember, handbook, owid, singapore, thailand
 
-    for code, source in (("D1", ember), ("D2", owid), ("D3", dosm), ("D5", handbook), ("DTH", thailand), ("DSG", singapore)):
+    for code, source in (
+        ("D1", ember),
+        ("D2", owid),
+        ("D3", dosm),
+        ("D5", handbook),
+        ("DTH", thailand),
+        ("DSG", singapore),
+    ):
         with run.step("EXTRACT", code) as step:
             path, version = source.download(refresh=refresh)
             step.source_version = version[:100]
@@ -178,9 +185,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     db_parser = sub.add_parser("db", help="database administration")
     db_sub = db_parser.add_subparsers(dest="db_command", required=True)
-    db_sub.add_parser("migrate", help="apply pending migrations and changed views").set_defaults(
-        func=_cmd_db_migrate
-    )
+    db_sub.add_parser("migrate", help="apply pending migrations and changed views").set_defaults(func=_cmd_db_migrate)
 
     sub.add_parser("seed", help="load seed/*.csv into ref and fixed dimensions").set_defaults(func=_cmd_seed)
     extract_parser = sub.add_parser("extract-load", help="download sources and merge them into raw.*")
@@ -194,8 +199,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     mode = forecast_parser.add_mutually_exclusive_group()
     mode.add_argument("--dev", action="store_true", help="development run on the protocol's 2023 months")
-    mode.add_argument("--final", action="store_true", help="the single locked 2024 backtest of ONE --grid (needs a committed protocol)")
-    forecast_parser.add_argument("--grid", action="append", help="grid code (repeatable); default: every published grid")
+    mode.add_argument(
+        "--final",
+        action="store_true",
+        help="the single locked 2024 backtest of ONE --grid (needs a committed protocol)",
+    )
+    forecast_parser.add_argument(
+        "--grid", action="append", help="grid code (repeatable); default: every published grid"
+    )
     forecast_parser.set_defaults(func=_cmd_forecast)
     run_parser = sub.add_parser("run", help="extract, load, transform and check")
     run_parser.add_argument("--dry-run", action="store_true", help="log a run without touching data")

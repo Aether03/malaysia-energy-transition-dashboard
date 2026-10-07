@@ -50,7 +50,9 @@ PDF, REJECTED = _pdf_path()
 # Skip only when no copy is on this PC at all (a fresh clone). A copy that fails its checksum, or
 # an explicit HANDBOOK_PDF that does, is an error: a silent skip would make a green run meaningless
 # (M4 review H1).
-pytestmark = pytest.mark.skipif(PDF is None and not REJECTED, reason="handbook PDF not on this PC (restricted; never committed)")
+pytestmark = pytest.mark.skipif(
+    PDF is None and not REJECTED, reason="handbook PDF not on this PC (restricted; never committed)"
+)
 
 
 def test_a_present_pdf_is_the_pinned_file():
@@ -167,7 +169,9 @@ def test_every_cell_equals_the_independent_re_read(cells):
     """Step 7: two fresh-context agents transcribed every pinned cell from the page images, blind
     to the parser. Any difference is a parse error or a misread, and must be settled by eye."""
     with REREAD.open(encoding="utf-8", newline="") as fh:
-        reread = {(r["table_code"], int(r["row_pos"]), int(r["col_pos"])): r["value_text"].strip() for r in csv.DictReader(fh)}
+        reread = {
+            (r["table_code"], int(r["row_pos"]), int(r["col_pos"])): r["value_text"].strip() for r in csv.DictReader(fh)
+        }
     parsed = {(c.table_code, c.row_pos, c.col_pos): c.value_text for v in cells.values() for c in v}
     assert set(reread) == set(parsed)
     differences = sorted(k for k in parsed if parsed[k] != reread[k])
