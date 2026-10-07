@@ -57,13 +57,13 @@
 - **Step 5 review done:**
   - Python: 4 HIGH, 7 MEDIUM, LOW items.
   - Database: 0 CRITICAL, 1 HIGH, 5 MEDIUM, LOW items.
-  - All fixed in `30adf17` and `90f30b9`. 269 tests pass.
+  - All fixed in `e4c3ae5` and `8a04ebb`. 269 tests pass.
 - **Step 6 done:**
   - The P4 Thailand label is **"Sum of regional demand (EGAT)"**, with a footnote: hourly mean; published system peaks are 2–4% higher (`docs/reconciliation.md`).
   - The FR-22 sample week matches pandas vs SQL for both grids.
-- **Step 1 done (2026-10-03):** 7 Desktop-made templates in `tools/templates/` (`36c0667`, `5db6303`). The tile style is stored as mode Basic + orientation 1D; Date Picker as RelativeDatePicker. **Clean-up done (2026-10-03):** Scratch page and table deleted in Desktop. That save also renumbered z-order and tabOrder on every visual, so the report files were restored to the committed, M2-verified state (`git checkout -- report/`); validator 0 problems. **Close Desktop WITHOUT saving** before the next pipeline run.
-- **Step 7 done (`bad6e31`):** the forecast contract as stubs (docstrings are the spec), plus 201 tests by a Sonnet agent, Deep-read before commit. `metrics.py` and `protocol.py` are additions to the plan's file list.
-- **Step 8 code + protocol draft done (`be9203f`). 2023 only; no 2024 hour was ever read.**
+- **Step 1 done (2026-10-03):** 7 Desktop-made templates in `tools/templates/` (`e518282`, `2520e8d`). The tile style is stored as mode Basic + orientation 1D; Date Picker as RelativeDatePicker. **Clean-up done (2026-10-03):** Scratch page and table deleted in Desktop. That save also renumbered z-order and tabOrder on every visual, so the report files were restored to the committed, M2-verified state (`git checkout -- report/`); validator 0 problems. **Close Desktop WITHOUT saving** before the next pipeline run.
+- **Step 7 done (`f2abda5`):** the forecast contract as stubs (docstrings are the spec), plus 201 tests by a Sonnet agent, Deep-read before commit. `metrics.py` and `protocol.py` are additions to the plan's file list.
+- **Step 8 code + protocol draft done (`724203a`). 2023 only; no 2024 hour was ever read.**
   - **Code:** `pipeline/forecast/` is implemented and all 470 tests pass.
   - **Modes:** `pipeline forecast --dev` (DEV) / `--final` (FINAL) / no flag (replay). `pipeline run` gets a FORECAST step, which replays the recorded FINAL run and is a no-op until one exists.
   - **V014:** the date check now fits a rolling backtest (`train_end < test_end`).
@@ -71,7 +71,7 @@
   - **2023 holdout:** TH 4.56% vs 6.70% baseline (improvement CI 24.9 to 37.7); SG 1.47% vs 1.98% (CI 15.4 to 34.5). Seeds are stable. Weak spot: TH 22–31 Dec 2023, a real cold spell plus year-end, listed under Limits.
   - **Dry run:** the FINAL/replay path ran on 2023 with a stand-in protocol and was rolled back, 9/9 checks pass. 2 DEV runs are stored (model_run_id 1–2).
   - **The gate:** `docs/forecast_final.json` will hold the FINAL record. `committed_protocol()` refuses `--final` unless `docs/forecast.md` and `pipeline/forecast/` are committed and clean (verified on the real repo).
-- **`ecc:mle-reviewer` done; fixes in `efb4af6`, 505 tests pass.**
+- **`ecc:mle-reviewer` done; fixes in `413adec`, 505 tests pass.**
   - The review found 0 CRITICAL, 3 HIGH, 7 MEDIUM and some LOW. All are fixed:
     - FINAL/replay tests on fakes;
     - input fingerprints and a forecast hash;
@@ -81,27 +81,27 @@
     - 7-day block bootstrap.
   - DEV runs 5–6 use the final method.
   - **Thailand finding, dev only:** the model beats the seasonal naive (CI 21.8 to 39.3) but **not** the weekday-aware naive (+8.4%, CI −15.3 to 24.6). SG beats every reference.
-  - **Re-verification: APPROVE WITH WARNINGS.** Its 3 remaining items are fixed in `d7a03e2` (509 tests):
+  - **Re-verification: APPROVE WITH WARNINGS.** Its 3 remaining items are fixed in `50dcc1a` (509 tests):
     - a second grid must match the first grid's recorded settings and code;
     - Python major.minor only in the fingerprint;
     - atomic record write.
-  - The gate is clean at `d7a03e2`.
+  - The gate is clean at `50dcc1a`.
 - **Step 9 DONE (2026-10-03), run once per grid with Amirul's go.** The H3 policy is report-only: the banner follows the seasonal naive.
   - **TH_EGAT** (FINAL run 7): 3.31% vs 6.23%, improvement 46.9% (CI 39.3 to 52.8).
   - **SG_EMA** (FINAL run 8): 1.64% vs 2.50%, improvement 34.5% (CI 26.2 to 41.7).
   - Both beat the baseline, so **no WARN banner**. Both also beat the weekday-aware naive (TH 33.9%, CI 26.0 to 40.1; SG 24.4%, CI 15.7 to 32.4).
-  - Weak months: TH April (Songkran) and January. Records: `d73808f`, `4198eb1`. `pipeline forecast` replay: identical.
+  - Weak months: TH April (Songkran) and January. Records: `a251448`, `5d2b75d`. `pipeline forecast` replay: identical.
   - **Never run `--final` again.** A change means a labelled POST_HOC run.
-- **Step 10 done (`52fc295`):** `R__mart_m3` (published grids only), plus showcase `08` peak/LF, `09` forecast metrics recomputed from the facts (max diff 0.0005), `10` load curves and `11` flows. All expected values match.
-- **Step 11 done (`1840270`, `1d620cf`, `228c604`, `4797887`):** 10 generated tables and 11 relationships.
+- **Step 10 done (`80d3c15`):** `R__mart_m3` (published grids only), plus showcase `08` peak/LF, `09` forecast metrics recomputed from the facts (max diff 0.0005), `10` load curves and `11` flows. All expected values match.
+- **Step 11 done (`4eb49b9`, `2d6fd9f`, `2e206e8`, `2d754d2`):** 10 generated tables and 11 relationships.
   - `forecast_date` and `season_pick` are disconnected controls (no hand-written interactions).
   - 34 P4 measures. **Twins: 22/22 pass, plus a season-toggle twin, untested until the next Desktop open.**
   - New tool: `tools/model_refresh.ps1` refreshes Desktop's model via TMSL, so no click is needed.
   - `dax_query.ps1` now writes UTF-8 (en-dash season labels).
   - Desktop quirk: `at` can't be a DAX variable name (it parses as SYNTAXERROR).
-- **Docs 01/03/05 as-built edits done (`1bf4b34`).**
+- **Docs 01/03/05 as-built edits done (`5582bd2`).**
 - **Step 12: GUI rounds 1–3 done (round 3 run by Claude via computer use, at Amirul's request, 2026-10-05).**
-  - **P4 split into Grid load + Forecast** (Amirul's choice). Grid slicers are synced. The date dropdown holds 2024 days only, with nothing forced. Final layout is in `c8f9303`.
+  - **P4 split into Grid load + Forecast** (Amirul's choice). Grid slicers are synced. The date dropdown holds 2024 days only, with nothing forced. Final layout is in `2dcea1c`.
   - **Checks:**
     - ✅ Grid → Singapore switches the whole page.
     - ✅ The sync carries both ways.
@@ -197,7 +197,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Python 3.13.15 installed (user scope) and `.venv` created, with pinned requirements (pandas 3.0.6, mssql-python 1.15.0, lightgbm 4.7.0, …).
     - SQL Server **17.0.1000.7 Standard Developer** running as the default instance. winget installed Standard, not Enterprise, Developer; doc 02 allows either.
     - `EnergyDW` created and reachable from Python via Windows auth.
-    - Git repo initialised; first commit `9a77069`.
+    - Git repo initialised; first commit `1793df6`.
     - Reference documents saved in `docs/references/` (git-ignored).
     - GSO consent email saved as a Gmail **draft** to admin@gso.org.my.
     - Task 0.6: Deep = Opus 5.5, with Fable 5.1 as the escalation rung.
@@ -207,14 +207,14 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - ~~GitHub repo~~ done: private repo https://github.com/Aether03/malaysia-energy-transition-dashboard, main pushed. **M0 COMPLETE 2026-09-30. Next: `/plan` M1 (Deep), then build.**
 
 - **M1 progress (2026-09-30; step plan: `Documents/plans/M1_plan.md`):**
-  - **Done, pushed at `1f8f3f5`:** steps 1–7.
+  - **Done, pushed at `b2c877e`:** steps 1–7.
     - Migration runner and V001–V007.
     - Seeds and views (Sonnet subagent).
     - Run log.
     - Ember extract/load: 5,070 rows, idempotent.
     - Transforms (2,192 + 328 facts) and the DQ gate. The injection test proved rollback.
     - Database review of the migrations: no critical or high findings; medium fixes are in V007.
-  - **Also done, pushed at `4a4bab4`:**
+  - **Also done, pushed at `e02c2d7`:**
     - Step 10 reconciliation: 5/5 within 0.005%, plus an independent pandas recheck within 0.001% (`docs/reconciliation.md`).
     - Transform review: 1 HIGH finding (RE capacity share under partial reporting), fixed. Malaysia unchanged.
     - RCSI on; DQ fails closed; 7 rules, 4 of them WARN.
@@ -223,7 +223,7 @@ Useful but unavailable: **GitHub connector**. Authorize it in the claude.ai conn
     - Step 2 (V008, the `_common` refactor, OWID, population and per capita; MY 2025 = 5.8144 MWh) is **done** and idempotent.
     - New WARN rules: OWID ±5% (MY 2023–24, as predicted); CF_AT_MOST_1, which found Ember's zero geothermal capacity, so `030` now nulls implausible RE capacity (MY unaffected).
     - **Known issue:** the PC runs out of RAM (270 MB free with Power BI Desktop open), so SQL Server stalls and the transform takes about 1–2 min instead of about 1 s. Close Desktop and Discord before a pipeline run; `min server memory` is proposed to Amirul.
-    - Step 3 (DOSM D3) **done** (`6156d81`). The DOSM WARN fires for 2022–23 only; the gap grows from 4% to 14%. Known WARNs are registered in `docs/reconciliation.md`.
+    - Step 3 (DOSM D3) **done** (`44df64b`). The DOSM WARN fires for 2022–23 only; the gap grows from 4% to 14%. Known WARNs are registered in `docs/reconciliation.md`.
     - The database review of the M2 changes found **0 CRITICAL, 0 HIGH**. Its 3 MEDIUM findings (NULLIF-safe rule division, NULL cases that passed silently, the OWID staging row check) and 3 LOW ones are fixed in V009 and the seeds.
     - SQL `min server memory` is set to 1024 MB (Amirul approved it, 2026-09-30). Transform plus checks is back to about 1 s.
     - Step 4 (SQL showcase `01`–`05` + mart: `hours_in_year`, target `source_name`, `mart.re_capacity_official`) **done**. The spot values equal P1.

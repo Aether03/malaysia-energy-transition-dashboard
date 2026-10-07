@@ -2,7 +2,7 @@
 
 Layout tokens follow doc 04 §4 (1280x720 canvas, nav rail x 0-176, content x 200-1256,
 header y 16-88, body y 104-680, footnote strip at the bottom); colours and type follow
-doc 04 §2-3. JSON shapes mirror visuals saved by Power BI Desktop: commit 5efb683 for the
+doc 04 §2-3. JSON shapes mirror visuals saved by Power BI Desktop: commit 4ac7967 for the
 classic card, slicer and charts, and `tools/templates/` (M2 step 5) for shapes, buttons,
 navigators, new cards, field parameters, tooltip and drill-through pages.
 """

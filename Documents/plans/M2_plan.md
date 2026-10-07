@@ -86,7 +86,7 @@ M2 turns the one-page slice into the headline story:
 | Views | `sql/views/R__mart_m1.sql` | Repeatable `R__`, explicit column lists, `GO` between views |
 | Tests | `tests/test_ember.py` + `tests/fixtures/ember_sample.csv` | pytest on a small fixture CSV, no database |
 | Model | `tools/gen_tmdl.py` | Table TMDL generated from `mart` column metadata; measures are hand-written in `_Measures.tmdl` |
-| Report pages | `tools/build_overview_page.py` | PBIR visuals generated from Python; query shapes copied from Desktop-saved templates (commit `5efb683`); re-running rebuilds the page |
+| Report pages | `tools/build_overview_page.py` | PBIR visuals generated from Python; query shapes copied from Desktop-saved templates (commit `4ac7967`); re-running rebuilds the page |
 | Errors | `pipeline/cli.py:134-141` | Exceptions are logged and exit 1; DQ fails closed |
 
 ## Files to change

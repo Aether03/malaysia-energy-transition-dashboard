@@ -115,7 +115,7 @@ These are development numbers, used to choose the settings above. They are not t
 The development runs are stored as DEV rows in `dw.forecast_run`; the report never shows them.
 
 ## Results (2024 backtest)
-The single FINAL run per grid, 2026-10-03, under the protocol committed at `d7a03e2`: FINAL run 7 (TH_EGAT) and run 8 (SG_EMA). The records are in `docs/forecast_final.json` (`d73808f`, `4198eb1`), and the replay reproduced both runs bit-for-bit.
+The single FINAL run per grid, 2026-10-03, under the protocol committed at `50dcc1a`: FINAL run 7 (TH_EGAT) and run 8 (SG_EMA). The records are in `docs/forecast_final.json` (`a251448`, `5d2b75d`), and the replay reproduced both runs bit-for-bit.
 
 **Decision rule: both grids beat the seasonal-naive baseline.** The lower bound of the 95% CI is far above 0, so P4 shows no WARN banner.
 

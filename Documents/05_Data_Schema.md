@@ -203,7 +203,7 @@ erDiagram
 | `dw.fact_country_annual` | country_key=`1` (Malaysia), year=`2024`, total_generation_twh=`195.0000`, demand_twh=`194.0000`, emissions_intensity_gco2e_kwh=`560.000`, population=`35000000`, demand_per_capita_mwh=`5.5429`, re_share_gen_pct=`19.500`, re_share_capacity_pct=`27.000` |
 | `dw.fact_state_reliability` | state_key=`1` (an example state), year=`2022`, saifi=`9.999`, saidi_min=`NULL` (deliberately impossible values; the handbook is restricted, so no real figure appears in this repo) |
 | `dw.fact_grid_hourly` | grid_key=`1` (TH_EGAT), ts_utc=`2024-04-25 07:00:00`, ts_local=`2024-04-25 14:00:00`, demand_mw=`34850.0`, is_imputed=`0`, date_key=`20240425`, hour=`14` |
-| `dw.forecast_run` | model_run_id=`7`, grid_key=`1`, run_kind=`FINAL`, model_name=`lightgbm`, train_start=`2023-01-08`, train_end=`2024-11-30`, test_start=`2024-01-01`, test_end=`2024-12-31`, mape_model=`3.309`, mape_baseline=`6.227`, improvement_pct=`46.864` (CI `39.324`–`52.849`), protocol_commit=`d7a03e2…`, is_current=`1`. The backtest is 12 monthly rolling origins across 2024 (M3 Q2), not a single Oct–Dec split |
+| `dw.forecast_run` | model_run_id=`7`, grid_key=`1`, run_kind=`FINAL`, model_name=`lightgbm`, train_start=`2023-01-08`, train_end=`2024-11-30`, test_start=`2024-01-01`, test_end=`2024-12-31`, mape_model=`3.309`, mape_baseline=`6.227`, improvement_pct=`46.864` (CI `39.324`–`52.849`), protocol_commit=`50dcc1a…`, is_current=`1`. The backtest is 12 monthly rolling origins across 2024 (M3 Q2), not a single Oct–Dec split |
 | `meta.dq_result` | run_id=`12`, rule_code=`MIX_SUMS_TO_100`, status=`PASS`, rows_affected=`0`, checked_at=`2026-10-05 09:14:02` |
 
 ## 7. Fixes & improvements
