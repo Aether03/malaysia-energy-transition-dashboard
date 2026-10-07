@@ -288,6 +288,10 @@ def _new_repo(root, files):
     root.mkdir()
     _git(root, "init", "-q")
     _git(root, "config", "core.autocrlf", "false")  # this repository only
+    # No background auto-maintenance: newer git (the CI runner's) detaches it after a commit, and its
+    # lock file can vanish mid-copy, failing the repo fixture's copytree.
+    _git(root, "config", "maintenance.auto", "false")
+    _git(root, "config", "gc.auto", "0")
     for rel, text in files.items():
         _write(root, rel, text)
     _commit(root, "initial")
