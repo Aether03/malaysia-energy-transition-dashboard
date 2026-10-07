@@ -157,7 +157,7 @@ T1: KPI name, definition, formula, unit, source, and latest vs previous value. T
 - **Back behaviour:** Power BI's native back button is only on D1. Elsewhere the nav rail handles movement.
 - **Refresh:** manual. Run the pipeline (Part B), then Power BI **Home → Refresh**. There's no scheduled refresh (no Power BI Service).
 - **Offline:** fully works offline once refreshed (Import mode).
-- **Exports (FR-17):** PNG per page, **File → Export → PDF** (all visible pages; hidden pages D1/T1/T2 excluded), and a GIF/MP4 walkthrough following journey J2.
+- **Exports (FR-17):** PNG per page, **File → Export → PDF** (all visible pages; hidden pages D1/T1/T2 excluded), and a GIF/MP4 walkthrough following journey J2. **As built (M5):** `docs/img/01–07_*.png` and `docs/report.pdf` hold the 7 public pages (Regions and State reliability stay out until the Energy Commission consents); the walkthrough is a 1:51 captioned MP4 (`docs/walkthrough_script.md`, "As recorded"), uploaded through GitHub's README editor when the repo goes public.
 
 ---
 

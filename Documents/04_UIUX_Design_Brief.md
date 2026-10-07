@@ -28,7 +28,7 @@ Power BI can only use fonts installed on the viewer's machine, not web fonts. **
 | `type.footnote` | Sources, caveats, consent notice | Segoe UI | 9 | 400 | `text.muted` |
 | `type.nav` | Nav rail labels | Segoe UI Semibold | 10 | 600 | `nav.text` |
 
-- **Numbers:** thousands separators; 1 decimal for TWh, % and gCO₂/kWh; whole numbers for MW. Units always in the label or axis title, never implied. Right-align numeric table columns. **Unverified:** whether Segoe UI's default digits are tabular (equal width); check column alignment at build and switch table numerals to DIN (a built-in Power BI font) if they drift.
+- **Numbers:** thousands separators; 1 decimal for TWh, % and gCO₂/kWh; whole numbers for MW. Units always in the label or axis title, never implied. Right-align numeric table columns. **As built (M5):** Segoe UI regular and bold digits are tabular (every digit the same advance width), and table values use the theme's `label` class (regular Segoe UI), so columns align without DIN. Segoe UI Semibold digits are proportional (the 1 is narrower); it is used only for titles, headers and card callouts, which are single values.
 - **Streamlit (post-v1):** the same scale, in the `"Segoe UI", system-ui, sans-serif` stack.
 
 ## 3. Colour palette
@@ -158,7 +158,7 @@ Power BI motion is native and minimal: visual transitions, the loading spinner a
 - **Tab order:** set in the Selection pane per page: nav → header controls → slicers → visuals in reading order (left→right, top→bottom).
 - **Keyboard:** Power BI's native visual navigation (Ctrl+F6 into the canvas, Tab between visuals, Alt+Shift+F11 for Show as table). It's documented in the README's "How to explore" section.
 - **Target size:** buttons and slicer chips ≥ 44 × 44 px at 100% canvas zoom.
-- **High-contrast mode:** Power BI adapts to Windows high-contrast themes automatically. Check P1 once in Windows high-contrast (doc 06).
+- **High-contrast mode:** Power BI adapts to Windows high-contrast themes automatically. Check P1 once in Windows high-contrast (doc 06). **As built (M5):** not checked; Amirul skipped it (2026-10-07), and the README lists it under Limits.
 - **Reduced motion:** no custom motion to reduce (§6).
 - **Review tools during the build:** `design:accessibility-review` on exported PNGs, and `design:design-critique` on the first page before the rest are built.
 

@@ -1,6 +1,6 @@
 # Walkthrough script (≤ 2 min)
 
-Journey J2 from doc 03, without the Regions and State reliability pages (they stay out of every published export until the Energy Commission consents; M5 plan Q2). Recorded by Amirul as an MP4 with Snipping Tool, then uploaded through GitHub's README editor so it plays inline and stays out of git history (Q6).
+Journey J2 from doc 03, without the Regions and State reliability pages (they stay out of every published export until the Energy Commission consents; M5 plan Q2). Planned as an MP4 recorded by Amirul with Snipping Tool (see "As recorded" at the end for what was done instead), then uploaded through GitHub's README editor so it plays inline and stays out of git history (Q6).
 
 **Target length:** 1:50. The narration is about 210 words, about 1:30 at a calm 140 words a minute; the pauses for hovers and page loads bring it to about 1:50.
 
@@ -33,3 +33,12 @@ Stop the recording on the About page.
 - Neither Regions nor State reliability appears in any frame, including during navigation.
 - No other window, notification or file path is visible.
 - The numbers spoken match the screen: 20.4%, about 80%, 81%, 47%, fourth and fifth, 34 rules, 4 warnings.
+
+## As recorded (2026-10-07)
+
+Amirul asked Claude to record it. Result: a 1:51 MP4, 1280 × 836 (the 1280 × 720 canvas plus a caption bar), kept out of git (`data/private/walkthrough.mp4`) until it is uploaded through the README editor.
+
+- **Captions instead of a voice:** each scene's "Say" text is burned in as a caption, rechecked against the screen.
+- **Capture:** ffmpeg's `gfxcapture` (Windows Graphics Capture) records the Desktop window alone, so no other window, notification or the Windows activation watermark appears; a plain desktop capture showed both. The canvas is cropped out of the window, so the ribbon, panes and page tabs don't appear either.
+- **Changes from the script:** the Forecast scene picks a January day (the day list scrolls slowly to April; January and April are both named as the hardest months in the caption); hover tooltips don't appear (synthetic mouse moves don't raise them), so the captions carry their content; the first caption doesn't claim the KPI hover text, because Desktop's editing mode shows "CTRL+click here to follow" instead.
+- **Checks:** 1:51 (≤ 2:00); no frame shows the Regions or State reliability pages (their nav labels show, as in the PNGs); every number in a caption is on screen or in the README (20.4%, about 80%, 40%, 81%, 35,560 MW, 47%, 4th and 5th, 45%, 34 rules, 4 warnings).

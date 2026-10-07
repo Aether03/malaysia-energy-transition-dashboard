@@ -1,6 +1,6 @@
 # Plan: M5 — Finish and ship v1.0.0
 
-**Source:** [06 Implementation Plan](../06_Implementation_Plan.md) Phase 5 (tasks 5.1–5.9) · **Complexity:** Large (about 3 sessions; the pre-publish audit and the history decision are the careful parts) · **Status:** APPROVED 2026-10-07 (Q1–Q8 as proposed; Q2 option taken: the Energy Commission consent email, task 6.1, moved into M5 and sent at approval); in progress
+**Source:** [06 Implementation Plan](../06_Implementation_Plan.md) Phase 5 (tasks 5.1–5.9) · **Complexity:** Large (about 3 sessions; the pre-publish audit and the history decision are the careful parts) · **Status:** APPROVED 2026-10-07 (Q1–Q8 as proposed; Q2 option taken: the Energy Commission consent email, task 6.1, moved into M5 and sent at approval); steps 1–11 and 13 done 2026-10-07; step 12 (going public) waits on the GitHub Support purge
 
 ## Summary
 M5 turns the working project into a public v1.0.0:
@@ -111,6 +111,10 @@ M5 turns the working project into a public v1.0.0:
 | 11 | 5.8 | **Pre-publish audit:** secrets scan over all history, no `data/`, `.pbix` or PDF other than `docs/report.pdf` in any commit, licence credits complete (every `dim_data_source` row, README, P6), GSO/D5 values absent (history scan). **`ecc:security-reviewer` + `anthropic-skills:audit-my-work` go/no-go** | D + reviewers | Verdict "go"; findings fixed and re-checked |
 | 12 | 5.9 | **Asks you first:** public, tag `v1.0.0` + Release, profile link; walkthrough added to the README | F + you | The public URL opens in a private window; README video plays |
 | 13 | acceptance | Doc 01 Must sweep (each verification column, with evidence), docs 01/03/04/06 as built, `DATA_LICENSES.md`, plan Outcome, index, vault note, skill-test memory | D | The acceptance list below |
+| 10 → outcome | 5.8 | **Done 2026-10-07** (session 3; Gmail checked first: no new reply from the Energy Commission or GSO):<br>• **`--history` scan** (`73ab558`). It found the V015/`R__stg_handbook` figure but **not** the doc 05 row: that was a 3-digit cell written with a trailing zero, under the scanner's 4-digit floor. A label-plus-value check (a row label and a numerically equal value on one line) found it; each check was proven on the old history as a positive control.<br>• **Rewrite** on a throwaway clone: `git filter-repo --replace-text` replaced each leaked line with the text the M4 fix put there. Doc 05's leak is in the first commit, so every hash changed. **Re-point commit** (`3ccf906`): 53 cited hashes in 9 files, hash-only by a normalised diff; the new protocol commit `50dcc1a` holds a byte-identical `docs/forecast.md`. `docs/history_rewrite.md` has the method, the checks and the full map.<br>• **Checks on the clone:** history scan 0; the removed numbers 0 in every commit; pytest green; README-only rebuild on an empty DB: exit 0, 30 PASS / 4 WARN, both FINAL runs replayed identically, then `pipeline forecast` identical. Bundle backup: `C:\src\energy_dashboard_pre_rewrite_2026-10-07.bundle`.<br>• **Found before pushing:** GitHub keeps `refs/pull/1–7/head` (the Dependabot PRs; read-only) and serves old commits by SHA, so a force-push alone would not hide the leak. **Amirul chose option 2:** force-push this repo, delete the Dependabot branches, then ask GitHub Support to purge the PR refs and cached commits before going public (draft request under Outcome).<br>• **Not done by Claude:** the local reset to the rewritten history and the force-push were both refused by Claude Code's auto-mode classifier, so Amirul runs them (commands in the index). Done: live `EnergyDW` FINAL runs 7/8 re-pointed to the new hashes (2-row `UPDATE`, Amirul's OK); the two throwaway DBs dropped | — | — |
+| 11 → outcome | 5.8 | **Done 2026-10-07:** gitleaks 8.30.1 over every commit: 0; no `data/`, `.pbix`, `.abf`, `.env` or PDF other than `docs/report.pdf` in any commit; the public PDF has 7 pages, no restricted marker text and PDFium-only metadata.<br>• **Found and fixed:** two Energy Commission officers' personal email addresses in the index and this plan (removed from all history in the same rewrite, which was rebuilt from scratch on `C:\src\r4`); `DATA_LICENSES.md` had no Singapore row; CC BY attribution lacked the licence link, the "modified" statement and the Zenodo dataset's creator (Bunnak, 2025); real CC BY fixture excerpts were uncredited (now `tests/fixtures/README.md`); the scanner gained the label-plus-value check with 4 tests (`a091534`). Amirul kept his Gmail address and `Documents/` public.<br>• **`ecc:security-reviewer`:** GO WITH FIXES (0 CRITICAL / HIGH / MEDIUM; 8 LOW, one fixed: the `TrustServerCertificate` README note). **`audit-my-work` (pre-flight):** GO after the credit fixes. **Verdict: go**, conditional on the force-push and the Support purge | — | — |
+| 12 → outcome | 5.9 | **Waiting 2026-10-07** on the GitHub Support purge: the repo stays private until Support confirms the old PR refs and cached commits are gone. Not started: public, tag, Release, profile link. **Walkthrough recorded** (Amirul asked Claude to): `data/private/walkthrough.mp4`, 1:51, the script's narration as captions, captured with ffmpeg's `gfxcapture` (the Desktop window alone; details in `docs/walkthrough_script.md`). It is uploaded through the README editor at publication (Q6) | — | — |
+| 13 → outcome | acceptance | **Done 2026-10-07, except what waits for publication.**<br>• **Doc 01 Must sweep:** FR-01 ✓ the README-only rebuild downloads every source (r4, 2026-10-07) · FR-02 ✓ a second run merges 0 (M4 step 12) · FR-03 ✓ injected FAIL rolls back and is logged (M1; M5 step 3) · FR-04 ✓ raw/stg/dw/mart/meta, README · FR-06 ✓ twins 35/35 incl. the P1 KPIs · FR-07 ✓ (M1/M2) · FR-08 ✓ GUI rounds + twins (M2) · FR-09 ✓ P5 (M2) · FR-10 ✓ cited targets (M2 step 1) · FR-11 ✓ KPI definitions on P6 and in the KPI hover text; formulas in `seed/kpi.csv` · FR-12 ✓ GUI rounds M2–M5 and the walkthrough · FR-13 ✓ as built on Thailand/Singapore (M3) · FR-14 ✓ P6/P6b show the latest run · FR-15 ✓ 14 showcase queries; 13/13 README claims · FR-16 ✓ 30-second test (step 7) · **FR-17 ◐** PNGs + PDF in the repo; the video is recorded and goes up at publication · FR-18 ✓ fresh clone 6.8 min (step 9) and again today · FR-22 ✓ as built on open data (M3) · FR-23/24 ✓ 989/989 re-read (M4), local only until D5 consent.<br>• **NFRs:** 02 ✓ · 03 ✓ reconciliation · **04 ◐** high contrast skipped (Amirul), screen-reader pass open · 05 ✓ after the rewrite · 06 ✓ after the step 11 credit fixes · 07 ✓ PBIP, ruff, CI.<br>• **Docs as built:** 01 (NFR-05), 03 (exports), 04 (tabular digits verified; high contrast skipped), 06 (5.3, 5.4, 5.8, 5.9), `DATA_LICENSES.md` (D5 resend), `docs/a11y.md`, `docs/walkthrough_script.md` ("As recorded"), `docs/consent/st_request.md` (log). The Energy Commission resend was sent 2026-10-07 at Amirul's go | — | — |
 
 **Batching:** steps 2 and 3 can run in parallel (Sonnet on 2 while I do 3). Step 6 can be done anytime after step 4. Steps 10–12 are strictly in order.
 
@@ -151,15 +155,40 @@ git log --all --name-only --format= | grep -iE '\.pdf$|^data/|\.pbix$' | grep -v
 | Desktop quirks (second instance, overlays, unsaved-change prompts) | Medium | `Start-Process`; never `open_application` for focus; close without saving |
 
 ## Acceptance (the doc 06 M5 check, plus)
-- [ ] Every **Must** in doc 01 passes its verification column, with the evidence noted (FR-13/22 as built on Thailand/Singapore, as accepted in M3)
-- [ ] P6 + P6b: every source credited; consent status shown; run summary and DQ table current after a refresh; empty state works; the badge shows on an injected FAIL
-- [ ] Alt text on every visual; `docs/a11y.md` checklist ticked; `design:accessibility-review` findings fixed
-- [ ] PNGs, PDF and walkthrough visible on GitHub, without P3/P3b (Q2)
-- [ ] README passes the 30-second test; every number in it matches the warehouse
-- [ ] CI green; Dependabot on
-- [ ] Fresh clone < 30 min following only the README
-- [ ] History decision (Q1) carried out; the history scan finds 0; the replay works on a fresh clone
-- [ ] 5.8 verdict "go" from `ecc:security-reviewer` + `audit-my-work`
+- [ ] Every **Must** in doc 01 passes its verification column, with the evidence noted (FR-13/22 as built on Thailand/Singapore, as accepted in M3) **(2026-10-07: all pass except FR-17's video, which goes up at publication; sweep in the step 13 outcome)**
+- [x] P6 + P6b: every source credited; consent status shown; run summary and DQ table current after a refresh; empty state works; the badge shows on an injected FAIL
+- [ ] Alt text on every visual; `docs/a11y.md` checklist ticked; `design:accessibility-review` findings fixed **(done except the a11y checklist's high-contrast item, skipped by Amirul, and the screen-reader pass)**
+- [ ] PNGs, PDF and walkthrough visible on GitHub, without P3/P3b (Q2) **(PNGs and PDF yes; the walkthrough at publication)**
+- [x] README passes the 30-second test; every number in it matches the warehouse
+- [x] CI green; Dependabot on
+- [x] Fresh clone < 30 min following only the README
+- [ ] History decision (Q1) carried out; the history scan finds 0; the replay works on a fresh clone **(rewrite done and verified on the clone; the force-push, Dependabot branch deletion and GitHub Support purge are Amirul's)**
+- [x] 5.8 verdict "go" from `ecc:security-reviewer` + `audit-my-work` **(go, conditional on the purge)**
 - [ ] Repo public, `v1.0.0` tagged, profile link added (your go)
-- [ ] Twins all PASS; validator 0 problems; tests green
-- [ ] Docs, `DATA_LICENSES.md`, index, vault note and skill-test memory updated; pushed
+- [x] Twins all PASS; validator 0 problems; tests green
+- [ ] Docs, `DATA_LICENSES.md`, index, vault note and skill-test memory updated; pushed **(updated 2026-10-07; pushed with the force-push)**
+
+## Outcome (2026-10-07; publication pending)
+
+**Shipped in M5** (the release notes source for `v1.0.0`):
+- **Report:** P6 About + P6b Data quality (sources, licences, consent, run summary, every DQ rule with a status chip), a Fail badge on every page, the ⓘ button, alt text on every visual, report-page tooltips (T2) on the ASEAN page, tab order fixed.
+- **Viewable without Power BI:** 7 page PNGs and a PDF (Regions and State reliability stay local until the Energy Commission consents), and a 1:51 captioned walkthrough.
+- **Reproducible and checked:** a README with 4 findings re-checked against the warehouse by script, CI (ruff, pytest; sqlfluff non-blocking), Dependabot, and a timed fresh-clone rebuild (6.8 min).
+- **Hardening:** a session applock on every pipeline command, an out-of-order migration check, a DENY on `meta.schema_version`, role tests, and the transform-review LOW items.
+- **Clean history:** two restricted figures and two third-party addresses removed from every commit (`docs/history_rewrite.md`); the forecast's locked protocol still replays identically.
+
+**Lessons:**
+- A history-rewrite plan must check what else the host keeps: GitHub's read-only PR refs and SHA-addressable caches meant a force-push alone was not enough.
+- Every guard needs a positive control on the case it exists for: the value scanner was blind to the very leak it was written for.
+- Live data drifts: the README needs a scripted number check and a stated data vintage, not a one-time audit (Ember's 6 Oct release moved a rank).
+- Recording next to an agent: capture the target window (Windows Graphics Capture), not the desktop.
+
+**For Amirul, to finish M5:**
+1. Bring the local repo onto the rewritten history, force-push, and delete the 7 Dependabot branches (commands in the index).
+2. Submit the GitHub Support request below at https://support.github.com (Support takes requests through its portal, not by email).
+3. When Support confirms: step 12. Claude asks first, then makes the repo public, tags `v1.0.0` with these notes, uploads the walkthrough, and shows the profile README link before adding it.
+
+**GitHub Support request (draft):**
+> **Subject:** Remove cached commits and pull-request refs after a history rewrite: Aether03/malaysia-energy-transition-dashboard
+>
+> I rewrote the history of my private repository Aether03/malaysia-energy-transition-dashboard with git-filter-repo and force-pushed it. The old commits contained (a) figures from a statistics publication whose licence forbids redistribution, and (b) two third parties' personal email addresses. Seven closed Dependabot pull requests (#1–#7) still reference the old commits through `refs/pull/N/head` and `refs/pull/N/merge`, and the old commits may stay reachable by SHA. Before I make the repository public, please remove those pull-request refs (or the pull requests) and purge cached views of the unreachable commits. The old `main` ended at `187311803c7ddf6db302c44919f2c11ecca2bfe7`; `docs/history_rewrite.md` in the repository maps every old commit to its new one. Thank you.

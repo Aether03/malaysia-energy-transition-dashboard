@@ -101,7 +101,7 @@ Priority uses MoSCoW: **M**ust / **S**hould / **C**ould.
 | NFR-02 **Reproducibility** | Pinned tool and package versions. Setup from a clean clone takes under 30 minutes, excluding tool installs. |
 | NFR-03 **Accuracy** | Headline figures reconcile to source within ±0.5%. Every KPI has a written definition and unit. |
 | NFR-04 **Accessibility** | Colour-blind-safe palette, WCAG AA text contrast, alt text on report visuals, and no information carried by colour alone. |
-| NFR-05 **Security / privacy** | No passwords, connection strings with secrets, or personal data committed to the repo. Public data only. |
+| NFR-05 **Security / privacy** | No passwords, connection strings with secrets, or personal data committed to the repo. Public data only. **As built (M5):** two handbook figures and two third-party email addresses were removed from every commit before publication (`docs/history_rewrite.md`); gitleaks finds 0 in all history. |
 | NFR-06 **Licensing** | Every dataset's licence permits redistribution and is credited as its licence requires (e.g. CC BY). |
 | NFR-07 **Maintainability** | Report stored in a text-diffable format if possible (**Unverified**: Power BI Project/PBIP, to check in doc 02). SQL and Python are formatted and commented. |
 | NFR-08 **Platform** | Windows 11 (Power BI Desktop is Windows-only). Viewers need only a web browser. |

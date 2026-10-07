@@ -1,17 +1,21 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5 IN PROGRESS: steps 1–9 done (sessions 1–2, 2026-10-07); resume at step 10 (history decision, Q1), in a fresh session.**
+**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5: steps 1–11 and 13 done (2026-10-07); step 12 (going public) waits on Amirul's force-push and the GitHub Support purge. Resume point below.**
 
-**M5 session 2 (2026-10-07): steps 6–9 done** (outcome row "6–9" in `plans/M5_plan.md`). **Resume at step 10** (session 3 = steps 10–13, the irreversible ones).
-- **Built:** `docs/walkthrough_script.md` (Amirul records it), the README + `tools/check_readme_numbers.py` (13 claims rebuilt from the showcase queries; run it after every `pipeline run`), CI (ruff check + format, sqlfluff non-blocking, pytest; green), Dependabot, `.sqlfluff`, `ruff format` on 41 files (`pipeline/forecast/` excluded, `.git-blame-ignore-revs`).
-- **Data moved to Ember's 6 Oct 2026 release** (Amirul's call): Thailand revised up, so **Malaysia is 4th of 6 on renewable share** (was 3rd). Finding 3, the README, the P1 box and the exports are updated. Malaysia's own numbers are unchanged.
-- **Fresh clone:** 6.8 min following only the README. Clone into a short path (Windows 260-char limit). `C:\src` holds two throwaway clones: Amirul deletes it (Claude's delete is blocked there).
-- **Open for Amirul:**
-  - Send the Energy Commission resend (Gmail draft to the two officers the Energy Commission named).
-  - The 7 Dependabot PRs (all green; none touches a fingerprinted package): merge or close them. `.github/dependabot.yml` ignores lightgbm, numpy, pandas and holidays, because the forecast replay fingerprints their versions and a bump would make every `pipeline run` refuse the replay.
-  - Record the walkthrough (`docs/walkthrough_script.md`).
-  - From session 1: Ctrl+click one P6 source link and the GitHub button; the Windows high-contrast check (or skip).
+**M5 session 3 (2026-10-07): steps 10, 11 and 13 done; step 12 (going public) waits on GitHub Support** (outcome rows and Outcome in `plans/M5_plan.md`).
+- **History rewritten** (Q1, Amirul chose option 2): the 2 handbook figures and 2 third-party email addresses are gone from every commit, and every hash changed (`docs/history_rewrite.md` maps old → new; the live DB's FINAL runs 7/8 are re-pointed). Verified on the clone `C:\src\r4`: tests, history scan 0, gitleaks 0, README-only rebuild with both FINAL runs replayed identically.
+- **Resume here: Amirul runs these** (Claude Code's auto mode refused the reset and the force-push), from `Energy_Dashboard`:
+  1. `git fetch C:\src\r4 main`, then `git reset --hard FETCH_HEAD` (local `main` becomes the rewritten history; `data/` is untouched; the old history is in `C:\src\energy_dashboard_pre_rewrite_2026-10-07.bundle`).
+  2. `git push --force-with-lease origin main`, then `git push origin --delete dependabot/github_actions/actions/checkout-7 dependabot/github_actions/actions/setup-python-7 dependabot/pip/charset-normalizer-3.5.2 dependabot/pip/markupsafe-3.0.4 dependabot/pip/platformdirs-4.12.3 dependabot/pip/python-dotenv-1.2.4 dependabot/pip/tzdata-2026.5` (closes PRs #1–7).
+  3. Submit the GitHub Support request (draft under Outcome in `plans/M5_plan.md`) at https://support.github.com.
+  4. When Support confirms: a fresh Claude session does step 12 (asks first; public, `v1.0.0` + Release, walkthrough upload, profile link shown first). Check CI on the new `main` first.
+- **Walkthrough recorded by Claude:** `data/private/walkthrough.mp4` (git-ignored; 1:51, captions instead of a voice; `docs/walkthrough_script.md` "As recorded").
+- **Consent:** the Energy Commission resend went to the two named officers on 2026-10-07 (Amirul's go); GSO: no reply. Check Gmail at the start of each session. The old resend draft is still in Gmail Drafts: discard it.
+- **Also open for Amirul:** delete `C:\src` once the push is confirmed (move the bundle somewhere safe first); LinkedIn Featured after publication; the screen-reader pass (optional). The high-contrast check is skipped (Amirul).
+- **Lessons:** GitHub keeps read-only PR refs and SHA-addressable commits after a force-push; the value scanner needed a label-plus-value check (positive controls now in tests); record the Desktop window with ffmpeg `gfxcapture`, not the desktop (the Claude window and the activation watermark show in desktop captures).
 - **Twin-check runbook:** run `tools/model_refresh.ps1` first; a stale Import cache gave 23/35 on 2026-10-07.
+
+**M5 session 2 (2026-10-07): steps 6–9 done** (outcome row "6–9" in `plans/M5_plan.md`): walkthrough script, README + `tools/check_readme_numbers.py`, CI, Dependabot, `ruff format`; data moved to Ember's 6 Oct 2026 release (Malaysia 4th of 6 on renewable share); fresh clone 6.8 min.
 
 **M3 COMPLETE (2026-10-05):**
 - **Forecast:** both grids beat the baseline in the locked, once-only 2024 backtest (TH +46.9%, SG +34.5%).

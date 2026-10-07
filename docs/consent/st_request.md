@@ -37,3 +37,8 @@ Amirul
 Electrical Engineering graduate, UiTM
 amirulaqmalazhar@gmail.com
 GitHub: https://github.com/Aether03
+
+## Log
+
+- 2026-10-07: sent to sc@st.gov.my, asking them to forward it.
+- 2026-10-07: the Strategic Communications Section replied that the request should go directly to two named officers of the Energy Data and Research Unit. Resent the same day with the same text and a first paragraph explaining the redirect (addresses not recorded here: they are personal).

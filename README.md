@@ -131,7 +131,7 @@ All data are used modified (cleaned, reshaped, aggregated and combined into deri
 - **Official vs Ember capacity share.** Malaysia's official renewable share of capacity was 31% at the end of 2025; Ember's grid basis gives 24.4%. The report shows both and explains the definition gap.
 - **The forecast is for Thailand and Singapore, not Malaysia**, until GSO consents. It covers one test year; Thailand's hardest month is April (the Songkran holiday), and against a weekday-aware naive rule its margin is smaller (33.9%).
 - **Static exports cut scrolling content.** Tables and lists that scroll show only their first rows in the PNGs and PDF (the sources, KPI definitions and data-quality rules on About and Data quality, the capacity-factor bars, the ASEAN country list); the full source list is above. Generation's main chart is only about 40 px tall, and three labels truncate ([`docs/a11y.md`](docs/a11y.md)).
-- **Accessibility checks not yet done:** Windows high-contrast mode and a screen-reader pass. Alt text, AA contrast, tab order and no-colour-only encoding are in place.
+- **Accessibility checks not done:** Windows high-contrast mode (skipped) and a screen-reader pass. Alt text, AA contrast, tab order and no-colour-only encoding are in place.
 - **Power BI Desktop only.** There is no Power BI Service publication, so the report needs Windows, SQL Server and Desktop to run live; the images and PDF are the portable view.
 
 ## Repository map
