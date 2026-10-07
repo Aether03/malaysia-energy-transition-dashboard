@@ -80,6 +80,9 @@ def build() -> list[dict]:
         },
         "objects": {
             "legend": [{"properties": {"show": lit("true"), "position": text("Top")}}],
+            # Direct labels at the right edge (doc 04 §3.2 relief: colour is never the only key). Desktop hides
+            # labels that would collide; the legend stays on. Shape captured by save in M5 step 5.
+            "seriesLabels": [{"properties": {"show": lit("true")}}],
             "dataPoint": rb.series_colours("dim_source", "display_name", colours),
         },
         "visualContainerObjects": rb.container("Generation by source (TWh or % of the year's total, per the Unit toggle)"),

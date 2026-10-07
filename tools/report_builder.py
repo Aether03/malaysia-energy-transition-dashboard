@@ -153,6 +153,9 @@ def visual(
         # Desktop focuses the HIGHEST tabOrder first (its Tab order pane lists it as 1; M5 GUI round 2), so
         # reading order = ascending z is written as a descending tabOrder.
         position["tabOrder"] = TAB_ORDER_TOP - z
+    else:
+        # Without a tabOrder Desktop lists the visual FIRST; its own low z sorts it after all content (901+).
+        position["tabOrder"] = z
     out = {"$schema": SCHEMA, "name": name, "position": position, "visual": body}
     if filter_config:
         out["filterConfig"] = filter_config  # container top level, a sibling of "visual" (card_new.json)

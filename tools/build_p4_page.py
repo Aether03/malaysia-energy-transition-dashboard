@@ -184,7 +184,9 @@ def heatmap() -> dict:
             "FillRule": {
                 "linearGradient2": {
                     "min": {"color": {"Literal": {"Value": "'minColor'"}}},
-                    "max": {"color": {"Literal": {"Value": "'maxColor'"}}},
+                    # Not the theme's maxColor (#0d366b): dark values on it were ~2:1. #5a91d6 keeps the 8 pt
+                    # #0b0b0b values at 6:1 in every cell (WCAG 1.4.3; M5 step 5 accessibility review).
+                    "max": {"color": {"Literal": {"Value": "'#5a91d6'"}}},
                     "nullColoringStrategy": {"strategy": {"Literal": {"Value": "'asZero'"}}},
                 }
             },
@@ -208,7 +210,7 @@ def heatmap() -> dict:
                         "metadata": "_Measures.Avg Load (GW)",
                     },
                 },
-                {"properties": {"fontSize": lit("8D")}},
+                {"properties": {"fontSize": lit("8D"), "fontColor": solid(rb.TEXT_PRIMARY)}},
             ],
             "columnHeaders": [
                 {

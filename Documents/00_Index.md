@@ -1,6 +1,6 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5 IN PROGRESS: steps 1–4 done (session 1, 2026-10-07); resume at step 5 (PDF export + PNGs), in a fresh session.**
+**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5 IN PROGRESS: steps 1–5 done (session 1, 2026-10-07); resume at step 6 (walkthrough script), in a fresh session.**
 
 **M3 COMPLETE (2026-10-05):**
 - **Forecast:** both grids beat the baseline in the locked, once-only 2024 backtest (TH +46.9%, SG +34.5%).
@@ -8,9 +8,10 @@
 - **Acceptance:** the empty-DB rebuild passes and replays the FINAL runs identically. Twins 23/23; 509 tests.
 - **Details:** `plans/M3_plan.md` (Outcome).
 
-**M5 session 1 (2026-10-07): steps 1–4 done** (outcome rows in `plans/M5_plan.md`). **Resume at step 5** (session 2 = steps 5–9; session 3 = steps 10–13).
+**M5 session 1 (2026-10-07): steps 1–5 done** (outcome rows in `plans/M5_plan.md`). **Resume at step 6** (session 2 = steps 6–9; session 3 = steps 10–13).
+- **Step 5:** `docs/report.pdf` + `docs/img/01–07_*.png` (P3/P3b dropped by `tools/export_pages.py`, which fails closed); `docs/a11y.md` (heatmap contrast fixed, series labels added; open minors listed). Re-export: Desktop → File → Export → Export to PDF, copy the newest `%TEMP%\Power BI Desktop\print-job-*\EnergyTransition.pdf` to `data/private/report_full.pdf`, run `tools/export_pages.py`. Run `pytest` with Desktop closed (RAM).
 - **Built:** P6 About + P6b Data quality, the Fail badge (Data quality nav item, every page; invisible at 0), the ⓘ button (foot of the rail), alt text on every visual, the T2 report-page tooltip back on P5, the hardening batch (applock, version order, V017/V018), and the DOSM gap partly explained. Twins 35/35; 971 tests; validator 269 visuals, 0 problems.
-- **Check first at step 5's GUI round** (validator-only so far): tab order is now written as `1000 − z` (Desktop focuses the highest `tabOrder` first), the T2 "gCO2e/kWh" card label, the P6 method-notes width. Also Ctrl+click one source link and the GitHub button once.
+- **Amirul, once:** Ctrl+click one P6 source link and the GitHub button in Desktop (Claude doesn't click external links).
 - **Desktop quirks learned:** `id` (like `at`) is a SYNTAXERROR as a DAX variable name; a new relationship from a table with NULL keys gives the dimension a blank row (use `ALLNOBLANKROW`, and return BLANK, not ""); report-page tooltips render when `visualTooltip` has only `show` + `section`; Desktop can hang on close: confirm `report/` is untouched, then end the process.
 - **Open:** the Windows high-contrast check (a system setting: Amirul toggles it, or we skip it); `ruff format` would change 40 files (decide at step 8).
 - **Consent emails sent 2026-10-07** (Amirul's go):

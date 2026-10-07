@@ -104,6 +104,9 @@ def build() -> list[dict]:
         },
         "objects": {
             "legend": [{"properties": {"show": lit("true"), "position": text("Top")}}],
+            # Direct labels at the right edge (doc 04 §3.2 relief: colour is never the only key). Desktop hides
+            # labels that would collide; the legend stays on. Shape captured by save in M5 step 5.
+            "seriesLabels": [{"properties": {"show": lit("true")}}],
             # Colour bound to the source, not the series order (doc 04 §3.6; M1 carry-over).
             "dataPoint": rb.series_colours("dim_source", "display_name", rb.source_colours()),
         },

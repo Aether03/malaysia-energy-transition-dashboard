@@ -104,7 +104,7 @@
                           "max": {
                             "color": {
                               "Literal": {
-                                "Value": "'maxColor'"
+                                "Value": "'#5a91d6'"
                               }
                             }
                           },
@@ -140,6 +140,17 @@
               "expr": {
                 "Literal": {
                   "Value": "8D"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#0b0b0b'"
+                    }
+                  }
                 }
               }
             }

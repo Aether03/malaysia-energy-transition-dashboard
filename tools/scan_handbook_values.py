@@ -42,6 +42,14 @@ def tokens() -> set[str]:
     return {v for v in values if pattern.fullmatch(v) and sum(c.isdigit() for c in v) >= 4}
 
 
+def _pdf_lines(path: Path) -> list[str]:
+    """The text layer of a PDF (docs/report.pdf, M5 step 5): PNGs can't be scanned, the PDF of the same pages can."""
+    import pypdfium2 as pdfium
+
+    doc = pdfium.PdfDocument(path)
+    return [line for i in range(len(doc)) for line in doc[i].get_textpage().get_text_range().splitlines()]
+
+
 def main() -> int:
     toks = tokens()
     if not toks:
@@ -54,7 +62,7 @@ def main() -> int:
         if name.endswith(SKIP_SUFFIXES) or name.startswith("tests/fixtures/"):
             continue  # fixtures are synthetic by construction and tested for it
         try:
-            lines = (ROOT / name).read_text(encoding="utf-8").splitlines()
+            lines = _pdf_lines(ROOT / name) if name.lower().endswith(".pdf") else (ROOT / name).read_text(encoding="utf-8").splitlines()
         except (UnicodeDecodeError, FileNotFoundError):
             continue
         matched = {i for i, rx in enumerate(regexes) if any(rx.search(line) for line in lines)}

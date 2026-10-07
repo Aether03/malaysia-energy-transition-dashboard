@@ -10,11 +10,15 @@ import json
 import pathlib
 import shutil
 import subprocess
+import sys
 
 import pytest
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 HANDBOOK_FIXTURES = "tests/fixtures/handbook/"
+# The one PDF that may be tracked: the report export without the restricted pages (M5 plan Q2, written by
+# tools/export_pages.py). Its text is checked below and value-scanned by tools/scan_handbook_values.py.
+PUBLIC_PDFS = {"docs/report.pdf"}
 
 
 @pytest.fixture(scope="module")
@@ -33,9 +37,23 @@ def tracked():
     return paths
 
 
-def test_no_tracked_file_is_a_pdf(tracked):
-    pdfs = [p for p in tracked if p.lower().endswith(".pdf")]
+def test_no_tracked_file_is_a_pdf_except_the_public_report(tracked):
+    pdfs = [p for p in tracked if p.lower().endswith(".pdf") and p not in PUBLIC_PDFS]
     assert pdfs == []
+
+
+def test_the_public_report_pdf_holds_no_restricted_page():
+    path = ROOT / "docs" / "report.pdf"
+    if not path.exists():
+        pytest.skip("docs/report.pdf has not been exported yet")
+    pdfium = pytest.importorskip("pypdfium2")
+    sys.path.insert(0, str(ROOT / "tools"))
+    from export_pages import RESTRICTED_MARKERS
+
+    doc = pdfium.PdfDocument(path)
+    for i in range(len(doc)):
+        text = doc[i].get_textpage().get_text_range()
+        assert not [m for m in RESTRICTED_MARKERS if m in text], f"page {i + 1} carries restricted page text"
 
 
 def test_nothing_under_data_or_docs_references_is_tracked(tracked):
