@@ -90,7 +90,7 @@ Under 30 minutes once the tools are installed. Windows 11 only (SQL Server and P
    py -3.13 -m venv .venv
    .venv\Scripts\python -m pip install -r requirements.txt
    ```
-3. Create the database and point the pipeline at it. `.env.example` holds the defaults (`localhost`, `EnergyDW`); no password is stored, since the pipeline uses Windows authentication:
+3. Create the database and point the pipeline at it. `.env.example` holds the defaults (`localhost`, `EnergyDW`); no password is stored, since the pipeline uses Windows authentication. The connection trusts the server's self-signed certificate (`TrustServerCertificate=yes`), which is meant for a local instance, so keep `SQL_SERVER` on this PC:
    ```powershell
    copy .env.example .env
    sqlcmd -S localhost -E -Q "CREATE DATABASE EnergyDW"
@@ -111,16 +111,16 @@ Under 30 minutes once the tools are installed. Windows 11 only (SQL Server and P
 
 | Source | Licence | Used for |
 |---|---|---|
-| [Ember](https://ember-energy.org/data/yearly-electricity-data/) Yearly Electricity Data | CC BY 4.0 | Generation, capacity, emissions and demand for Malaysia and ASEAN |
-| [Our World in Data](https://github.com/owid/energy-data) energy dataset | CC BY 4.0 | Population (per-capita demand), cross-checks |
-| DOSM via [data.gov.my](https://data.gov.my) | CC BY 4.0 | Data-quality cross-check |
-| Thai Power System dataset, EGAT via [Zenodo](https://doi.org/10.5281/zenodo.17109911) | CC BY 4.0 | Hourly load, forecast, interconnector flows |
-| Energy Market Authority Singapore system demand | Singapore Open Data Licence v1.0 | Hourly load and forecast |
+| [Ember](https://ember-energy.org/data/yearly-electricity-data/) Yearly Electricity Data | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Generation, capacity, emissions and demand for Malaysia and ASEAN |
+| [Our World in Data](https://github.com/owid/energy-data) energy dataset | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Population (per-capita demand), cross-checks |
+| DOSM via [data.gov.my](https://data.gov.my) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Data-quality cross-check |
+| Thai Power System dataset (Bunnak, 2025; EGAT data) via [Zenodo](https://doi.org/10.5281/zenodo.17109911) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Hourly load, forecast, interconnector flows |
+| Energy Market Authority Singapore system demand | [Singapore Open Data Licence v1.0](https://www.ema.gov.sg/terms-of-use) | Hourly load and forecast |
 | Energy Commission, Malaysia Energy Statistics Handbook 2023 | All rights reserved; written consent requested | Regions and State reliability pages (local only) |
 | National RE targets (12MP / SEDA MyRER 2021, NETR 2023) | Cited facts | Target markers |
-| geoBoundaries MYS ADM1 | ODbL 1.0 | State boundaries: "© OpenStreetMap contributors, via geoBoundaries" |
+| geoBoundaries MYS ADM1 | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/) | State boundaries: "© OpenStreetMap contributors, via geoBoundaries" |
 
-Full terms and how each one is honoured: [`DATA_LICENSES.md`](DATA_LICENSES.md). Code: MIT ([`LICENSE`](LICENSE)).
+All data are used modified (cleaned, reshaped, aggregated and combined into derived metrics), and no source endorses this project. Full terms and how each one is honoured: [`DATA_LICENSES.md`](DATA_LICENSES.md). Code: MIT ([`LICENSE`](LICENSE)).
 
 - **Energy Commission handbook (D5).** Its copyright page requires written consent to reproduce any part. The pipeline downloads the public PDF at build time and nothing from it is committed, not even in test fixtures (a guard test and a value scan enforce this). Consent was requested on 7 October 2026. Until it is granted, the Regions and State reliability pages render only on your own machine and are left out of every published image, PDF and video, and the pages carry a "permission requested" notice.
 - **Peninsular Malaysia hourly demand (GSO / TNB).** The Grid System Operator's terms forbid downloading or storing its data without TNB's written consent, which was requested on 30 September 2026 with no reply yet. The grid and forecast pages therefore use Thailand's open hourly data as a stand-in, and say so in a banner. The GSO adapter stays switched off until consent arrives.

@@ -1,17 +1,20 @@
 # Data sources and licences
 
-The code in this repository is MIT-licensed (see `LICENSE`). The **data** belongs to its publishers and is used under their terms below. Raw source files are never committed (`data/raw/` is git-ignored); the pipeline downloads them at build time.
+The code in this repository is MIT-licensed (see `LICENSE`). The **data** belongs to its publishers and is used under their terms below. Raw source files are not committed (`data/raw/` is git-ignored); the pipeline downloads them at build time. The exceptions are small excerpts of the open sources used as test fixtures, credited in [`tests/fixtures/README.md`](tests/fixtures/README.md).
 
 | Code | Source | Licence / terms | How it is used here |
 |---|---|---|---|
 | D1 | Ember, Yearly Electricity Data (https://ember-energy.org/data/yearly-electricity-data/) | CC BY 4.0 | Generation mix, capacity, emissions, demand for Malaysia and ASEAN |
 | D2 | Our World in Data, Energy dataset (https://github.com/owid/energy-data) | CC BY 4.0 (cite OWID and its underlying sources) | Population, per-capita electricity, cross-checks |
 | D3 | Department of Statistics Malaysia via data.gov.my (electricity_supply, electricity_consumption) | CC BY 4.0 (Government of Malaysia) | Data-quality cross-check only |
-| DTH | Thai Power System: Hourly Power Generation, Demand, and Cross-Border Flows (Zenodo, doi:10.5281/zenodo.17109911) | CC BY 4.0 | Hourly grid load, forecast, Thailand-Malaysia interconnector flows |
+| DTH | Phumthep Bunnak (2025), Thai Power System: Hourly Power Generation, Demand, and Cross-Border Flows, v1.0 (Zenodo, doi:10.5281/zenodo.17109911) | CC BY 4.0 | Hourly grid load, forecast, Thailand-Malaysia interconnector flows |
+| DSG | Energy Market Authority of Singapore, Half-hourly System Demand Data (https://www.ema.gov.sg/resources/statistics/half-hourly-system-demand-data) | Singapore Open Data Licence v1.0: "Contains information from Half-hourly System Demand Data accessed on 2026-10-03 from the Energy Market Authority of Singapore, made available under the terms of the Singapore Open Data Licence version 1.0 (https://www.ema.gov.sg/terms-of-use)" | Hourly grid load and forecast. Two weekly files are redistributed unmodified as test fixtures (`tests/fixtures/singapore/`, with the same statement) |
 | D4 | Grid System Operator (GSO), Tenaga Nasional Berhad | Reuse requires TNB's prior written consent. **Not used** unless consent is granted | Disabled by default (`gso.enabled = false`) |
 | D5 | Energy Commission (Suruhanjaya Tenaga), Malaysia Energy Statistics Handbook 2023 | All rights reserved; reproduction needs the Energy Commission's prior written consent (see below). Consent requested 2026-10-07 (`docs/consent/st_request.md`) | Extracted locally at build time; nothing from it is committed; only derived, credited charts are shown (Regions and State reliability pages) |
 | D6 | National Energy Transition Roadmap targets (via MIDA and IEA summaries) | Cited facts | NETR target line |
 | GEO | geoBoundaries MYS ADM1, boundaryID `MYS-ADM1-15666254` (OpenStreetMap-derived) | ODbL 1.0: "Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0)" | State boundaries for the reliability map; redistributed unmodified (see below) |
+
+**Changes.** CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/) and Singapore Open Data Licence data are used **modified**: the pipeline cleans, reshapes, aggregates and combines them into derived metrics (shares, ranks, intensities, per-capita values, load factors, forecasts). The transformations are the SQL in `sql/` and the Python in `pipeline/`. No source endorses this project.
 
 ## D5: Energy Commission handbook
 

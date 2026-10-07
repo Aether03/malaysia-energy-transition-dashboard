@@ -12,6 +12,11 @@ figures) are possible, so each hit is reviewed by hand.
 
 `--history` reads each distinct blob reachable from any ref once, under the first path git lists for
 it, and names the commits that added a matching blob, so a leak can be traced and rewritten.
+
+Short values (fewer than 4 digits) are too common to match on their own, and that is how one leak got
+past this scan: a 3-digit cell written with an extra trailing zero (M5 step 10). So each line is also
+checked in context: a line that names a handbook row label (a state, a region, ...) and holds a number
+numerically equal to one of that row's cells (a decimal, or at least 3 digits; not a year) is flagged.
 """
 
 from __future__ import annotations
@@ -44,6 +49,35 @@ def tokens() -> set[str]:
     values = {r[0].strip() for r in rows}
     pattern = re.compile(r"[\d,]*\.\d+|\d{1,3}(,\d{3})+(\.\d+)?")
     return {v for v in values if pattern.fullmatch(v) and sum(c.isdigit() for c in v) >= 4}
+
+
+NUMBER = re.compile(r"(?<![\d.])\d[\d,]*(?:\.\d+)?(?!\d)")
+
+
+def row_values() -> dict[str, set[float]]:
+    """Row label -> the numeric cells of that row (decimals, or at least 3 digits); labels under 4 characters skipped."""
+    with connect() as conn:
+        rows = conn.cursor().execute("SELECT row_label, value_text FROM raw.handbook_cell").fetchall()
+    out: dict[str, set[float]] = {}
+    for label, text in rows:
+        v = (text or "").strip().replace(",", "").rstrip("%")
+        if len(label.strip()) >= 4 and re.fullmatch(r"-?\d+(\.\d+)?", v) and ("." in v or len(v.lstrip("-")) >= 3):
+            out.setdefault(label.strip(), set()).add(round(float(v), 6))
+    return out
+
+
+def context_lines(lines: list[str], labelled: dict[re.Pattern[str], set[float]]) -> list[int]:
+    """Line numbers where a row label and a number equal to one of that row's cells appear together."""
+    hits = []
+    for n, line in enumerate(lines, 1):
+        for rx, values in labelled.items():
+            if rx.search(line) and any(
+                ("." in s or len(s) >= 3) and not re.fullmatch(r"(19|20)\d\d", s) and round(float(s), 6) in values
+                for s in (m.replace(",", "") for m in NUMBER.findall(line))
+            ):
+                hits.append(n)
+                break
+    return hits
 
 
 def _pdf_lines(source: Path | bytes) -> list[str]:
@@ -107,22 +141,27 @@ def main() -> int:
         print("raw.handbook_cell is empty: run the pipeline first")
         return 1
     regexes = [re.compile(r"(?<![\d.,])" + re.escape(t) + r"(?!\d)") for t in toks]
+    labelled = {re.compile(r"\b" + re.escape(label) + r"\b"): v for label, v in row_values().items()}
     problems = checked = 0
     for name, oid, lines in _history_blobs() if history else _worktree_files():
         checked += 1
         matched = {i for i, rx in enumerate(regexes) if any(rx.search(line) for line in lines)}
-        if not matched:
+        in_context = context_lines(lines, labelled)
+        if not matched and not in_context:
             continue
         line_nos = sorted({n for n, line in enumerate(lines, 1) if any(regexes[i].search(line) for i in matched)})
         # A blob in history may be an older version of a reviewed file, with fewer of its coincidences.
         known = KNOWN.get(name, 0)
         status = "known coincidence" if (len(matched) <= known if history else len(matched) == known) else "CHECK"
+        if in_context:
+            status = "CHECK"
         problems += status == "CHECK"
         where = ""
         if oid and status == "CHECK":
             added = _git("log", "--all", "--format=%h", f"--find-object={oid}").split()
             where = f", blob {oid[:10]}, in commit(s) {' '.join(added)}"
-        print(f"{status}: {name}: {len(matched)} token(s), lines {line_nos}{where}")
+        context = f"; label + value on lines {in_context}" if in_context else ""
+        print(f"{status}: {name}: {len(matched)} token(s), lines {line_nos}{context}{where}")
     unit = "blobs in all history" if history else "files"
     print(f"{len(toks)} tokens checked against {checked} {unit}; {problems} file(s) to check")
     return 1 if problems else 0
