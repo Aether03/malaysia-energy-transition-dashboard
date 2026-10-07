@@ -22,7 +22,7 @@ Journey J2 from doc 03, without the Regions and State reliability pages (they st
 | 0:18–0:36 | Generation | Click **%** in the **Unit** box. Pause 2 s. Click **TWh**. Hover the **Coal** bar in **Capacity factor by source** | "Fossil fuels still supply about 80%. Generation grew 40% since 2015, and all the fossil growth was coal. Capacity factor shows how hard each fleet runs: coal at 81%." |
 | 0:36–0:52 | Grid load | Ctrl+click **Grid load** on the rail. Hover the darkest cell in the heatmap (Apr–May, about 21:00) | "Malaysia's grid operator hasn't licensed its hourly data yet, so the grid pages use Thailand's open data as a stand-in, as the banner says. Demand peaks on hot-season evenings." |
 | 0:52–1:12 | Forecast | Ctrl+click **Forecast**. Open **Backtest day**, pick any day in **April 2024**. Pause 3 s on the chart | "A day-ahead LightGBM forecast, tested once on all of 2024 under a protocol I locked in advance. It cuts hourly error by 47% against last week's same hour, and April, with Songkran, is its hardest month." |
-| 1:12–1:34 | ASEAN → Country Deep Dive | Ctrl+click **ASEAN**. Hover **Vietnam** in the carbon-intensity bars until the country tooltip appears. Right-click **Vietnam** → **Drill through** → **Country Deep Dive**. Pause 2 s. Ctrl+click **Back** | "Among six ASEAN peers, Malaysia is third on renewable share but fifth on carbon intensity, because coal is 45% of its mix. Any country drills through to its own deep dive." |
+| 1:12–1:34 | ASEAN → Country Deep Dive | Ctrl+click **ASEAN**. Hover **Vietnam** in the carbon-intensity bars until the country tooltip appears. Right-click **Vietnam** → **Drill through** → **Country Deep Dive**. Pause 2 s. Ctrl+click **Back** | "Among six ASEAN peers, Malaysia is fourth on renewable share and fifth on carbon intensity, because coal is 45% of its mix. Any country drills through to its own deep dive." |
 | 1:34–1:50 | Data quality → About | Ctrl+click **Data quality**. Click **Ember Yearly Electricity Data** in **Rows per source**; the rules table filters. Click it again to clear. Ctrl+click the **ⓘ** at the foot of the rail | "Thirty-four data-quality rules run on every pipeline load; the four warnings are known differences between sources. And every source and licence is credited here. The code and SQL are on GitHub." |
 
 Stop the recording on the About page.
@@ -32,4 +32,4 @@ Stop the recording on the About page.
 - Length ≤ 2:00 (trim the head and tail in Clipchamp or the Photos app if needed).
 - Neither Regions nor State reliability appears in any frame, including during navigation.
 - No other window, notification or file path is visible.
-- The numbers spoken match the screen: 20.4%, about 80%, 81%, 47%, third and fifth, 34 rules, 4 warnings.
+- The numbers spoken match the screen: 20.4%, about 80%, 81%, 47%, fourth and fifth, 34 rules, 4 warnings.

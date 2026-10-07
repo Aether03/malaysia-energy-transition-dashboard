@@ -10,8 +10,8 @@
 --           Per-capita needs OWID population, which ends in 2024 for Indonesia, so its common
 --           year can be earlier than the others'.
 -- Expected: the six default peers all have 2025 generation data, so RE share and intensity
---           rank on 2025; per capita ranks on 2024. Malaysia (2026-09-30 data): RE share
---           3 of 6 (20.4%), carbon intensity 5 of 6 (606 g/kWh), per capita 2 of 6 (5.91 MWh).
+--           rank on 2025; per capita ranks on 2024. Malaysia (Ember release of 2026-10-06): RE share
+--           4 of 6 (20.4%), carbon intensity 5 of 6 (606 g/kWh), per capita 2 of 6 (5.91 MWh).
 
 WITH range_end AS (  -- the report's year-range slicer end; the full range by default
     SELECT MAX(year) AS last_year FROM mart.dim_year

@@ -2,11 +2,11 @@
 
 **How fast is Malaysia's electricity getting cleaner, and how does it compare with its ASEAN neighbours?**
 
-## Findings (2015–2025, Ember data)
+## Findings (2015–2025, Ember release of 6 Oct 2026)
 
 1. **The renewable share roughly doubled, mostly in one hydro-driven step.** Renewables' share of generation rose from **9.6% (2013–15 average) to 19.7% (2023–25)**, and reached **20.4% in 2025**. Most of the gain came in 2015–17, as new large hydro ramped up; since then hydro and solar have shared the growth.
 2. **Each kWh got cleaner, yet power-sector emissions rose 27%.** Carbon intensity **fell 9.5% (669 → 606 gCO₂e/kWh)**, but **generation grew 40%**, so **emissions rose 27%**. All the fossil growth was coal: **coal output grew 49% while gas was flat**, and **coal is now 44.9% of generation**.
-3. **Mid-table on renewables, near the bottom on carbon intensity.** Among the six largest ASEAN power systems, Malaysia ranks **3rd of 6 on renewable share** but **5th of 6 on carbon intensity**. The reason is coal: it makes 45% of Malaysia's electricity, while Thailand, with less renewable power, has cleaner electricity because it runs mostly on gas. The coal-to-gas balance matters as much as the renewable share.
+3. **Lower half on renewables, near the bottom on carbon intensity.** Among the six largest ASEAN power systems, Malaysia ranks **4th of 6 on renewable share** and **5th of 6 on carbon intensity**. The gap is mostly coal: Thailand's renewable share is only 1.3 points higher, yet its electricity is 80 g/kWh cleaner, because it runs mostly on gas while coal makes 45% of Malaysia's. The coal-to-gas balance matters as much as the renewable share.
 4. **A day-ahead load forecast beats the standard baseline.** Tested once on all of 2024 under a protocol locked in advance, a LightGBM model cuts hourly error (MAPE) against the same hour last week by **46.9% for Thailand** and **34.5% for Singapore**.
 
 ![Overview page of the Power BI report: Malaysia's 2025 KPIs, generation mix since 1985, renewable share of capacity against targets, ASEAN rank and the headline findings](docs/img/01_overview.png)
@@ -80,7 +80,7 @@ Under 30 minutes once the tools are installed. Windows 11 only (SQL Server and P
 
 **Steps**, from a PowerShell prompt:
 
-1. Clone with full history (the forecast replay reads its locked protocol from the commit it was recorded at, so don't use `--depth`):
+1. Clone with full history (the forecast replay reads its locked protocol from the commit it was recorded at, so don't use `--depth`). Clone into a folder whose path is under about 110 characters, such as `C:\src`: the repo folder adds 37 characters and its deepest file 108 more, and Windows limits paths to 260 unless long paths are enabled (otherwise the checkout fails with "Filename too long"):
    ```powershell
    git clone https://github.com/Aether03/malaysia-energy-transition-dashboard.git
    cd malaysia-energy-transition-dashboard
@@ -101,7 +101,7 @@ Under 30 minutes once the tools are installed. Windows 11 only (SQL Server and P
    .venv\Scripts\python -m pipeline seed
    .venv\Scripts\python -m pipeline run
    ```
-5. Open the report: double-click `report\EnergyTransition.pbip`, then **Home → Refresh**. If Desktop asks how to connect to SQL Server, choose **Windows → Use my current credentials**. If you used another server or database name in `.env`, set it first under **Transform data → Edit parameters**. The **Data quality** page should show your run with 30 PASS, 4 WARN and 0 FAIL.
+5. Open the report: double-click `report\EnergyTransition.pbip`, then **Home → Refresh**. If Desktop asks how to connect to SQL Server, choose **Windows → Use my current credentials**. If you used another server or database name in `.env`, set it first under **Transform data → Edit parameters**, then click **Apply changes** in the yellow bar that appears (this also loads the data). The **Data quality** page should show your run with 30 PASS, 4 WARN and 0 FAIL.
 
 **Checks** (no database needed): `.venv\Scripts\python -m pytest -q` and `.venv\Scripts\python -m ruff check .`
 
@@ -127,7 +127,7 @@ Full terms and how each one is honoured: [`DATA_LICENSES.md`](DATA_LICENSES.md).
 
 ## Limits
 
-- **Ember basis.** Every Malaysia number uses Ember's grid generation and capacity. Recent Sabah and Sarawak figures are partly carried forward, 2025 capacity repeats 2024 for solar and hydro, and other sources disagree on Malaysia's generation by 6–14% in recent years (partly explained in [`docs/reconciliation.md`](docs/reconciliation.md)).
+- **Ember basis.** Every Malaysia number uses Ember's grid generation and capacity. Recent Sabah and Sarawak figures are partly carried forward, 2025 capacity repeats 2024 for solar and hydro, and other sources disagree on Malaysia's generation by 6–14% in recent years (partly explained in [`docs/reconciliation.md`](docs/reconciliation.md)). Peer ranks can move with Ember's releases: its 6 Oct 2026 release revised Thailand's bioenergy upwards and moved Malaysia from 3rd to 4th on renewable share. `tools/check_readme_numbers.py` flags any such drift after a `pipeline run`.
 - **Official vs Ember capacity share.** Malaysia's official renewable share of capacity was 31% at the end of 2025; Ember's grid basis gives 24.4%. The report shows both and explains the definition gap.
 - **The forecast is for Thailand and Singapore, not Malaysia**, until GSO consents. It covers one test year; Thailand's hardest month is April (the Songkran holiday), and against a weekday-aware naive rule its margin is smaller (33.9%).
 - **Static exports cut scrolling content.** Tables and lists that scroll show only their first rows in the PNGs and PDF (the sources, KPI definitions and data-quality rules on About and Data quality, the capacity-factor bars, the ASEAN country list); the full source list is above. Generation's main chart is only about 40 px tall, and three labels truncate ([`docs/a11y.md`](docs/a11y.md)).

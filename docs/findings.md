@@ -3,7 +3,7 @@
 **Status:** audited (M2 step 12, 2026-10-02). The independent `audit-my-work` review confirmed every number against both the warehouse and Ember's raw CSV. Its framing corrections are applied below.
 
 **Data:**
-- Ember Yearly Electricity Data (CC BY 4.0), pipeline run of 30 Sep 2026.
+- Ember Yearly Electricity Data (CC BY 4.0): findings 1–2 from the pipeline run of 30 Sep 2026 (unchanged in Ember's 6 Oct 2026 release, which did not revise Malaysia); finding 3 re-verified on that release (run 46, 7 Oct 2026).
 - OWID population (CC BY 4.0).
 
 **Latest complete year:** 2025.
@@ -54,18 +54,19 @@ From 2015 to 2025:
 
 **Source query:** `07_emissions_vs_demand.sql`.
 
-## 3. Among its ASEAN peers, Malaysia is mid-table on renewable share but near the bottom on carbon intensity
+## 3. Among its ASEAN peers, Malaysia is in the lower half on renewable share and near the bottom on carbon intensity
 
 In 2025, among the six largest ASEAN power systems:
-- **Renewable share:** Malaysia's 20.4% ranks **3rd of 6**, behind Vietnam (45.3%) and the Philippines (23.3%).
+- **Renewable share:** Malaysia's 20.4% ranks **4th of 6**, behind Vietnam (46.0%), the Philippines (23.3%) and Thailand (21.7%). It was also 4th in 2023 and 2024.
 - **Carbon intensity:** at 606 gCO₂e/kWh, Malaysia narrowly trails the Philippines (595) for **5th of 6**. Only Indonesia (705) is higher. Malaysia was **4th in 2023 and 2024**, so this rank is close and may move with revisions.
-- **Why intensity lags:** Thailand has a lower renewable share (16.6%) but cleaner electricity (546 g/kWh), because its generation is mostly gas (65.5%), with little coal (17.8%). Malaysia's mix is 44.9% coal and 33.4% gas.
+- **Why intensity lags:** Thailand's renewable share is only 1.3 points higher than Malaysia's, yet its electricity is 80 g/kWh cleaner (526 g/kWh), because its generation is mostly gas (61.5%), with little coal (16.7%). Malaysia's mix is 44.9% coal and 33.4% gas.
 
-The coal-to-gas balance therefore also matters, alongside the renewable share.
+The coal-to-gas balance therefore matters as much as the renewable share.
 
 **Caveats:**
-- **Peer set.** The six are Indonesia, Vietnam, Malaysia, Thailand, the Philippines and Singapore, the largest by 2025 generation; Laos is 7th at 52 TWh in 2024. Adding Cambodia, which also reports 2025, Malaysia ranks 4th of 7 on renewable share and 6th of 7 on intensity.
+- **Peer set.** The six are Indonesia, Vietnam, Malaysia, Thailand, the Philippines and Singapore, the largest by 2025 generation; Laos is 7th at 52 TWh in 2024. Adding Cambodia, which also reports 2025, Malaysia ranks 5th of 7 on renewable share and 6th of 7 on intensity.
 - **Generation basis.** Thailand imports about 16% of its demand (36.9 TWh in 2025, mostly from Laos), which generation-based shares leave out.
+- **Data vintage.** Ember's release of 6 Oct 2026 revised Thailand for every year from 1985: its 2025 bioenergy output doubled (10.2 → 22.1 TWh), lifting its renewable share from 16.6% to 21.7%. That moved Malaysia from 3rd to 4th on renewable share. Vietnam and the Philippines were revised slightly; Malaysia was not. Peer ranks can move with any release.
 
 **Source query:** `03_ranking.sql` (coal and gas shares: the same `mart.generation_annual` pattern as `01_trends.sql`).
 

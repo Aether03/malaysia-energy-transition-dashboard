@@ -308,8 +308,8 @@ def build() -> list[dict]:
                     ),
                     (
                         (
-                            "3. Malaysia is 3rd of 6 ASEAN peers on renewable share but 5th of 6 on carbon intensity (606 g/kWh, "
-                            "2025): the coal-to-gas balance matters too."
+                            "3. Malaysia is 4th of 6 ASEAN peers on renewable share and 5th of 6 on carbon intensity (606 g/kWh, "
+                            "2025): the coal-to-gas balance matters as much."
                         ),
                         9,
                         rb.TEXT_PRIMARY,

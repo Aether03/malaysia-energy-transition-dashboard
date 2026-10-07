@@ -30,7 +30,7 @@ def claims(cursor) -> list[str]:
     rolling = {r["year"]: r for r in run(cursor, "04_rolling_avg") if r["name"] == "Malaysia"}
     e = run(cursor, "07_emissions_vs_demand")[0]
     ranks = {r["name"]: r for r in run(cursor, "03_ranking")}
-    my = ranks["Malaysia"]
+    my, th = ranks["Malaysia"], ranks["Thailand"]
     forecast = {r["grid_code"]: r for r in run(cursor, "09_forecast_metrics") if r["month"] is None}
     if abs(e["gas_latest"] - e["gas_base"]) / e["gas_base"] >= 0.01:
         raise SystemExit("FAIL  gas output is no longer flat (>= 1% change): rewrite finding 2")
@@ -47,6 +47,8 @@ def claims(cursor) -> list[str]:
         f"coal is now {100 * e['coal_latest'] / e['gen_latest']:.1f}% of generation",
         f"{ORDINAL[my['re_share_rank']]} of {my['countries_compared']} on renewable share",
         f"{ORDINAL[my['intensity_rank']]} of {my['countries_compared']} on carbon intensity",
+        f"Thailand's renewable share is only {th['re_share_gen_pct'] - my['re_share_gen_pct']:.1f} points higher",
+        f"its electricity is {my['emissions_intensity_gco2e_kwh'] - th['emissions_intensity_gco2e_kwh']:.0f} g/kWh cleaner",
         f"{forecast['TH_EGAT']['improvement_pct']:.1f}% for Thailand",
         f"{forecast['SG_EMA']['improvement_pct']:.1f}% for Singapore",
     ]
