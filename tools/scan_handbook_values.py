@@ -8,6 +8,10 @@ line numbers and counts only, never the values. Coincidences (package versions, 
 figures) are possible, so each hit is reviewed by hand.
 
     .venv/Scripts/python tools/scan_handbook_values.py      # exit 1 if any file matches
+    .venv/Scripts/python tools/scan_handbook_values.py --history   # every blob in every commit (M5 step 10)
+
+`--history` reads each distinct blob reachable from any ref once, under the first path git lists for
+it, and names the commits that added a matching blob, so a leak can be traced and rewritten.
 """
 
 from __future__ import annotations
@@ -42,23 +46,47 @@ def tokens() -> set[str]:
     return {v for v in values if pattern.fullmatch(v) and sum(c.isdigit() for c in v) >= 4}
 
 
-def _pdf_lines(path: Path) -> list[str]:
+def _pdf_lines(source: Path | bytes) -> list[str]:
     """The text layer of a PDF (docs/report.pdf, M5 step 5): PNGs can't be scanned, the PDF of the same pages can."""
     import pypdfium2 as pdfium
 
-    doc = pdfium.PdfDocument(path)
+    doc = pdfium.PdfDocument(source)
     return [line for i in range(len(doc)) for line in doc[i].get_textpage().get_text_range().splitlines()]
 
 
-def main() -> int:
-    toks = tokens()
-    if not toks:
-        print("raw.handbook_cell is empty: run the pipeline first")
-        return 1
-    regexes = [re.compile(r"(?<![\d.,])" + re.escape(t) + r"(?!\d)") for t in toks]
-    files = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split("\n")
-    problems = 0
-    for name in filter(None, files):
+def _git(*args: str) -> str:
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout
+
+
+def _history_blobs():
+    """(path, blob id, lines) for each distinct blob reachable from any ref."""
+    seen: dict[str, str] = {}
+    for row in _git("rev-list", "--all", "--objects").splitlines():
+        oid, _, path = row.partition(" ")
+        if path and oid not in seen:
+            seen[oid] = path
+    check = subprocess.run(
+        ["git", "cat-file", "--batch-check=%(objectname) %(objecttype)"],
+        cwd=ROOT,
+        input="\n".join(seen),
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout.splitlines()
+    for oid in (r.split()[0] for r in check if r.endswith(" blob")):
+        path = seen[oid]
+        if path.endswith(SKIP_SUFFIXES) or path.startswith("tests/fixtures/"):
+            continue
+        data = subprocess.run(["git", "cat-file", "blob", oid], cwd=ROOT, capture_output=True, check=True).stdout
+        try:
+            lines = _pdf_lines(data) if path.lower().endswith(".pdf") else data.decode("utf-8").splitlines()
+        except UnicodeDecodeError:
+            continue
+        yield path, oid, lines
+
+
+def _worktree_files():
+    for name in filter(None, _git("ls-files").split("\n")):
         if name.endswith(SKIP_SUFFIXES) or name.startswith("tests/fixtures/"):
             continue  # fixtures are synthetic by construction and tested for it
         try:
@@ -69,14 +97,34 @@ def main() -> int:
             )
         except (UnicodeDecodeError, FileNotFoundError):
             continue
+        yield name, None, lines
+
+
+def main() -> int:
+    history = "--history" in sys.argv[1:]
+    toks = tokens()
+    if not toks:
+        print("raw.handbook_cell is empty: run the pipeline first")
+        return 1
+    regexes = [re.compile(r"(?<![\d.,])" + re.escape(t) + r"(?!\d)") for t in toks]
+    problems = checked = 0
+    for name, oid, lines in _history_blobs() if history else _worktree_files():
+        checked += 1
         matched = {i for i, rx in enumerate(regexes) if any(rx.search(line) for line in lines)}
         if not matched:
             continue
         line_nos = sorted({n for n, line in enumerate(lines, 1) if any(regexes[i].search(line) for i in matched)})
-        status = "known coincidence" if KNOWN.get(name) == len(matched) else "CHECK"
+        # A blob in history may be an older version of a reviewed file, with fewer of its coincidences.
+        known = KNOWN.get(name, 0)
+        status = "known coincidence" if (len(matched) <= known if history else len(matched) == known) else "CHECK"
         problems += status == "CHECK"
-        print(f"{status}: {name}: {len(matched)} token(s), lines {line_nos}")
-    print(f"{len(toks)} tokens checked against {len(files)} files; {problems} file(s) to check")
+        where = ""
+        if oid and status == "CHECK":
+            added = _git("log", "--all", "--format=%h", f"--find-object={oid}").split()
+            where = f", blob {oid[:10]}, in commit(s) {' '.join(added)}"
+        print(f"{status}: {name}: {len(matched)} token(s), lines {line_nos}{where}")
+    unit = "blobs in all history" if history else "files"
+    print(f"{len(toks)} tokens checked against {checked} {unit}; {problems} file(s) to check")
     return 1 if problems else 0
 
 
