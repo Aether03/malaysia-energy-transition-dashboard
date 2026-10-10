@@ -1,0 +1,214 @@
+{
+ "exported_at": "2026-10-10T18:55:20+00:00",
+ "run": {
+  "run_id": 47,
+  "started_at": "2026-10-10T13:04:39",
+  "finished_at": "2026-10-10T13:07:25",
+  "status": "WARN"
+ },
+ "data_vintage": [
+  {
+   "data_source_code": "D1",
+   "run_id": 47,
+   "loaded_at": "2026-10-10T13:04:49",
+   "rows_in": 5070,
+   "rows_merged": 0,
+   "source_version": "Tue, 06 Oct 2026 18:04:43 GMT"
+  },
+  {
+   "data_source_code": "D2",
+   "run_id": 47,
+   "loaded_at": "2026-10-10T13:04:53",
+   "rows_in": 1031,
+   "rows_merged": 0,
+   "source_version": "Mon, 27 Apr 2026 14:38:33 GMT"
+  },
+  {
+   "data_source_code": "D3",
+   "run_id": 47,
+   "loaded_at": "2026-10-10T13:04:54",
+   "rows_in": 1224,
+   "rows_merged": 599,
+   "source_version": "supply=Wed, 07 Oct 2026 16:10:05 GMT; consumption=Wed, 07 Oct 2026 16:10:06 GMT"
+  },
+  {
+   "data_source_code": "D5",
+   "run_id": 47,
+   "loaded_at": "2026-10-10T13:05:00",
+   "rows_in": 989,
+   "rows_merged": 0,
+   "source_version": "edition 2023 md5 ba481c7f; Tue, 31 Mar 2026 15:22:19 GMT"
+  },
+  {
+   "data_source_code": "DSG",
+   "run_id": 47,
+   "loaded_at": "2026-10-10T13:06:59",
+   "rows_in": 106848,
+   "rows_merged": 0,
+   "source_version": "EMA half-hourly, 106 weekly files 2022-12-26..2024-12-30; sha256 2a38d8fe3173"
+  },
+  {
+   "data_source_code": "DTH",
+   "run_id": 47,
+   "loaded_at": "2026-10-10T13:06:44",
+   "rows_in": 281424,
+   "rows_merged": 0,
+   "source_version": "zenodo 17109911 v1.0; 2023 md5 426d0db7; 2024 md5 5c1f09d6"
+  }
+ ],
+ "grids": [
+  "SG_EMA",
+  "TH_EGAT"
+ ],
+ "files": [
+  {
+   "file": "country_annual.parquet",
+   "rows": 328,
+   "sources": [
+    "D1",
+    "D2"
+   ]
+  },
+  {
+   "file": "data_source.parquet",
+   "rows": 9,
+   "sources": []
+  },
+  {
+   "file": "dim_country.parquet",
+   "rows": 11,
+   "sources": []
+  },
+  {
+   "file": "dim_date.parquet",
+   "rows": 742,
+   "sources": []
+  },
+  {
+   "file": "dim_grid.parquet",
+   "rows": 2,
+   "sources": []
+  },
+  {
+   "file": "dim_hour.parquet",
+   "rows": 24,
+   "sources": []
+  },
+  {
+   "file": "dim_source.parquet",
+   "rows": 7,
+   "sources": []
+  },
+  {
+   "file": "dim_year.parquet",
+   "rows": 41,
+   "sources": []
+  },
+  {
+   "file": "dq_latest.parquet",
+   "rows": 34,
+   "sources": []
+  },
+  {
+   "file": "forecast_date.parquet",
+   "rows": 366,
+   "sources": [
+    "DSG",
+    "DTH"
+   ]
+  },
+  {
+   "file": "forecast_run_current.parquet",
+   "rows": 2,
+   "sources": []
+  },
+  {
+   "file": "forecast_status.parquet",
+   "rows": 2,
+   "sources": []
+  },
+  {
+   "file": "generation_annual.parquet",
+   "rows": 2192,
+   "sources": [
+    "D1"
+   ]
+  },
+  {
+   "file": "grid_flow_daily.parquet",
+   "rows": 2206,
+   "sources": []
+  },
+  {
+   "file": "grid_hourly.parquet",
+   "rows": 35372,
+   "sources": []
+  },
+  {
+   "file": "kpi.parquet",
+   "rows": 11,
+   "sources": []
+  },
+  {
+   "file": "load_forecast_current.parquet",
+   "rows": 17568,
+   "sources": []
+  },
+  {
+   "file": "netr_target.parquet",
+   "rows": 4,
+   "sources": [
+    "D6"
+   ]
+  },
+  {
+   "file": "re_capacity_official.parquet",
+   "rows": 1,
+   "sources": [
+    "D6"
+   ]
+  },
+  {
+   "file": "run_latest.parquet",
+   "rows": 1,
+   "sources": []
+  },
+  {
+   "file": "season_pick.parquet",
+   "rows": 6,
+   "sources": []
+  },
+  {
+   "file": "source_load_latest.parquet",
+   "rows": 6,
+   "sources": []
+  }
+ ],
+ "excluded_views": {
+  "dim_region": "D5 not publishable",
+  "dim_state": "D5 not publishable",
+  "region_annual": "D5 not publishable",
+  "region_capacity": "D5 not publishable",
+  "reliability_metric": "D5 not publishable",
+  "reliability_year": "D5 not publishable",
+  "state_reliability": "D5 not publishable"
+ },
+ "expected": [
+  "01_trends",
+  "02_yoy_lag",
+  "03_ranking",
+  "04_rolling_avg",
+  "05_capacity_factor",
+  "06_re_growth_decomposition",
+  "07_emissions_vs_demand",
+  "08_grid_load",
+  "09_forecast_metrics",
+  "10_load_curves",
+  "11_interconnector_flows"
+ ],
+ "excluded_showcase": {
+  "12_regions": "D5 not publishable",
+  "13_state_reliability": "D5 not publishable",
+  "00_reconciliation": "not shown in the app (a warehouse check against raw Ember)"
+ }
+}

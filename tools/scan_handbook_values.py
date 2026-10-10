@@ -35,12 +35,15 @@ sys.path.insert(0, str(ROOT))
 from pipeline.db import connect
 from tools.export_pages import RESTRICTED_MARKERS, RESTRICTED_PAGES, consent
 
-SKIP_SUFFIXES = (".topojson", ".png", ".pbix", ".abf", ".xls", ".xlsx", ".parquet")
+SKIP_SUFFIXES = (".topojson", ".png", ".pbix", ".abf", ".xls", ".xlsx")
 # Reviewed coincidences: file -> number of matching tokens that are not from the handbook.
 KNOWN = {
     "Documents/plans/M2_plan.md": 1,  # OWID/UN population figure
     "Documents/plans/M3_plan.md": 1,  # package version
     "docs/forecast_final.json": 1,  # package version
+    # Open showcase results (D1/D2/grids only; no D5 query is exported): rounded Ember capacity factors, GW and TWh
+    # that equal a handbook cell by chance. Reviewed 2026-10-11 by query and field; re-review after each export.
+    "exports/expected.json": 34,
     "requirements.txt": 1,  # package version
     "sql/migrations/V010__grid_and_forecast.sql": 1,  # package version in a comment
     "tests/test_forecast_run.py": 1,  # synthetic test load
@@ -101,6 +104,34 @@ def _pdf_lines(source: Path | bytes) -> list[str]:
     return [line for text in texts for line in text.splitlines()]
 
 
+def _cell(value) -> str:
+    """A cell as text; a number in plain and thousands-comma form, so either way a handbook token was written matches."""
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        return str(value)
+    number = int(value) if float(value).is_integer() else value
+    return f"{number} {number:,}"
+
+
+def _parquet_lines(source: Path | bytes) -> list[str]:
+    """A Parquet snapshot (exports/, M6 plan Q5) as text: a header line, then one line per row."""
+    import io
+
+    import pandas as pd
+
+    frame = pd.read_parquet(io.BytesIO(source) if isinstance(source, bytes) else source)
+    return [" | ".join(map(str, frame.columns))] + [
+        " | ".join(map(_cell, row)) for row in frame.itertuples(index=False)
+    ]
+
+
+def _lines(name: str, source: Path | bytes) -> list[str]:
+    if name.lower().endswith(".pdf"):
+        return _pdf_lines(source)
+    if name.lower().endswith(".parquet"):
+        return _parquet_lines(source)
+    return (source if isinstance(source, bytes) else source.read_bytes()).decode("utf-8").splitlines()
+
+
 def _git(*args: str) -> str:
     return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout
 
@@ -126,7 +157,7 @@ def _history_blobs():
             continue
         data = subprocess.run(["git", "cat-file", "blob", oid], cwd=ROOT, capture_output=True, check=True).stdout
         try:
-            lines = _pdf_lines(data) if path.lower().endswith(".pdf") else data.decode("utf-8").splitlines()
+            lines = _lines(path, data)
         except UnicodeDecodeError:
             continue
         yield path, oid, lines
@@ -137,11 +168,7 @@ def _worktree_files():
         if name.endswith(SKIP_SUFFIXES) or name.startswith("tests/fixtures/"):
             continue  # fixtures are synthetic by construction and tested for it
         try:
-            lines = (
-                _pdf_lines(ROOT / name)
-                if name.lower().endswith(".pdf")
-                else (ROOT / name).read_text(encoding="utf-8").splitlines()
-            )
+            lines = _lines(name, ROOT / name)
         except (UnicodeDecodeError, FileNotFoundError):
             continue
         yield name, None, lines

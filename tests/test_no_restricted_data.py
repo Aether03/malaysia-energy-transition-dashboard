@@ -71,3 +71,20 @@ def test_every_tracked_handbook_fixture_is_json_marked_synthetic(tracked):
             continue
         data = json.loads(path.read_text(encoding="utf-8"))
         assert data.get("synthetic") is True, f"{rel} is not marked synthetic"
+
+
+def test_exports_hold_only_publishable_sources():
+    # M6 plan Q3: every exported file's sources are publishable in the seed, and no excluded view has a file.
+    import csv
+
+    manifest_path = ROOT / "exports" / "manifest.json"
+    if not manifest_path.exists():
+        pytest.skip("exports/ has not been written yet")
+    with (ROOT / "seed" / "data_source.csv").open(encoding="utf-8", newline="") as f:
+        publishable = {r["data_source_code"] for r in csv.DictReader(f) if r["is_publishable"] == "1"}
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for entry in manifest["files"]:
+        assert set(entry["sources"]) <= publishable, f"{entry['file']}: {entry['sources']}"
+    on_disk = {p.stem for p in (ROOT / "exports").glob("*.parquet")}
+    assert on_disk == {e["file"].removesuffix(".parquet") for e in manifest["files"]}
+    assert not on_disk & set(manifest["excluded_views"])

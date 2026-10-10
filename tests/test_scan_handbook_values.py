@@ -2,7 +2,7 @@
 
 import re
 
-from tools.scan_handbook_values import context_lines, scannable_pages
+from tools.scan_handbook_values import _parquet_lines, context_lines, scannable_pages
 
 LABELLED = {re.compile(r"\bJohor\b"): {0.58, 1234.5}}
 
@@ -43,3 +43,14 @@ def test_values_on_an_unmarked_page_are_scanned_even_with_consent():
 
 def test_a_missing_consent_row_keeps_the_page_in_the_scan():
     assert scannable_pages(PAGES, {"D1": "OPEN"}) == PAGES
+
+
+# Parquet snapshots (M6 plan Q5): read as text, numbers in plain and thousands-comma form. Synthetic values.
+def test_parquet_rows_are_scanned_as_text_with_both_number_forms(tmp_path):
+    import pandas as pd
+
+    path = tmp_path / "x.parquet"
+    pd.DataFrame({"state": ["Johor", "Kedah"], "value": [1234.5, 7.0]}).to_parquet(path, index=False)
+    lines = _parquet_lines(path)
+    assert any("Johor" in line and "1,234.5" in line for line in lines)
+    assert context_lines(lines, LABELLED) == [2]  # line 1 is the header

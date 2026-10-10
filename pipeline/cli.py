@@ -171,6 +171,27 @@ def _cmd_extract_load(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_export(_: argparse.Namespace) -> int:
+    from pipeline import db
+    from pipeline.export import ExportRefused, export
+
+    # Locked so a snapshot never reads a warehouse that a run is rebuilding.
+    with db.pipeline_lock("export"):
+        try:
+            manifest = export()
+        except ExportRefused as exc:
+            log.error("Export refused, nothing written: %s", exc)
+            return 1
+    log.info(
+        "Exported %d views (%d rows) and %d showcase results; left out %d views",
+        len(manifest["files"]),
+        sum(f["rows"] for f in manifest["files"]),
+        len(manifest["expected"]),
+        len(manifest["excluded_views"]),
+    )
+    return 0
+
+
 def _not_yet(step: str):
     def handler(_: argparse.Namespace) -> int:
         log.error("Not implemented yet (M1 %s)", step)
@@ -208,6 +229,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--grid", action="append", help="grid code (repeatable); default: every published grid"
     )
     forecast_parser.set_defaults(func=_cmd_forecast)
+    sub.add_parser("export", help="licence-gated Parquet snapshots of mart.* for the web showcase").set_defaults(
+        func=_cmd_export
+    )
     run_parser = sub.add_parser("run", help="extract, load, transform and check")
     run_parser.add_argument("--dry-run", action="store_true", help="log a run without touching data")
     run_parser.add_argument("--refresh", action="store_true", help="re-download even if today's file exists")
