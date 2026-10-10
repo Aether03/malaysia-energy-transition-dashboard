@@ -14,7 +14,8 @@ data/raw/
 # Local-only verification material for the restricted handbook (M4 plan Q1): the independent
 # re-read transcriptions and the 2022 check-only edition. Never commit.
 data/private/
-exports/*.parquet
+# exports/*.parquet ARE committed (doc 02 §3.2, M6 plan Q3): `pipeline export` writes only publishable views,
+# and tests/test_no_restricted_data.py plus tools/scan_handbook_values.py check them.
 logs/
 
 # Reference copies of third-party documents (copyrighted; private use only)
