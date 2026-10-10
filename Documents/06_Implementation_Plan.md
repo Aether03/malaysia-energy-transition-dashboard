@@ -20,7 +20,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | **done 2026-10-05**: [plans/M3_plan.md](plans/M3_plan.md) (Outcome section) |
 | **M4** | Regions and state reliability | FR-23, 24 | M1 | **done 2026-10-05**: [plans/M4_plan.md](plans/M4_plan.md) (Outcome). P3 split into Regions + State reliability |
 | **M5** | Finish and ship **v1.0.0** | FR-14, 16, 17, 18, 20; NFR-01…08 | M2, M3, M4 | **in progress**: [plans/M5_plan.md](plans/M5_plan.md), approved 2026-10-07; task 6.1 (consent email) pulled into M5 |
-| **M6** | Post-v1 | FR-21 (Streamlit), FR-19 (optional), Energy Commission consent, GSO if consented | M5 | pending |
+| **M6** | Post-v1 | FR-21 (Streamlit), FR-19 (optional), Energy Commission consent (**granted 2026-10-09**, used in M5), GSO if consented | M5 | pending |
 
 M2, M3 and M4 depend only on M1, so they can run in any order. **Recommended order:** M2 → M3 → M4, because it gets the headline story done first.
 
@@ -122,7 +122,7 @@ flowchart LR
 | 5.1 | P6 About the Data: sources and licences, run summary, DQ table, KPI definitions, consent status (GUI) | PBIR | doc 03 P6 | P1 | Low | S | Every `dim_data_source` row shows its credit | M |
 | 5.2 | Remaining DQ rules (hourly gaps, capacity factor ≤ 1) + the P6 nav badge on Fail | `seed/dq_rule.csv` | task 1.6 | P2 | Low | F | An injected fail shows the badge | S |
 | 5.3 | Accessibility pass: alt text on every visual, tab order, Windows high-contrast check, digit alignment (doc 04 §2 **Unverified**); run `design:accessibility-review` on the PNGs **As built:** done except the Windows high-contrast check (skipped by Amirul) and a screen-reader pass (open); digits verified tabular (doc 04 §2) | PBIR | doc 04 §7 | P2 | Medium | S | Checklist in `docs/a11y.md` all ticked | M |
-| 5.4 | Exports: PNG per page (1280 × 720), PDF export, a ≤2-min walkthrough recorded by you with Snipping Tool following the J2 script (Claude writes the script) **As built:** 7 PNGs + PDF without P3/P3b (`tools/export_pages.py`, fails closed); the walkthrough was recorded by Claude at Amirul's request (captioned, no voice; ffmpeg `gfxcapture`), uploaded at 5.9 | `docs/img/`, `docs/report.pdf` | doc 03 A4 | P2 | Low | F | Files render on GitHub | S |
+| 5.4 | Exports: PNG per page (1280 × 720), PDF export, a ≤2-min walkthrough recorded by you with Snipping Tool following the J2 script (Claude writes the script) **As built:** 7 PNGs + PDF without P3/P3b (`tools/export_pages.py`, fails closed), all 9 pages since 2026-10-10 after the Energy Commission's consent; the walkthrough was recorded by Claude at Amirul's request (captioned, no voice; ffmpeg `gfxcapture`), uploaded at 5.9 | `docs/img/`, `docs/report.pdf` | doc 03 A4 | P2 | Low | F | Files render on GitHub | S |
 | 5.5 | README: the question, 3 findings, hero image, architecture diagram (doc 02 §1), setup, "How to explore", credits and licences | `README.md` | doc 01 FR-16 | P1 | Medium | D | A friend states the main finding within 30 s (doc 01 §5) | M |
 | 5.6 | CI: GitHub Actions (`ruff`, `sqlfluff`, `pytest`) + Dependabot | `.github/workflows/ci.yml` | doc 02 §6 | P2 | Low | F | Green run on push; confirm Actions minutes (**Unverified** in doc 02) | S |
 | 5.7 | Fresh-clone reproduction (FR-18) in a new folder with a new database, following only the README | — | doc 03 J5 | P1 | Medium | D | Completes in < 30 min (excluding installs); all DQ PASS | M |

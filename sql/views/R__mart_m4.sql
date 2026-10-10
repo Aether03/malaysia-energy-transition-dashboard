@@ -1,7 +1,8 @@
 -- R__mart_m4: the M4 presentation layer for P3 Regions and P3b State reliability (repeatable).
 -- Explicit column lists only. Source D5 (Energy Commission handbook) is restricted (M4 plan Q1):
--- these views live only in the local database and feed the local report; dim_data_source
--- .is_publishable = 0 keeps them out of any export.
+-- these views live only in the local database and feed the report, whose derived charts are published
+-- under the Energy Commission's consent (2026-10-09, DATA_LICENSES.md); dim_data_source
+-- .is_publishable = 0 keeps the rows out of any data export.
 
 CREATE OR ALTER VIEW mart.dim_region AS
 SELECT region_key, region_code, name, display_order

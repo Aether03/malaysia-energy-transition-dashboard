@@ -1,10 +1,17 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-07 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5: steps 1–11 and 13 done (2026-10-07); step 12 (going public) waits on Amirul's force-push and the GitHub Support purge. Resume point below.**
+**Updated:** 2026-10-10 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5: steps 1–11 and 13 done; the Energy Commission's consent is in use (2026-10-10); step 12 (going public) waits on the GitHub Support purge. Resume point below.**
+
+**M5 session 4 (2026-10-10): the Energy Commission granted consent; step 12 still waits on GitHub Support** (outcome row "12a" in `plans/M5_plan.md`).
+- **Resume here. Purge check failed:** `git ls-remote origin` still lists `refs/pull/1–7/head`, and the old SHAs (`187311803c7d`, `9a770695a263`) still open on GitHub. Support ticket #4832554 has only the auto-acknowledgement (7 Oct). Amirul chose to wait. **Next session:** check Gmail for Support, re-run both checks, then step 12 (asks first; check CI on `main` first).
+- **Consent used (Amirul's go):** D5 `GRANTED` (`is_publishable` stays 0: charts, not data rows); P3/P3b in the 9 PNGs and the PDF (renumbered `01–09`); new notice wording; two guards changed with Amirul's explicit go (the export marker check; the value scan skips the PDF's P3/P3b pages only while D5 is GRANTED). Thank-you reply sent. Walkthrough unchanged (no P3/P3b; Amirul).
+- **GSO:** D4 stays off until TNB replies (Amirul, 2026-10-10); then update.
+- **Still open:** discard the old resend draft in Gmail Drafts; delete `C:\src` once the purge is confirmed (move the bundle first).
 
 **M5 session 3 (2026-10-07): steps 10, 11 and 13 done; step 12 (going public) waits on GitHub Support** (outcome rows and Outcome in `plans/M5_plan.md`).
 - **History rewritten** (Q1, Amirul chose option 2): the 2 handbook figures and 2 third-party email addresses are gone from every commit, and every hash changed (`docs/history_rewrite.md` maps old → new; the live DB's FINAL runs 7/8 are re-pointed). Verified on the clone `C:\src\r4`: tests, history scan 0, gitleaks 0, README-only rebuild with both FINAL runs replayed identically.
-- **Resume here: Amirul runs these** (Claude Code's auto mode refused the reset and the force-push), from `Energy_Dashboard`:
+- **Steps 1–2 below DONE by Amirul 2026-10-07:** GitHub `main` = `4a21f0c`, CI green; Dependabot closed PRs #1–7 and deleted its branches itself; `refs/pull/1–7/head` remain (old commits) until the Support purge. A fresh GitHub clone passes the history scan (0) and finds the forecast protocol at `50dcc1a`. **Step 3 DONE 2026-10-07:** GitHub Support ticket submitted (category Repositories → Repository features → Branches; issue type General question; asks to delete/dereference PRs #1–7, purge cached views, garbage-collect the old commits; lists the 4 old SHAs). **Resume at step 4: wait for Support's reply (it comes to Gmail), then verify `refs/pull/*` gone and old SHAs unreachable before step 12.** (This note is uncommitted; commit it with step 12.)
+- **Resume here: Amirul ran these** (Claude Code's auto mode refused the reset and the force-push), from `Energy_Dashboard`:
   1. `git fetch C:\src\r4 main`, then `git reset --hard FETCH_HEAD` (local `main` becomes the rewritten history; `data/` is untouched; the old history is in `C:\src\energy_dashboard_pre_rewrite_2026-10-07.bundle`).
   2. `git push --force-with-lease origin main`, then `git push origin --delete dependabot/github_actions/actions/checkout-7 dependabot/github_actions/actions/setup-python-7 dependabot/pip/charset-normalizer-3.5.2 dependabot/pip/markupsafe-3.0.4 dependabot/pip/platformdirs-4.12.3 dependabot/pip/python-dotenv-1.2.4 dependabot/pip/tzdata-2026.5` (closes PRs #1–7).
   3. Submit the GitHub Support request (draft under Outcome in `plans/M5_plan.md`) at https://support.github.com.
@@ -33,7 +40,7 @@
   - Energy Commission request to `sc@st.gov.my`, asking them to forward it to the Energy Data and Research Unit (`docs/consent/st_request.md`). D5 is now `REQUESTED`, so the page notice reads "permission requested"; `is_publishable` stays 0.
   - GSO follow-up in the 30 Sep thread (`docs/consent/gso_request.md`).
   - **Check Gmail for replies at the start of each M5 session.**
-- **Standing M5 decisions:** P3/P3b stay out of every published export until D5 consent (Q2). The history rewrite is only done after a dry run on a clone, and only with Amirul's go (Q1; the forecast replay depends on `protocol_commit`). P6 splits into About + Data quality (Q3).
+- **Standing M5 decisions:** P3/P3b stay out of every published export until D5 consent (Q2; consent granted 2026-10-09, reversed 2026-10-10). The history rewrite is only done after a dry run on a clone, and only with Amirul's go (Q1; the forecast replay depends on `protocol_commit`). P6 splits into About + Data quality (Q3).
 
 **M4 COMPLETE (2026-10-05):** plan `plans/M4_plan.md` (step outcome rows + Outcome).
 - **Data:** 12 handbook tables (989 cells) land at runtime only. Blind re-read: 0 differences. The Sarawak year remap is proven by the 2022 edition. 12 D5 rules; twins 31/31; 948 tests.

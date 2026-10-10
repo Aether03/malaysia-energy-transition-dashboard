@@ -94,7 +94,7 @@ Common to every page (**Recommended**): a header with the page title as a takeaw
 | | Hover | State, value, rank, change vs 2015 |
 | Year dropdown (P3b) | Change | Map and bar show that year; empty = the latest year. **As built (Q9): P3b's own control, not synced** with P1/P2/P5, whose years run to 2025 |
 
-**States:** Empty: SAIDI not published for a state/year → "Not reported", greyed. **Consent notice** (**Decided** per doc 01 R3; **as built, M4 Q1**): both footers read "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pages)" followed by a measure on the D5 consent status. Since 2026-10-07 (request sent, seed `REQUESTED`) it says "Derived charts for non-commercial portfolio use; written permission requested from the Energy Commission." It changes to "Reproduced with the Energy Commission's written permission." if consent is `GRANTED`.
+**States:** Empty: SAIDI not published for a state/year → "Not reported", greyed. **Consent notice** (**Decided** per doc 01 R3; **as built, M4 Q1**): both footers read "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023 (pages)" followed by a measure on the D5 consent status. From 2026-10-07 (request sent, seed `REQUESTED`) it said "Derived charts for non-commercial portfolio use; written permission requested from the Energy Commission." **Since 2026-10-10** (consent granted 2026-10-09, seed `GRANTED`) it says "Charts adapted from the handbook with the Energy Commission's written permission (9 October 2026). Not endorsed by the Energy Commission.", which meets the consent's conditions (adapted charts identified, no endorsement implied).
 **Edge cases:** state names differ between handbook editions (e.g. "WP Kuala Lumpur" vs "Kuala Lumpur") → normalised in `stg` via a state mapping table (doc 05). **Map visual (verified 2026-09-30; Decided):**
 - Power BI **Shape Map** (now generally available; accepts a custom TopoJSON/GeoJSON file; [MS Learn](https://learn.microsoft.com/en-us/power-bi/visuals/desktop-shape-map)). It's used instead of the classic Filled Map, which Microsoft is deprecating in favour of Azure Maps ([MS Learn](https://learn.microsoft.com/en-us/azure/azure-maps/power-bi-visual-conversion)). Shape Map also renders offline with no map-service dependency.
 - Boundaries: **geoBoundaries `MYS` ADM1 TopoJSON** (**as built:** the full-resolution file, 795,812 B, since geoBoundaries publishes the simplified version only as GeoJSON; registered in the report as a Shape Map resource with an explicit Mercator projection; joined on `shapeISO` = `dim_state.iso_3166_2`) (16 units: 13 states + 3 federal territories, 2017 boundaries). **ODbL 1.0**, derived from OpenStreetMap ([API record](https://www.geoboundaries.org/api/current/gbOpen/MYS/ADM1/)).
@@ -157,7 +157,7 @@ T1: KPI name, definition, formula, unit, source, and latest vs previous value. T
 - **Back behaviour:** Power BI's native back button is only on D1. Elsewhere the nav rail handles movement.
 - **Refresh:** manual. Run the pipeline (Part B), then Power BI **Home → Refresh**. There's no scheduled refresh (no Power BI Service).
 - **Offline:** fully works offline once refreshed (Import mode).
-- **Exports (FR-17):** PNG per page, **File → Export → PDF** (all visible pages; hidden pages D1/T1/T2 excluded), and a GIF/MP4 walkthrough following journey J2. **As built (M5):** `docs/img/01–07_*.png` and `docs/report.pdf` hold the 7 public pages (Regions and State reliability stay out until the Energy Commission consents); the walkthrough is a 1:51 captioned MP4 (`docs/walkthrough_script.md`, "As recorded"), uploaded through GitHub's README editor when the repo goes public.
+- **Exports (FR-17):** PNG per page, **File → Export → PDF** (all visible pages; hidden pages D1/T1/T2 excluded), and a GIF/MP4 walkthrough following journey J2. **As built (M5):** `docs/img/01–09_*.png` and `docs/report.pdf` hold all 9 visible pages (Regions and State reliability joined on 2026-10-10, after the Energy Commission's consent; the walkthrough shows the other 7); the walkthrough is a 1:51 captioned MP4 (`docs/walkthrough_script.md`, "As recorded"), uploaded through GitHub's README editor when the repo goes public.
 
 ---
 
@@ -188,7 +188,7 @@ flowchart TD
 | Forecast | `pipeline forecast` | Forecast + metrics written | Model worse than baseline → still written, flagged honestly |
 | Export (post-v1) | `pipeline export` | Parquet snapshots for Streamlit | Excludes consent-restricted sources automatically |
 
-**Source switches** in the config file (**Decided**): `gso.enabled = false` until TNB consents; `energy_commission.publish = false` (the repo holds only derived, credited charts until consent).
+**Source switches** in the config file (**Decided**): `gso.enabled = false` until TNB consents; `energy_commission.publish = false` (the repo holds only derived, credited charts until consent). **As built:** no config switch; D5's `consent_status` in `seed/data_source.csv` gates the exports (`tools/export_pages.py`), `GRANTED` since 2026-10-09.
 
 ---
 

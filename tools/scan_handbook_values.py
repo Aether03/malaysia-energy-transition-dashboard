@@ -17,6 +17,9 @@ Short values (fewer than 4 digits) are too common to match on their own, and tha
 past this scan: a 3-digit cell written with an extra trailing zero (M5 step 10). So each line is also
 checked in context: a line that names a handbook row label (a state, a region, ...) and holds a number
 numerically equal to one of that row's cells (a decimal, or at least 3 digits; not a year) is flagged.
+
+`docs/report.pdf` is scanned page by page: the Regions and State reliability pages are skipped only while the
+Energy Commission's consent (D5) is GRANTED in `seed/data_source.csv` (`scannable_pages`).
 """
 
 from __future__ import annotations
@@ -30,6 +33,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from pipeline.db import connect
+from tools.export_pages import RESTRICTED_MARKERS, RESTRICTED_PAGES, consent
 
 SKIP_SUFFIXES = (".topojson", ".png", ".pbix", ".abf", ".xls", ".xlsx", ".parquet")
 # Reviewed coincidences: file -> number of matching tokens that are not from the handbook.
@@ -80,12 +84,21 @@ def context_lines(lines: list[str], labelled: dict[re.Pattern[str], set[float]])
     return hits
 
 
+def scannable_pages(texts: list[str], consent_by_source: dict[str, str]) -> list[str]:
+    """PDF page texts to scan. A page with a restricted marker (a Regions/State reliability page) is skipped only
+    while its source's consent is GRANTED: those are the consented charts (DATA_LICENSES.md, D5). Every other page
+    is scanned, so a handbook value anywhere else in the PDF is still caught."""
+    granted = all(consent_by_source.get(code) == "GRANTED" for code in set(RESTRICTED_PAGES.values()))
+    return [t for t in texts if not (granted and any(m in t for m in RESTRICTED_MARKERS))]
+
+
 def _pdf_lines(source: Path | bytes) -> list[str]:
     """The text layer of a PDF (docs/report.pdf, M5 step 5): PNGs can't be scanned, the PDF of the same pages can."""
     import pypdfium2 as pdfium
 
     doc = pdfium.PdfDocument(source)
-    return [line for i in range(len(doc)) for line in doc[i].get_textpage().get_text_range().splitlines()]
+    texts = scannable_pages([doc[i].get_textpage().get_text_range() for i in range(len(doc))], consent())
+    return [line for text in texts for line in text.splitlines()]
 
 
 def _git(*args: str) -> str:

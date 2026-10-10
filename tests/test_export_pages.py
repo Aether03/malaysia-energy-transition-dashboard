@@ -37,6 +37,11 @@ def test_marker_check_passes_when_mapping_and_content_agree():
     assert ep.check_markers(texts, [True, False, False, True], PAGES) == []
 
 
+def test_marker_check_passes_when_consent_keeps_the_restricted_pages():
+    texts = ["Renewables supplied", "SAIFI by region: Sabah", "(darker = less reliable)", "34 rules"]
+    assert ep.check_markers(texts, [True, True, True, True], PAGES) == []
+
+
 def test_marker_check_refuses_restricted_text_on_a_kept_page():
     texts = ["Renewables supplied", "SAIFI by region", "darker = less reliable", "SAIFI by region leaked"]
     problems = ep.check_markers(texts, [True, False, False, True], PAGES)

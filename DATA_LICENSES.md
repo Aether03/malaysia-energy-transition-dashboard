@@ -10,7 +10,7 @@ The code in this repository is MIT-licensed (see `LICENSE`). The **data** belong
 | DTH | Phumthep Bunnak (2025), Thai Power System: Hourly Power Generation, Demand, and Cross-Border Flows, v1.0 (Zenodo, doi:10.5281/zenodo.17109911) | CC BY 4.0 | Hourly grid load, forecast, Thailand-Malaysia interconnector flows |
 | DSG | Energy Market Authority of Singapore, Half-hourly System Demand Data (https://www.ema.gov.sg/resources/statistics/half-hourly-system-demand-data) | Singapore Open Data Licence v1.0: "Contains information from Half-hourly System Demand Data accessed on 2026-10-03 from the Energy Market Authority of Singapore, made available under the terms of the Singapore Open Data Licence version 1.0 (https://www.ema.gov.sg/terms-of-use)" | Hourly grid load and forecast. Two weekly files are redistributed unmodified as test fixtures (`tests/fixtures/singapore/`, with the same statement) |
 | D4 | Grid System Operator (GSO), Tenaga Nasional Berhad | Reuse requires TNB's prior written consent. **Not used** unless consent is granted | Disabled by default (`gso.enabled = false`) |
-| D5 | Energy Commission (Suruhanjaya Tenaga), Malaysia Energy Statistics Handbook 2023 | All rights reserved; reproduction needs the Energy Commission's prior written consent (see below). Consent requested 2026-10-07 and, at the Energy Commission's request, resent the same day to the two officers it named (`docs/consent/st_request.md`) | Extracted locally at build time; nothing from it is committed; only derived, credited charts are shown (Regions and State reliability pages) |
+| D5 | Energy Commission (Suruhanjaya Tenaga), Malaysia Energy Statistics Handbook 2023 | All rights reserved; reproduction needs the Energy Commission's prior written consent (see below). **Consent granted 2026-10-09** for the use and adaptation of its charts and data in this non-commercial project (`docs/consent/st_request.md`) | Extracted locally at build time; nothing from it is committed; only derived, credited charts are published (Regions and State reliability pages, in the page images, PDF and walkthrough) |
 | D6 | National Energy Transition Roadmap targets (via MIDA and IEA summaries) | Cited facts | NETR target line |
 | GEO | geoBoundaries MYS ADM1, boundaryID `MYS-ADM1-15666254` (OpenStreetMap-derived) | ODbL 1.0: "Boundaries © OpenStreetMap contributors, via geoBoundaries (ODbL 1.0)" | State boundaries for the reliability map; redistributed unmodified (see below) |
 
@@ -24,7 +24,14 @@ The handbook's own copyright page (p. 5 of the 2023 edition) is stricter than th
 - commits only code, page and table pins, the file's MD5, **synthetic** test fixtures (every number replaced), and docs that record counts and pass/fail results, never handbook values;
 - shows only derived charts (rank, change since 2015, trend, ratio), with no table that reproduces a handbook grid, credited "Source: Energy Commission, Malaysia Energy Statistics Handbook 2023" with a consent notice driven by `dim_data_source.consent_status`.
 
-Until consent is granted, exports of the Regions and State reliability pages (PNG/PDF) are not committed; the M5 pre-publication audit (task 5.8) decides. The Streamlit mirror excludes D5 (`is_publishable = 0`).
+**Consent (2026-10-09).** The Energy Commission's Strategic Communications approved "the use and adaptation of charts and data from the publication" for the stated purpose (derived charts as page images, a PDF export and a video walkthrough, in this public repository and on the author's portfolio website, non-commercial only), on four conditions, each met on both pages:
+
+1. The source is acknowledged as "Source: Energy Commission": in each page subtitle and footnote.
+2. Modified or adapted charts are identified: the footnote reads "Charts adapted from the handbook with the Energy Commission's written permission (9 October 2026)".
+3. The information is presented accurately: every landed cell was checked against the PDF in an independent blind re-read (989/989, M4), and 12 D5 data-quality rules run on every build.
+4. No endorsement is implied: the footnote reads "Not endorsed by the Energy Commission".
+
+Any other use needs separate permission. The consent covers the charts, not the data rows: the extracted cells stay uncommitted, the value scan still guards every committed text file, and `is_publishable` stays 0, so a data export (the post-v1 Streamlit mirror) still excludes D5.
 
 ## GEO: state boundaries
 

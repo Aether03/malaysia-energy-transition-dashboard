@@ -29,7 +29,7 @@ flowchart LR
     D2[Our World in Data<br/>CC BY 4.0]
     D3[DOSM via data.gov.my<br/>CC BY 4.0]
     DO[Hourly demand: Thailand EGAT via Zenodo, CC BY 4.0<br/>Singapore EMA, SODL v1.0]
-    D5[Energy Commission handbook<br/>consent requested]
+    D5[Energy Commission handbook<br/>used with permission]
     D6[NETR / MyRER targets<br/>cited seed]
   end
   subgraph Pipeline["Python pipeline"]
@@ -52,7 +52,7 @@ flowchart LR
 
 ## How to explore
 
-**Without Power BI:** the page images in [`docs/img/`](docs/img/) and the [PDF export](docs/report.pdf) show seven of the nine pages (see [Data and consent](#data-and-consent) for the other two).
+**Without Power BI:** the page images in [`docs/img/`](docs/img/) and the [PDF export](docs/report.pdf) show all nine pages.
 
 | Page | What it shows |
 |---|---|
@@ -116,13 +116,13 @@ Under 30 minutes once the tools are installed. Windows 11 only (SQL Server and P
 | DOSM via [data.gov.my](https://data.gov.my) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Data-quality cross-check |
 | Thai Power System dataset (Bunnak, 2025; EGAT data) via [Zenodo](https://doi.org/10.5281/zenodo.17109911) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Hourly load, forecast, interconnector flows |
 | Energy Market Authority Singapore system demand | [Singapore Open Data Licence v1.0](https://www.ema.gov.sg/terms-of-use) | Hourly load and forecast |
-| Energy Commission, Malaysia Energy Statistics Handbook 2023 | All rights reserved; written consent requested | Regions and State reliability pages (local only) |
+| Energy Commission, Malaysia Energy Statistics Handbook 2023 | All rights reserved; used with the Energy Commission's written permission (9 Oct 2026) | Regions and State reliability pages (charts adapted) |
 | National RE targets (12MP / SEDA MyRER 2021, NETR 2023) | Cited facts | Target markers |
 | geoBoundaries MYS ADM1 | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/) | State boundaries: "© OpenStreetMap contributors, via geoBoundaries" |
 
 All data are used modified (cleaned, reshaped, aggregated and combined into derived metrics), and no source endorses this project. Full terms and how each one is honoured: [`DATA_LICENSES.md`](DATA_LICENSES.md). Code: MIT ([`LICENSE`](LICENSE)).
 
-- **Energy Commission handbook (D5).** Its copyright page requires written consent to reproduce any part. The pipeline downloads the public PDF at build time and nothing from it is committed, not even in test fixtures (a guard test and a value scan enforce this). Consent was requested on 7 October 2026. Until it is granted, the Regions and State reliability pages render only on your own machine and are left out of every published image, PDF and video, and the pages carry a "permission requested" notice.
+- **Energy Commission handbook (D5).** Its copyright page requires written consent to reproduce any part. The pipeline downloads the public PDF at build time and nothing from it is committed, not even in test fixtures (a guard test and a value scan enforce this). On 9 October 2026 the Energy Commission gave written permission to use and adapt its charts and data in this non-commercial project, so the Regions and State reliability pages are in the page images and PDF. Each credits "Source: Energy Commission", marks its charts as adapted and states that the Energy Commission does not endorse the project. The permission covers the charts, not the data: the extracted tables still never enter the repository.
 - **Peninsular Malaysia hourly demand (GSO / TNB).** The Grid System Operator's terms forbid downloading or storing its data without TNB's written consent, which was requested on 30 September 2026 with no reply yet. The grid and forecast pages therefore use Thailand's open hourly data as a stand-in, and say so in a banner. The GSO adapter stays switched off until consent arrives.
 
 ## Limits

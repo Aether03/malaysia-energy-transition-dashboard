@@ -2,7 +2,7 @@
 
 Desktop has File > Export > Export to PDF, but no per-page PNG. So:
 1. In Desktop, export the whole report to `data/private/report_full.pdf` (git-ignored: it holds P3/P3b,
-   whose Energy Commission handbook figures stay out of every published file until consent).
+   whose Energy Commission handbook charts are published only while D5's consent is GRANTED).
 2. Run `.venv/Scripts/python tools/export_pages.py`. It writes `docs/report.pdf` (public pages only) and
    `docs/img/NN_<page>.png` at 1280x720.
 
@@ -59,15 +59,17 @@ def keep_flags(pages: list[tuple[str, str]], consent_by_source: dict[str, str]) 
 
 
 def check_markers(texts: list[str], keep: list[bool], pages: list[tuple[str, str]]) -> list[str]:
-    """Problems that must stop the export: a dropped page without a marker (the mapping is off), or a
-    kept page with one (restricted text would be published)."""
+    """Problems that must stop the export: a restricted page without a marker (the mapping is off), or an
+    unrestricted page with one (restricted text would be published without its consent)."""
     problems = []
     for text, kept, (name, _) in zip(texts, keep, pages, strict=True):
         found = [m for m in RESTRICTED_MARKERS if m in text]
-        if kept and found:
+        restricted = name in RESTRICTED_PAGES
+        if found and not restricted:
             problems.append(f"{name}: kept page contains restricted marker(s) {found}")
-        if not kept and not found:
-            problems.append(f"{name}: dropped page has no restricted marker; is the page order right?")
+        if restricted and not found:
+            state = "kept" if kept else "dropped"
+            problems.append(f"{name}: {state} page has no restricted marker; is the page order right?")
     return problems
 
 

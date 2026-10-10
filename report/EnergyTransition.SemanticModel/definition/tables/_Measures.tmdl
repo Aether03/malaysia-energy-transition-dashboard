@@ -1075,7 +1075,7 @@ table _Measures
 			RETURN
 			    SWITCH (
 			        s,
-			        "GRANTED", "Reproduced with the Energy Commission's written permission.",
+			        "GRANTED", "Charts adapted from the handbook with the Energy Commission's written permission (9 October 2026). Not endorsed by the Energy Commission.",
 			        "REQUESTED", "Derived charts for non-commercial portfolio use; written permission requested from the Energy Commission.",
 			        "Derived charts for non-commercial portfolio use; written permission to be requested from the Energy Commission."
 			    )

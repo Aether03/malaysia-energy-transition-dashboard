@@ -2,7 +2,7 @@
 
 **To:** sc@st.gov.my (Strategic Communications, from the "Who To Contact" page, https://www.st.gov.my/contact-us/who-to-contact; the handbook names the Energy Data and Research Unit, Strategic Planning and Communication Department, as the contact for its figures, but publishes no email for it, and the site's general form is CAPTCHA-protected)
 **Subject:** Request for written consent: derived charts from the Malaysia Energy Statistics Handbook 2023 in a non-commercial portfolio project
-**Status:** SENT 2026-10-07 from amirulaqmalazhar@gmail.com (Gmail message 1a1120fcdce4d462), with Amirul's go. D5 `consent_status = REQUESTED` in `seed/data_source.csv`; `is_publishable` stays 0. Awaiting reply. Until consent: P3/P3b stay out of every published export (M5 Q2).
+**Status:** **GRANTED 2026-10-09** (reply in the resent thread; conditions in `DATA_LICENSES.md` §D5). D5 `consent_status = GRANTED` in `seed/data_source.csv`; `is_publishable` stays 0 (the consent covers charts, not the data rows). P3/P3b are now in the published exports (M5 Q2 reversed). First sent 2026-10-07 from amirulaqmalazhar@gmail.com (Gmail message 1a1120fcdce4d462), with Amirul's go.
 
 ---
 
@@ -42,3 +42,5 @@ GitHub: https://github.com/Aether03
 
 - 2026-10-07: sent to sc@st.gov.my, asking them to forward it.
 - 2026-10-07: the Strategic Communications Section replied that the request should go directly to two named officers of the Energy Data and Research Unit. Resent the same day with the same text and a first paragraph explaining the redirect (addresses not recorded here: they are personal).
+- 2026-10-09: Strategic Communications (Senior Assistant Director) approved the use and adaptation of the handbook's charts and data for the stated purpose, on four conditions: credit "Source: Energy Commission", identify adapted charts, present the data accurately, imply no endorsement. Other uses need separate permission.
+- 2026-10-10: thank-you reply sent in the same thread (Gmail message 1a125e9ac4e19626), with Amirul's go; it confirms the four conditions and offers the link once the repository is public.

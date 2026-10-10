@@ -46,12 +46,15 @@ def test_the_public_report_pdf_holds_no_restricted_page():
         pytest.skip("docs/report.pdf has not been exported yet")
     pdfium = pytest.importorskip("pypdfium2")
     sys.path.insert(0, str(ROOT / "tools"))
-    from export_pages import RESTRICTED_MARKERS
+    from export_pages import RESTRICTED_MARKERS, consent
 
     doc = pdfium.PdfDocument(path)
-    for i in range(len(doc)):
-        text = doc[i].get_textpage().get_text_range()
-        assert not [m for m in RESTRICTED_MARKERS if m in text], f"page {i + 1} carries restricted page text"
+    texts = [doc[i].get_textpage().get_text_range() for i in range(len(doc))]
+    marked = [i + 1 for i, text in enumerate(texts) if any(m in text for m in RESTRICTED_MARKERS)]
+    if consent().get("D5") == "GRANTED":
+        assert len(marked) == 2  # P3 and P3b, consented 2026-10-09 (DATA_LICENSES.md, D5)
+    else:
+        assert marked == [], f"pages {marked} carry restricted page text"
 
 
 def test_nothing_under_data_or_docs_references_is_tracked(tracked):
