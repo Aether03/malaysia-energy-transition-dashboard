@@ -124,6 +124,12 @@ def _parquet_lines(source: Path | bytes) -> list[str]:
     ]
 
 
+def token_checked(name: str) -> bool:
+    """Parquet snapshots get the label-plus-value check only: their tens of thousands of open-data numbers (hourly
+    MW, TWh) equal some handbook token by chance, while a handbook table landing there would carry its row labels."""
+    return not name.lower().endswith(".parquet")
+
+
 def _lines(name: str, source: Path | bytes) -> list[str]:
     if name.lower().endswith(".pdf"):
         return _pdf_lines(source)
@@ -185,7 +191,11 @@ def main() -> int:
     problems = checked = 0
     for name, oid, lines in _history_blobs() if history else _worktree_files():
         checked += 1
-        matched = {i for i, rx in enumerate(regexes) if any(rx.search(line) for line in lines)}
+        matched = (
+            {i for i, rx in enumerate(regexes) if any(rx.search(line) for line in lines)}
+            if token_checked(name)
+            else set()
+        )
         in_context = context_lines(lines, labelled)
         if not matched and not in_context:
             continue

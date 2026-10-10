@@ -2,7 +2,7 @@
 
 import re
 
-from tools.scan_handbook_values import _parquet_lines, context_lines, scannable_pages
+from tools.scan_handbook_values import _parquet_lines, context_lines, scannable_pages, token_checked
 
 LABELLED = {re.compile(r"\bJohor\b"): {0.58, 1234.5}}
 
@@ -54,3 +54,10 @@ def test_parquet_rows_are_scanned_as_text_with_both_number_forms(tmp_path):
     lines = _parquet_lines(path)
     assert any("Johor" in line and "1,234.5" in line for line in lines)
     assert context_lines(lines, LABELLED) == [2]  # line 1 is the header
+
+
+def test_parquet_gets_the_label_check_only():
+    # 58k open-data numbers (hourly MW, TWh) equal some handbook token by chance; a handbook table landing in
+    # exports/ carries its row labels, which the label-plus-value check catches (M6 step 1, Amirul's go).
+    assert not token_checked("exports/grid_hourly.parquet")
+    assert token_checked("exports/expected.json") and token_checked("README.md")
