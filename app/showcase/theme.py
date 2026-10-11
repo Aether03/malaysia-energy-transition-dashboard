@@ -27,8 +27,19 @@ TEMPLATE = go.layout.Template(
         colorway=SOURCE_COLORS,
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        xaxis={"gridcolor": "#e4e3df", "linecolor": "#e4e3df", "tickfont": {"color": TEXT_SECONDARY}},
-        yaxis={"gridcolor": "#e4e3df", "linecolor": "#e4e3df", "tickfont": {"color": TEXT_SECONDARY}},
+        # automargin: the tight margins below grow to fit tick labels instead of clipping them
+        xaxis={
+            "gridcolor": "#e4e3df",
+            "linecolor": "#e4e3df",
+            "tickfont": {"color": TEXT_SECONDARY},
+            "automargin": True,
+        },
+        yaxis={
+            "gridcolor": "#e4e3df",
+            "linecolor": "#e4e3df",
+            "tickfont": {"color": TEXT_SECONDARY},
+            "automargin": True,
+        },
         legend={"orientation": "h", "y": -0.2},
         margin={"l": 8, "r": 8, "t": 32, "b": 8},
     )
