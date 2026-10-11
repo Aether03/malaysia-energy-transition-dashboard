@@ -1,0 +1,23 @@
+# The web showcase's theme (M6 plan Q6): doc 04 tokens. Light is the report's; dark uses doc 04's dark slots.
+[theme]
+font = "Segoe UI, system-ui, sans-serif"
+chartCategoricalColors = ["#a0522d", "#4a3aa7", "#eb6834", "#2a78d6", "#008300", "#1baf7a", "#eda100"]
+
+[theme.light]
+primaryColor = "#104281"
+backgroundColor = "#f4f3ef"
+secondaryBackgroundColor = "#fcfcfb"
+textColor = "#0b0b0b"
+linkColor = "#256abf"
+borderColor = "#e4e3df"
+
+[theme.dark]
+primaryColor = "#86b6ef"
+backgroundColor = "#1a1a19"
+secondaryBackgroundColor = "#252523"
+textColor = "#f4f3ef"
+linkColor = "#86b6ef"
+chartCategoricalColors = ["#a0522d", "#9085e9", "#d95926", "#3987e5", "#008300", "#1ca3a6", "#c98500"]
+
+[client]
+toolbarMode = "viewer"
