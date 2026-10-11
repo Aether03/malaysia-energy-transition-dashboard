@@ -7,8 +7,6 @@ without text (frames, selected-state bars) and the rail's brand text (the app's 
 import json
 from pathlib import Path
 
-import pytest
-
 ROOT = Path(__file__).resolve().parent.parent
 PAGES = ROOT / "report" / "EnergyTransition.Report" / "definition" / "pages"
 # P1, the Country Deep Dive, P2, P4, P4b, P5, P6, P6b and the T2 tooltip. P3/P3b wait on consent (plan Q2).
@@ -54,7 +52,6 @@ def test_layout_rules_keep_the_information():
     assert "59dacfc5089b163e62a0/frame_nav_0" not in items
 
 
-@pytest.mark.xfail(strict=True, reason="mapped as the pages are built, M6 steps 4-5")
 def test_every_item_maps_to_the_app():
     coverage = json.loads((ROOT / "app" / "coverage.json").read_text(encoding="utf-8"))
     missing = [i for i in inventory() if not coverage.get(i, "").strip()]

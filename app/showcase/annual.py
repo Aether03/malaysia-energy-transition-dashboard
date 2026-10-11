@@ -43,6 +43,13 @@ def _focus_annual(f: Frames) -> pd.DataFrame:
     return ca[ca["country_key"] == _focus(f)].set_index("year")
 
 
+def _country_annual(f: Frames, country: str) -> pd.DataFrame:
+    """One country's `country_annual` rows by name, indexed by year (the ASEAN deep dive's country in context)."""
+    dc = f["dim_country"]
+    ca = f["country_annual"]
+    return ca[ca["country_key"] == int(dc.loc[dc["name"] == country, "country_key"].iloc[0])].set_index("year")
+
+
 def years(f: Frames) -> list[int]:
     return sorted(int(y) for y in f["dim_year"]["year"])
 
@@ -244,15 +251,15 @@ def mix_summary(t: pd.DataFrame) -> str:
 # ----------------------------------------------------------------------------- P2 Generation
 
 
-def generation_title(f: Frames, last_year: int) -> str:
-    """DAX [Generation Title]: the fossil share at the last year of the selected range."""
-    fossil = _focus_annual(f)["fossil_share_gen_pct"].get(last_year)
-    return f"{FOCUS}: fossil fuels supplied {fmt(fossil)}% of electricity in {last_year}"
+def generation_title(f: Frames, last_year: int, country: str = FOCUS) -> str:
+    """DAX [Generation Title]: the fossil share at the last year of the selected range, for [Context Country]."""
+    fossil = _country_annual(f, country)["fossil_share_gen_pct"].get(last_year)
+    return f"{country}: fossil fuels supplied {fmt(fossil)}% of electricity in {last_year}"
 
 
-def generation_subtitle(first: int, last: int, as_of: str) -> str:
+def generation_subtitle(first: int, last: int, as_of: str, country: str = FOCUS) -> str:
     """DAX [Generation Subtitle]."""
-    return f"{FOCUS} · {first}–{last} · {as_of}"
+    return f"{country} · {first}–{last} · {as_of}"
 
 
 def mix_series(f: Frames, first: int, last: int, sources: list[str]) -> pd.DataFrame:
@@ -284,11 +291,11 @@ def generation_mix_summary(series: pd.DataFrame, unit: str) -> str:
     return f"In {y1}, {top['source']} was the largest source shown at {value}."
 
 
-def capacity_factors(f: Frames, year: int, sources: list[str]) -> pd.DataFrame:
-    """DAX [Ctx Capacity Factor (%)] per source at `year` (sql/showcase/05 via `metrics.capacity_factor`): blank, never
-    0, with the reason, when capacity is not reported or implies a factor above 100%."""
+def capacity_factors(f: Frames, year: int, sources: list[str], country: str = FOCUS) -> pd.DataFrame:
+    """DAX [Ctx Capacity Factor (%)] per source at `year` for `country` (sql/showcase/05 via `metrics.capacity_factor`):
+    blank, never 0, with the reason, when capacity is not reported or implies a factor above 100%."""
     r = pd.DataFrame(metrics.capacity_factor(f))
-    r = r[(r["name"] == FOCUS) & (r["year"] == year)].rename(columns={"blank_reason": "reason"})
+    r = r[(r["name"] == country) & (r["year"] == year)].rename(columns={"blank_reason": "reason"})
     r = r[r["source"].isin(sources)] if sources else r
     order = {s: i for i, s in enumerate(f["dim_source"].sort_values("sort_order")["display_name"])}
     r = r.sort_values("source", key=lambda s: s.map(order))
