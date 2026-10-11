@@ -13,12 +13,14 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-from showcase import cache, theme  # noqa: F401  (theme registers the Plotly template)
+from showcase import cache, theme
 
 
 def data_as_of() -> str:
-    """DAX [Data As Of]: "Data as of 7 Oct 2026", from the latest pipeline run."""
+    """DAX [Data As Of]: "Data as of 7 Oct 2026", from the latest pipeline run (said so when none is recorded)."""
     finished = pd.to_datetime(cache.frames()["run_latest"]["finished_at"]).max()
+    if pd.isna(finished):
+        return "Data as of: no pipeline run recorded"
     return f"Data as of {finished.day} {finished:%b %Y}"
 
 
@@ -45,9 +47,17 @@ def reset_button(keys: Iterable[str]) -> None:
         st.rerun()
 
 
+def is_dark() -> bool:
+    """The viewer's theme. Streamlit infers it from the page background, so on a session's very first load it can
+    report light for a dark viewer until the next rerun (any widget change); the charts then follow."""
+    return st.context.theme.type == "dark"
+
+
 def chart(fig: go.Figure, summary: str, data: pd.DataFrame, *, key: str) -> None:
     """A Plotly chart in the report's template, its one-sentence text summary, and a "Show data" table."""
-    fig.update_layout(template="energy_transition")
+    if is_dark():
+        fig = theme.to_dark(fig)
+    fig.update_layout(template="energy_transition_dark" if is_dark() else "energy_transition")
     st.plotly_chart(fig, theme=None, key=key, alt=summary)  # theme=None: the report's template, not Streamlit's
     st.caption(summary)
     with st.expander("Show data"):

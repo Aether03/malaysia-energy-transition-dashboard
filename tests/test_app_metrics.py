@@ -20,7 +20,7 @@ def test_every_exported_showcase_result_has_a_port():
 
 
 def assert_rows_match(got: list[dict], want: list[dict]) -> None:
-    """Same columns and rows; text, dates and integers exact, other numbers within max(0.05, 0.1%)."""
+    """Same columns and rows; text, dates and integers exact, other numbers equal up to float noise (1e-9)."""
     g, w = pd.DataFrame(got), pd.DataFrame(want)
     assert list(g.columns) == list(w.columns)
     assert len(g) == len(w)
@@ -30,7 +30,7 @@ def assert_rows_match(got: list[dict], want: list[dict]) -> None:
     for col in w.columns:
         for i, (a, b) in enumerate(zip(g[col], w[col], strict=True)):
             if isinstance(b, float) and not math.isnan(b):
-                assert a is not None and abs(a - b) <= max(0.05, 0.001 * abs(b)), f"{col} row {i}: {a} vs {b}"
+                assert a is not None and math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-9), f"{col} row {i}: {a} vs {b}"
             else:
                 assert (pd.isna(a) and pd.isna(b)) or a == b, f"{col} row {i}: {a!r} vs {b!r}"
 
@@ -47,10 +47,13 @@ def test_port_matches_its_sql_twin(name):
 
 
 def test_the_comparison_catches_a_wrong_number():
+    # The ports reproduce the SQL rounding exactly, so the comparison allows float noise only (M6 review M3): a
+    # number one rounding step off fails, which max(0.05, 0.1%) would have let through.
     want = [{"grid_code": "TH_EGAT", "mape": 4.56}]
-    assert_rows_match([{"grid_code": "TH_EGAT", "mape": 4.6}], want)
-    with pytest.raises(AssertionError):
-        assert_rows_match([{"grid_code": "TH_EGAT", "mape": 4.7}], want)
+    assert_rows_match([{"grid_code": "TH_EGAT", "mape": 4.56 + 1e-12}], want)
+    for wrong in (4.57, 4.6):
+        with pytest.raises(AssertionError):
+            assert_rows_match([{"grid_code": "TH_EGAT", "mape": wrong}], want)
 
 
 # --- edge cases the real data does not exercise, on small synthetic frames ---

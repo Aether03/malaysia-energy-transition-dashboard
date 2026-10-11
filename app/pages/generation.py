@@ -137,7 +137,8 @@ with cf_col:
             orientation="h",
             marker_color=have["color"].tolist(),
             text=[annual.fmt(v) for v in have["capacity_factor_pct"]],
-            textposition="auto",
+            textposition="outside",
+            cliponaxis=False,
             hovertext=[
                 f"{r.source}: capacity factor {annual.fmt(r.capacity_factor_pct)}%<br>"
                 f"= generation {annual.fmt(r.generation_twh, 2)} TWh ÷ (capacity {annual.fmt(r.capacity_gw, 2)} GW "

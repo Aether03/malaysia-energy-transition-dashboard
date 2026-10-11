@@ -117,7 +117,8 @@ with netr_col:
                 orientation="h",
                 marker_color=colour,
                 text=[annual.fmt(value)],
-                textposition="auto",
+                textposition="outside",
+                cliponaxis=False,
                 hovertext=hover,
                 hoverinfo="text",
             )

@@ -383,3 +383,11 @@ def test_the_latest_complete_year_ignores_a_partial_one():
     dy = F["dim_year"].copy()
     dy.loc[dy["year"] == LATEST, "is_complete"] = False
     assert annual.latest_complete_year({**F, "dim_year": dy}) == LATEST - 1
+
+
+def test_fmt_never_prints_a_negative_zero():
+    """Review L8: a value that rounds to zero is "0.0", as grid.num already did (it now uses fmt)."""
+    from showcase import grid
+
+    assert annual.fmt(-0.04) == "0.0" and annual.fmt(-0.0, 2) == "0.00"
+    assert grid.num(-0.4) == "0" and grid.num(-1234.5, thousands=True) == "-1,235"

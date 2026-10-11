@@ -59,8 +59,8 @@ st.markdown("\n".join(f"- {note}" for note in NOTES))
 st.caption(NOT_HERE)
 
 st.subheader("Data vintage")
-run = manifest["run"]["run_id"]
-st.markdown(f"These snapshots were exported on **{meta.exported_at(manifest)}** from pipeline run {run}.")
+run = f"pipeline run {manifest['run']['run_id']}" if manifest.get("run") else "no pipeline run recorded"
+st.markdown(f"These snapshots were exported on **{meta.exported_at(manifest)}** from {run}.")
 st.table(meta.vintage_table(manifest, f).set_index("Source"))
 
 st.subheader("What the web version leaves out, and why")

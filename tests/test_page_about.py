@@ -322,3 +322,13 @@ def test_left_out_lists_views_then_queries_each_with_its_reason():
 
 def test_left_out_is_empty_when_nothing_is_excluded():
     assert meta.left_out({"excluded_views": {}, "excluded_showcase": {}}).empty
+
+
+def test_the_page_renders_without_a_recorded_run(monkeypatch):
+    """Review L6: the exporter allows a manifest with run = None and an empty run_latest."""
+    no_run = {**data.manifest(), "run": None}
+    monkeypatch.setattr(data, "manifest", lambda: no_run)
+    with patched(frames_with(run_latest=F["run_latest"].iloc[0:0])):
+        at = AppTest.from_file(PAGE, default_timeout=60).run()
+    assert not at.exception
+    assert "no pipeline run recorded" in page_text(at)

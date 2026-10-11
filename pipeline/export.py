@@ -147,6 +147,19 @@ def check_dq_detail(rows: list[tuple[str, str | None, str | None]], publishable:
         raise ExportRefused(f"dq_latest detail from a non-publishable source: {', '.join(leaks)}")
 
 
+def check_grid_filtered(columns: dict[str, list[str]]) -> None:
+    """{view: columns}: a grid column outside the row-filtered views means grid rows nobody filtered (review M2)."""
+    unfiltered = sorted(
+        view
+        for view, cols in columns.items()
+        if view not in GRID_KEYED | {"dim_grid"} and {"grid_key", "grid_code"} & set(cols)
+    )
+    if unfiltered:
+        raise ExportRefused(
+            f"grid column in a view not filtered by grid: {', '.join(unfiltered)}; add it to GRID_KEYED"
+        )
+
+
 def _plain(value):
     if isinstance(value, Decimal):
         return float(value)
@@ -201,14 +214,20 @@ def export(out_dir: Path = EXPORT_DIR) -> dict:
         _, run = _query(cur, "SELECT run_id, started_at, finished_at, status FROM mart.run_latest")
         cols, loads = _query(cur, "SELECT * FROM mart.source_load_latest ORDER BY data_source_code")
 
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for old in out_dir.glob("*.parquet"):
-        old.unlink()  # a view excluded since the last export must not linger
+    check_grid_filtered({view: list(frame.columns) for view, frame in frames.items()})
+
+    # Everything is serialised in memory first, then written beside its target and swapped in, so a failure never
+    # leaves a half-new set (review M1). exports/README.md is not the export's and is left alone.
+    import io
+
+    content: dict[str, bytes] = {}
     files = []
     for view, frame in frames.items():
-        frame.to_parquet(out_dir / f"{view}.parquet", index=False)
+        buffer = io.BytesIO()
+        frame.to_parquet(buffer, index=False)
+        content[f"{view}.parquet"] = buffer.getvalue()
         files.append({"file": f"{view}.parquet", "rows": len(frame), "sources": sorted(VIEWS[view])})
-    (out_dir / "expected.json").write_text(json.dumps(expected, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    content["expected.json"] = (json.dumps(expected, indent=1, ensure_ascii=False) + "\n").encode("utf-8")
     manifest = {
         "exported_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "run": dict(zip(("run_id", "started_at", "finished_at", "status"), map(_plain, run[0]), strict=True))
@@ -221,7 +240,22 @@ def export(out_dir: Path = EXPORT_DIR) -> dict:
         "expected": sorted(expected),
         "excluded_showcase": show_excluded,
     }
-    (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+    content["manifest.json"] = (json.dumps(manifest, indent=1, ensure_ascii=False) + "\n").encode("utf-8")
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    staged = {name: out_dir / f".{name}.tmp" for name in content}
+    try:
+        for name, data in content.items():
+            staged[name].write_bytes(data)
+    except BaseException:
+        for tmp in staged.values():
+            tmp.unlink(missing_ok=True)
+        raise
+    for old in out_dir.glob("*.parquet"):
+        if old.name not in content:
+            old.unlink()  # a view excluded since the last export must not linger
+    for name, tmp in staged.items():
+        tmp.replace(out_dir / name)
     for name, reason in {**excluded, **show_excluded}.items():
         log.info("Left out %s: %s", name, reason)
     return manifest

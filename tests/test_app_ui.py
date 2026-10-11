@@ -53,3 +53,17 @@ def test_the_fail_badge_shows_only_when_a_rule_fails(monkeypatch):
         assert "1 data-quality rule failing" in at.sidebar.error[0].value
     finally:
         st.cache_data.clear()  # later tests must not see the failing frames
+
+
+def test_data_as_of_says_so_when_no_run_is_recorded(monkeypatch):
+    from showcase import data
+
+    real = data.frames
+    monkeypatch.setattr(data, "frames", lambda: {**real(), "run_latest": real()["run_latest"].iloc[0:0]})
+    st.cache_data.clear()
+    try:
+        at = AppTest.from_function(page, default_timeout=30).run()
+        assert not at.exception
+        assert at.caption[0].value == "Data as of: no pipeline run recorded"
+    finally:
+        st.cache_data.clear()

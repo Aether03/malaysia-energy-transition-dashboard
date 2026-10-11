@@ -26,6 +26,7 @@ def fmt(x, digits: int = 1, *, grouping: bool = False) -> str:
     if x is None or pd.isna(x):
         return ""
     q = Decimal(repr(float(x))).quantize(Decimal(1).scaleb(-digits), rounding=ROUND_HALF_UP)
+    q = abs(q) if q == 0 else q  # no "-0.0"
     return f"{q:,.{digits}f}" if grouping else f"{q:.{digits}f}"
 
 

@@ -13,10 +13,11 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from datetime import date, datetime
-from decimal import ROUND_HALF_UP, Decimal
 
 import numpy as np
 import pandas as pd
+
+from showcase import annual
 
 Frames = Mapping[str, pd.DataFrame]
 YEARS = (2023, 2024)  # P4's page filter on dim_date[year]
@@ -25,10 +26,8 @@ ERROR_STATE = "Forecast not generated in latest run — see About page"  # [Fore
 
 # ---------------------------------------------------------------- DAX FORMAT
 def num(x: float, digits: int = 0, *, thousands: bool = False) -> str:
-    """DAX FORMAT(x, "0.0" or "#,0"): halves round away from zero (Python's round and :.1f round half to even)."""
-    q = Decimal(repr(float(x))).quantize(Decimal(1).scaleb(-digits), rounding=ROUND_HALF_UP)
-    q = abs(q) if q == 0 else q  # no "-0.0"
-    return f"{q:,.{digits}f}" if thousands else f"{q:.{digits}f}"
+    """DAX FORMAT(x, "0.0" or "#,0"): `annual.fmt`, the one implementation (halves away from zero, no "-0")."""
+    return annual.fmt(x, digits, grouping=thousands)
 
 
 def date_text(d: date | datetime, *, weekday: bool = False) -> str:

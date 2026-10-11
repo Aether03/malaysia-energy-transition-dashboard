@@ -10,6 +10,9 @@ secondaryBackgroundColor = "#fcfcfb"
 textColor = "#0b0b0b"
 linkColor = "#256abf"
 borderColor = "#e4e3df"
+# KPI deltas (:green[] / :red[]): doc 04 text-safe colours, measured on this page colour (4.98 and 5.11:1)
+greenTextColor = "#087a08"
+redTextColor = "#bd3434"
 
 [theme.dark]
 primaryColor = "#86b6ef"
@@ -17,6 +20,9 @@ backgroundColor = "#1a1a19"
 secondaryBackgroundColor = "#252523"
 textColor = "#f4f3ef"
 linkColor = "#86b6ef"
+# KPI deltas, measured on #1a1a19 (7.57 and 6.02:1)
+greenTextColor = "#4cc24c"
+redTextColor = "#f07070"
 chartCategoricalColors = ["#a0522d", "#9085e9", "#d95926", "#3987e5", "#008300", "#1ca3a6", "#c98500"]
 
 [client]

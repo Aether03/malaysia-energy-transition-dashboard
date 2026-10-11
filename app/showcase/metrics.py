@@ -2,8 +2,8 @@
 
 Contract: each function reproduces one `sql/showcase` query from the snapshot frames (`data.frames()`, keyed by
 view name) and returns rows with the query's column names, row set and rounding. `tests/test_app_metrics.py`
-compares the result with `exports/expected.json[<query>]`: text, dates and integers exactly, other numbers within
-the twin tolerance max(0.05, 0.1%) (`tools/dax_twin_check.py`). The SQL file is the specification; where its
+compares the result with `exports/expected.json[<query>]`: text, dates and integers exactly, other numbers up to
+float noise (1e-9; the twins' max(0.05, 0.1%) was loosened slack, M6 review). The SQL file is the specification; where its
 comments describe a choice (a year window, a blank reason, a rounding), the port makes the same one.
 
 The pages build their charts from these results or from the same frames, so a number on the web page is the
