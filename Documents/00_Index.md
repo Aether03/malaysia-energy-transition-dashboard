@@ -2,6 +2,11 @@
 
 **Updated:** 2026-10-10 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5: steps 1–11 and 13 done; the Energy Commission's consent is in use (2026-10-10); step 12 (going public) waits on the GitHub Support purge. Resume point below.**
 
+**M6 task 6.2 (Streamlit web showcase), on branch `m6` (2026-10-11): steps 0-2 done; resume at step 3** (plan `plans/M6_plan.md`, approved in the Plan Canvas 2026-10-10; Outcome section has each step).
+- **Step 3 next:** port the 11 showcase queries in `app/showcase/metrics.py` (plan: Sonnet subagent, Deep read); `tests/test_app_metrics.py` turns each xfail into a pass. Then steps 4-5 (pages; map all 119 items in `app/coverage.json`), 6 (reviews), 7 (docs + CI), 8 (deploy after M5 step 12), 9 (only if the Energy Commission agrees).
+- **Run it:** `pipeline export` refreshes `exports/` (re-review the scanner's `KNOWN` count for `exports/expected.json` after each export); preview config `energy-showcase` (workspace `.claude/launch.json`, port 8502).
+- **Waiting:** the Energy Commission's answer to the 2026-10-11 follow-up (web app + data file); GitHub Support (M5 step 12). CI runs only on `main` pushes and PRs: Amirul to decide on a draft PR `m6` → `main`.
+
 **M5 session 4 (2026-10-10): the Energy Commission granted consent; step 12 still waits on GitHub Support** (outcome row "12a" in `plans/M5_plan.md`).
 - **Resume here. Purge check failed:** `git ls-remote origin` still lists `refs/pull/1–7/head`, and the old SHAs (`187311803c7d`, `9a770695a263`) still open on GitHub. Support ticket #4832554 has only the auto-acknowledgement (7 Oct). Amirul chose to wait. **Next session:** check Gmail for Support, re-run both checks, then step 12 (asks first; check CI on `main` first).
 - **Consent used (Amirul's go):** D5 `GRANTED` (`is_publishable` stays 0: charts, not data rows); P3/P3b in the 9 PNGs and the PDF (renumbered `01–09`); new notice wording; two guards changed with Amirul's explicit go (the export marker check; the value scan skips the PDF's P3/P3b pages only while D5 is GRANTED). Thank-you reply sent. Walkthrough unchanged (no P3/P3b; Amirul).
