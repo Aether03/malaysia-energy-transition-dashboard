@@ -24,3 +24,16 @@ def test_page_renders(page):
     at = AppTest.from_file(str(page), default_timeout=30).run()
     assert not at.exception
     assert at.title, "every page has a title"
+
+
+def test_the_cloud_installs_the_versions_the_tests_run():
+    """Community Cloud installs only app/requirements.txt (M6 plan Q8); each pin there must equal the root pin that
+    local runs and CI's main job test with, so a drift can't ship untested."""
+
+    def pins(path: Path) -> dict[str, str]:
+        lines = path.read_text(encoding="utf-8").splitlines()
+        return dict(line.split("==") for line in lines if "==" in line and not line.startswith("#"))
+
+    app, root = pins(APP / "requirements.txt"), pins(APP.parent / "requirements.txt")
+    assert set(app) == {"streamlit", "plotly", "pandas", "pyarrow"}
+    assert {name: root.get(name) for name in app} == app

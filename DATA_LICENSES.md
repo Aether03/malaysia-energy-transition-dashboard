@@ -31,7 +31,16 @@ The handbook's own copyright page (p. 5 of the 2023 edition) is stricter than th
 3. The information is presented accurately: every landed cell was checked against the PDF in an independent blind re-read (989/989, M4), and 12 D5 data-quality rules run on every build.
 4. No endorsement is implied: the footnote reads "Not endorsed by the Energy Commission".
 
-Any other use needs separate permission. The consent covers the charts, not the data rows: the extracted cells stay uncommitted, the value scan still guards every committed text file, and `is_publishable` stays 0, so a data export (the post-v1 Streamlit mirror) still excludes D5.
+Any other use needs separate permission. The consent covers the charts, not the data rows: the extracted cells stay uncommitted, the value scan still guards every committed text file, and `is_publishable` stays 0, so the web showcase's data export (`exports/`, below) leaves out every D5 view and showcase query. The showcase's About page links the two consented page images instead. Whether the permission extends to an interactive web version and its data snapshot was asked on 2026-10-11 (`docs/consent/st_request.md`); until the Energy Commission agrees, it stays out.
+
+## Web showcase data (`exports/`)
+
+`python -m pipeline export` writes Parquet snapshots of the `mart` views and the open SQL twins' results for the Streamlit app (`app/`). It is licence-gated and fails closed:
+- a view is exported only if every source it draws on has `is_publishable = 1` (D1, D2, D3, D6, DSG, DTH, GEO);
+- grid rows are kept only for grids whose source is publishable;
+- an unreviewed view, an unknown source code or a restricted source's data-quality detail stops the export with nothing written.
+
+Every run records what it left out, and why, in `exports/manifest.json`, which the app's About page shows. D5 metadata does appear in the snapshot, as on the report's About and Data quality pages: the names, descriptions and statuses of its 12 data-quality rules in `dq_latest`, and its load count and edition checksum in `source_load_latest`. None of it is a handbook value (D5 rule details are NULL by design). Nothing from D4 is exported. Each file's credit, worded as its licence asks, is in [`exports/README.md`](exports/README.md); every page of the app also credits its sources in its footer.
 
 ## GEO: state boundaries
 

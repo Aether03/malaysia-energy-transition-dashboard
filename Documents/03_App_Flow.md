@@ -2,7 +2,7 @@
 
 **Status:** Approved 2026-09-30 · **Updated:** 2026-09-30 · **Builds on:** [01 PRD](01_Product_Requirements.md), [02 TRD](02_Technical_Requirements.md) (both Approved) · **Next:** 04 UI/UX Design Brief
 
-> **How this document is adapted:** there's no app with screens and sign-in here. The "screens" are **Power BI report pages** (Part A). The "system flow" is the **pipeline run** (Part B). Part C covers the post-v1 Streamlit showcase. Visual styling and exact layout are doc 04's job; this document defines *what is on each page and what every control does*.
+> **How this document is adapted:** there's no app with screens and sign-in here. The "screens" are **Power BI report pages** (Part A). The "system flow" is the **pipeline run** (Part B). Part C covers the Streamlit web showcase (as built in M6). Visual styling and exact layout are doc 04's job; this document defines *what is on each page and what every control does*.
 > Labels: **Decided** · **Recommended** · **Unverified** (as in docs 01–02).
 
 ---
@@ -186,14 +186,26 @@ flowchart TD
 | Transform | (part of `run`) | `dw.*` rebuilt in one transaction | Error → transaction rolled back, previous `dw` kept |
 | Check | `pipeline check` | All blocking rules pass | Blocking fail → roll back, exit 1 (FR-03). Non-blocking → WARN, shown on P6. |
 | Forecast | `pipeline forecast` | Forecast + metrics written | Model worse than baseline → still written, flagged honestly |
-| Export (post-v1) | `pipeline export` | Parquet snapshots for Streamlit | Excludes consent-restricted sources automatically |
+| Export (M6, as built) | `pipeline export` | Parquet snapshots of 22 `mart` views, `expected.json` (the open SQL twins' results), `manifest.json` | Excludes any view whose source isn't `is_publishable` and records why; refuses an unreviewed view or source, an unfiltered grid view or a restricted DQ detail; writes atomically |
 
 **Source switches** in the config file (**Decided**): `gso.enabled = false` until TNB consents; `energy_commission.publish = false` (the repo holds only derived, credited charts until consent). **As built:** no config switch; D5's `consent_status` in `seed/data_source.csv` gates the exports (`tools/export_pages.py`), `GRANTED` since 2026-10-09.
 
 ---
 
-# Part C — Post-v1 web showcase (FR-21), outline only
-Streamlit multipage app mirroring P1, P2, P4, P5 and P6. P3 is included only if Energy Commission consent is granted. It uses a sidebar nav and the same takeaway-sentence titles, and reads Parquet snapshots. Detailed flow is to be written when FR-21 starts (after v1). **Recommended:** don't design it further now.
+# Part C — Web showcase (FR-21), as built (M6 task 6.2, 2026-10-12)
+A Streamlit multipage app (`app/streamlit_app.py`, `st.navigation`) with a sidebar nav. Each page has its report page's takeaway title, computed like the DAX title; the page's footnote, then each source's credit as `data_source` words it; and a sidebar notice when a data-quality rule fails (the report's Fail badge). Every chart has a one-sentence text summary (also its `alt` text) and a "Show data" table. Hover text replaces the report's tooltips. It reads only `exports/`, never the database. **No information left behind:** `app/coverage.json` maps all 119 report items on the mirrored pages to their app element, and a test fails on any unmapped item.
+
+| App page | Report pages | What changed from the report |
+|---|---|---|
+| Overview | P1 | The year is a dropdown; the KPI cards' click-through to P2 is an arrow plus the sidebar |
+| Generation | P2 | The year range doesn't sync with other pages (Streamlit drops an absent widget's state) |
+| Grid load | P4 | The grid choice is shared with Forecast; under 768 px the heatmap's cell values move to hover and "Show data" |
+| Forecast | P4b | No change in content; the empty and error states are messages instead of overlays |
+| ASEAN | P5, the Country Deep Dive (D1), the T2 tooltip | The drill-through is a country selector on the same page (Malaysia by default, as the DAX lands without one); "Back" is an in-page link; T2's fields are the hover text on the four comparison charts and also appear in "Show data". No cross-highlighting |
+| About | P6 | Adds the data vintage and "what the web version leaves out, and why" (from the manifest), with links, not embeds, to the two consented handbook images |
+| Data quality | P6b | The source list is a row-select filter; a web-only message appears when a filter leaves no rule |
+
+**Not in the web version:** P3 Regions and P3b State reliability. The Energy Commission's consent covers the charts as images, not the data rows a web app must ship. They join only if the Energy Commission agrees (M6 plan Q2, step 9).
 
 ---
 

@@ -17,7 +17,7 @@
 | `EnergyDW.mart.*` (views) | One view per Power BI table, with only the columns the report uses | A stable contract between the database and the report |
 | `EnergyDW.ref.*` | Hand-authored seeds (NETR targets, colours, KPI definitions, state aliases, source licences) | Loaded from `seed/*.csv` in the repo. Authored by us, so publishable |
 | `EnergyDW.meta.*` | Run log, step log, DQ rules and results, schema version | FR-03, FR-05, and P6 "About the Data" |
-| `exports/*.parquet` (post-v1) | Aggregated snapshots of `mart.*` for Streamlit | FR-21; licence-filtered by `dim_data_source.is_publishable` |
+| `exports/` (M6, committed) | `*.parquet`: one snapshot per exported `mart` view (22, 1.7 MB); `expected.json`: the open `sql/showcase` results; `manifest.json`: export time, run, source vintage, files with rows and sources, excluded views and queries with reasons; `README.md`: per-file credits | FR-21; licence-gated by `dim_data_source.is_publishable` plus the allowlist in `pipeline/export.py` (`VIEWS`, `GRID_KEYED`, `SHOWCASE`) |
 
 ### 1.1 Verified source shapes
 | Source | File / endpoint | Real columns (verified) | Grain | Coverage |
@@ -192,7 +192,7 @@ erDiagram
 - **Retention:** landing files keep the last 3 versions per source, pruned by the pipeline. `meta` is kept forever (tiny). Each `forecast_run` is kept; `is_current` flags the one the report shows.
 - **Backup:** not needed, because the whole database is rebuildable from public sources plus seeds by `pipeline run` (FR-18). Optional `BACKUP DATABASE` before risky migrations.
 - **Sync / offline conflicts:** not applicable. There's a single local writer, and Power BI Import mode works offline.
-- **Licence gating:** `dim_data_source.is_publishable` controls `pipeline export` (post-v1). Rows from D4/D5 never leave the PC until consent flips the flag.
+- **Licence gating:** `dim_data_source.is_publishable` controls `pipeline export` (as built in M6). Rows from D4/D5 never leave the PC until consent flips the flag. Each `mart` view is listed in `pipeline/export.py` with its sources; an unlisted view refuses the export, grid-keyed views keep only publishable grids' rows, and a test checks the Parquet contents themselves (`tests/test_no_restricted_data.py`). D5 metadata (DQ rule names and statuses, the load count) is exported, as P6/P6b show it; D5 rule details are NULL.
 
 ## 6. Sample records (synthetic: illustrative values, not real data)
 

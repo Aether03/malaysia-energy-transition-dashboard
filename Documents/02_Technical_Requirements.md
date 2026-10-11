@@ -65,6 +65,7 @@ Not applicable. The deliverables are a desktop Power BI report, a GitHub repo an
 - **Framework:** Streamlit (**Recommended**: you already run HA-PIT on Streamlit Community Cloud). Charts with Plotly.
 - **Data:** Parquet snapshots exported from `mart.*` and committed to the repo, only for openly licensed sources (and Energy Commission or GSO data only if consent is granted).
 - **Hosting limits:** apps sleep after **12 hours without traffic** and wake on a visit. Resource limits are shared and "may change at any time" ([Streamlit docs](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app), [resource limits](https://docs.streamlit.io/knowledge-base/deploy/resource-limits)). Snapshots stay small (aggregated, a few MB).
+- **As built (M6 task 6.2, 2026-10-12; branch `m6`, deployed at step 8):** Streamlit 1.65.0 and Plotly 7.1.0, pinned in both `requirements.txt` and `app/requirements.txt`. Community Cloud reads the file beside the entrypoint first, and a test keeps the two files' pins equal. `app/streamlit_app.py` uses `st.navigation` for the 7 pages. `pipeline export` writes 22 views (1.7 MB) plus `expected.json` and `manifest.json` to `exports/`, licence-gated, fail-closed and atomic. The app's pandas ports equal the SQL twins exactly (tested). The charts follow the viewer's light or dark theme, using doc 04's slots. CI has a second job that installs only `app/requirements.txt` and runs the app's 285 tests.
 
 ## 4. Backend
 There is **no server or API.** The "backend" is a command-line batch pipeline run on your PC.
@@ -148,7 +149,7 @@ Environments: a single local environment. "Prod" is simply the published GitHub 
 | Report format | PBIP with PBIR + TMDL (GA) | [PBIP overview](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview) |
 | mssql-python | 1.12.0 or newer | [PyPI](https://pypi.org/project/mssql-python/) |
 | Other Python packages | Pinned at first install | `requirements.txt` (to be created) |
-| Streamlit | Pinned when FR-21 starts | `requirements.txt` |
+| Streamlit | 1.65.0 with Plotly 7.1.0 (pinned at FR-21's start, 2026-10-11) | `requirements.txt`, `app/requirements.txt` |
 
 ## 10. Fixes & improvements
 | # | Item | Why |

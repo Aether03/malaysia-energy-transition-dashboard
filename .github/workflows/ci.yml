@@ -30,3 +30,19 @@ jobs:
         run: python -m sqlfluff lint sql/
       - name: pytest (no SQL Server or Power BI needed)
         run: python -m pytest -q
+
+  app:
+    # Streamlit Community Cloud installs only app/requirements.txt (M6 plan Q8): prove the web showcase's tests pass on
+    # that file alone. tests/test_app_pages.py checks its pins equal the root ones.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: app/requirements.txt
+      - run: python -m pip install -r app/requirements.txt "$(grep '^pytest==' requirements.txt)"
+      - name: pytest (the showcase's tests on its own dependencies)
+        run: python -m pytest -q tests/test_app_*.py tests/test_page_*.py

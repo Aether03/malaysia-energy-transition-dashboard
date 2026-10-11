@@ -21,6 +21,7 @@ An end-to-end energy analytics project, built on public data with free tools on 
 - **SQL Server warehouse** in layers (`raw → stg → dw → mart`, plus `meta` for run logs and data-quality results), built by numbered migrations.
 - **Power BI report** (PBIP, Import mode) of nine pages, with every key DAX measure checked against an SQL twin.
 - **Day-ahead load forecast** (LightGBM), backtested once on 2024 under a pre-registered protocol and replayed identically on every run.
+- **Web showcase** (Streamlit + Plotly) of the seven open-data pages, reading licence-gated Parquet snapshots of the mart views; its numbers are tested against the same SQL twins.
 
 ```mermaid
 flowchart LR
@@ -48,7 +49,14 @@ flowchart LR
   DW --> F --> DW
   MART --> PBI[Power BI Desktop<br/>PBIP, Import mode]
   PBI --> OUT[docs/img PNGs<br/>docs/report.pdf]
+  MART --> EXP[exports/ Parquet<br/>licence-gated] --> APP[Streamlit showcase<br/>app/]
 ```
+
+## Try it online
+
+**Web showcase:** *link added at deployment* (Streamlit Community Cloud; the free tier sleeps when idle, so a first visit may have to wake it up). No install and no Power BI: Overview, Generation, Grid load, Forecast, ASEAN (with each country's deep dive), About and Data quality, with the report's titles, numbers and credits. Every chart has a text summary and a "Show data" table, and it follows your light or dark theme.
+
+It reads the Parquet snapshots in [`exports/`](exports/), which `pipeline export` writes only for sources whose licence allows their data rows to be published. So Regions and State reliability are not in it: the Energy Commission's permission covers the charts, not the data behind them. Their images are in [`docs/img/`](docs/img/). The About page lists what is left out and why. To run it locally after [Setup](#setup): `.venv\Scripts\streamlit run app\streamlit_app.py`.
 
 ## How to explore
 
@@ -132,7 +140,7 @@ All data are used modified (cleaned, reshaped, aggregated and combined into deri
 - **The forecast is for Thailand and Singapore, not Malaysia**, until GSO consents. It covers one test year; Thailand's hardest month is April (the Songkran holiday), and against a weekday-aware naive rule its margin is smaller (33.9%).
 - **Static exports cut scrolling content.** Tables and lists that scroll show only their first rows in the PNGs and PDF (the sources, KPI definitions and data-quality rules on About and Data quality, the capacity-factor bars, the ASEAN country list); the full source list is above. Generation's main chart is only about 40 px tall, and three labels truncate ([`docs/a11y.md`](docs/a11y.md)).
 - **Accessibility checks not done:** Windows high-contrast mode (skipped) and a screen-reader pass. Alt text, AA contrast, tab order and no-colour-only encoding are in place.
-- **Power BI Desktop only.** There is no Power BI Service publication, so the report needs Windows, SQL Server and Desktop to run live; the images and PDF are the portable view.
+- **Power BI Desktop only.** There is no Power BI Service publication, so the report needs Windows, SQL Server and Desktop to run live. The portable views are the images, the PDF and the [web showcase](#try-it-online), which has no Regions or State reliability pages and replaces cross-highlighting and drill-through with selectors.
 
 ## Repository map
 
@@ -142,6 +150,8 @@ All data are used modified (cleaned, reshaped, aggregated and combined into deri
 | `sql/` | Migrations, repeatable views, transform scripts, showcase queries |
 | `seed/` | Reference data: countries, sources, KPI definitions, DQ rules, targets |
 | `report/` | The Power BI project (PBIP: report JSON and TMDL model; no data) |
+| `app/` | The Streamlit web showcase: pages, the metric ports of the SQL twins, theme, and `coverage.json` (every report item mapped to the app) |
+| `exports/` | The showcase's data: licence-gated Parquet snapshots, `expected.json` (the SQL twins' results) and the manifest |
 | `tools/` | Page builders, report validator, DAX-vs-SQL twin check, export and guard scripts |
 | `tests/` | pytest suite (no database or Power BI needed) |
 | `docs/` | Findings, forecast method, reconciliation, accessibility, page exports |
