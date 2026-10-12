@@ -90,7 +90,7 @@ There is **no server or API.** The "backend" is a command-line batch pipeline ru
 - Fallback (doc 01): annual demand and renewables-share projection to 2030 if hourly data is unusable.
 - v2 idea: weather features.
 
-**Scheduling:** manual `pipeline run` for v1. A monthly Windows Task Scheduler job is a **Could** (Ember updates twice a month).
+**Scheduling:** manual, following the checklist in `docs/refresh.md` (Ember updates about twice a month). A Task Scheduler job was dropped (2026-10-12): it would automate only `pipeline run`, while the report export, the README check and the push need Desktop or a person.
 
 ## 5. Databases and storage
 - **Engine: SQL Server 2025** (version 17.x), **Developer edition**, free for development and non-production use ([Editions](https://learn.microsoft.com/en-us/sql/sql-server/editions-and-components-of-sql-server-2025?view=sql-server-ver17), [Downloads](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)). 2025 has two developer editions:

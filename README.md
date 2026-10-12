@@ -135,7 +135,7 @@ All data are used modified (cleaned, reshaped, aggregated and combined into deri
 
 ## Limits
 
-- **Ember basis.** Every Malaysia number uses Ember's grid generation and capacity. Recent Sabah and Sarawak figures are partly carried forward, 2025 capacity repeats 2024 for solar and hydro, and other sources disagree on Malaysia's generation by 6–14% in recent years (partly explained in [`docs/reconciliation.md`](docs/reconciliation.md)). Peer ranks can move with Ember's releases: its 6 Oct 2026 release revised Thailand's bioenergy upwards and moved Malaysia from 3rd to 4th on renewable share. `tools/check_readme_numbers.py` flags any such drift after a `pipeline run`.
+- **Ember basis.** Every Malaysia number uses Ember's grid generation and capacity. Recent Sabah and Sarawak figures are partly carried forward, 2025 capacity repeats 2024 for solar and hydro, and other sources disagree on Malaysia's generation by 6–14% in recent years (partly explained in [`docs/reconciliation.md`](docs/reconciliation.md)). Peer ranks can move with Ember's releases: its 6 Oct 2026 release revised Thailand's bioenergy upwards and moved Malaysia from 3rd to 4th on renewable share. `tools/check_readme_numbers.py` flags any such drift after a `pipeline run`; the full refresh routine is in [`docs/refresh.md`](docs/refresh.md).
 - **Official vs Ember capacity share.** Malaysia's official renewable share of capacity was 31% at the end of 2025; Ember's grid basis gives 24.4%. The report shows both and explains the definition gap.
 - **The forecast is for Thailand and Singapore, not Malaysia**, until GSO consents. It covers one test year; Thailand's hardest month is April (the Songkran holiday), and against a weekday-aware naive rule its margin is smaller (33.9%).
 - **Static exports cut scrolling content.** Tables and lists that scroll show only their first rows in the PNGs and PDF (the sources, KPI definitions and data-quality rules on About and Data quality, the capacity-factor bars, the ASEAN country list); the full source list is above. Generation's main chart is only about 40 px tall, and three labels truncate ([`docs/a11y.md`](docs/a11y.md)).
@@ -154,5 +154,5 @@ All data are used modified (cleaned, reshaped, aggregated and combined into deri
 | `exports/` | The showcase's data: licence-gated Parquet snapshots, `expected.json` (the SQL twins' results) and the manifest |
 | `tools/` | Page builders, report validator, DAX-vs-SQL twin check, export and guard scripts |
 | `tests/` | pytest suite (no database or Power BI needed) |
-| `docs/` | Findings, forecast method, reconciliation, accessibility, page exports |
+| `docs/` | Findings, forecast method, reconciliation, accessibility, page exports, the refresh checklist, release notes |
 | `Documents/` | Planning documents (requirements, design, schema, plans per milestone) |
