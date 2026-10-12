@@ -2,7 +2,7 @@
 
 **To:** admin@gso.org.my (contact address listed on gso.org.my; confirm before sending)
 **Subject:** Request for written consent: use of GSO System Demand data in a non-commercial portfolio project
-**Status:** SENT 2026-09-30 from amirulaqmalazhar@gmail.com (Gmail message 1a0eee52ac5e11ef). D4 consent_status = REQUESTED. **Follow-up** sent 2026-10-07 in the same thread (Gmail message 1a1120fd42c70a41): no reply and no bounce after 7 days; it asks to be pointed to the right TNB/GSO contact if needed. Awaiting reply.
+**Status:** SENT 2026-09-30 from amirulaqmalazhar@gmail.com (Gmail message 1a0eee52ac5e11ef). D4 consent_status = REQUESTED. **Follow-up** sent 2026-10-07 in the same thread (Gmail message 1a1120fd42c70a41): no reply and no bounce after 7 days; it asks to be pointed to the right TNB/GSO contact if needed. **Second follow-up** sent 2026-10-12 in the same thread (Gmail message 1a1301525de325c9, Amirul's go): asks for a forward to the right contact, or a short decline so the request can be closed. Awaiting reply.
 
 ---
 

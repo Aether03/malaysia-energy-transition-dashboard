@@ -20,7 +20,7 @@ New project. Nothing is built yet. Evidence (2026-09-30):
 | **M3** | Grid load and forecast | FR-13, 22; interconnector flows (S2) | M1 | **done 2026-10-05**: [plans/M3_plan.md](plans/M3_plan.md) (Outcome section) |
 | **M4** | Regions and state reliability | FR-23, 24 | M1 | **done 2026-10-05**: [plans/M4_plan.md](plans/M4_plan.md) (Outcome). P3 split into Regions + State reliability |
 | **M5** | Finish and ship **v1.0.0** | FR-14, 16, 17, 18, 20; NFR-01…08 | M2, M3, M4 | **in progress**: [plans/M5_plan.md](plans/M5_plan.md), approved 2026-10-07; task 6.1 (consent email) pulled into M5 |
-| **M6** | Post-v1 | FR-21 (Streamlit), FR-19 (optional), Energy Commission consent (**granted 2026-10-09**, used in M5), GSO if consented | M5 | pending |
+| **M6** | Post-v1 | FR-21 (Streamlit), FR-19 (dropped 2026-10-12), Energy Commission consent (**granted 2026-10-09**, used in M5), GSO if consented | M5 | pending |
 
 M2, M3 and M4 depend only on M1, so they can run in any order. **Recommended order:** M2 → M3 → M4, because it gets the headline story done first.
 
@@ -138,7 +138,7 @@ flowchart LR
 |---|---|---|---|---|---|---|---|---|
 | 6.1 | Draft the **Energy Commission consent** email (Gmail draft; you send it), per doc 01 R3 | `docs/consent/st_request.md` | task 0.4 | P2 | Medium | S | Draft approved; D5 status → `REQUESTED` | S |
 | 6.2 | Streamlit web showcase (FR-21): `pipeline export` (licence-filtered Parquet), a multipage app mirroring P1/P2/P4/P5/P6, deployed on Community Cloud. Run `/plan` first **As built (steps 0–7, 2026-10-12, branch `m6`, plan [plans/M6_plan.md](plans/M6_plan.md)):** 7 pages (P1, P2, P4, P4b, P5 with the Country Deep Dive and T2, P6, P6b); every one of the 119 report items mapped (`app/coverage.json`); the 11 open SQL twins ported to pandas and equal to them exactly; licence-gated, atomic export; dark mode; reviews done (0 high). P3/P3b stay out until the Energy Commission agrees. Deploy (step 8) waits on the repo going public (M5 step 12) | `app/`, `exports/` | doc 02 §3.2, doc 03 Part C | P2 | Medium | S | Public URL; 3 numbers match Power BI | L |
-| 6.3 | Optional FR-19 "Publish to web" via the UiTM account **before it expires** (you sign in) | — | — | P3 | Low | F | Link opens logged-out | S |
+| 6.3 | ~~Optional FR-19 "Publish to web" via the UiTM account **before it expires** (you sign in)~~ **Dropped 2026-10-12 (Amirul):** the web showcase (6.2) is the durable link | — | — | P3 | Low | F | Link opens logged-out | S |
 | 6.4 | **If TNB consents:** build the GSO adapter (10-min → hourly), set `is_published = 1`, re-run the forecast on Peninsular data, update P4, README and P6 | `pipeline/sources/gso.py` | task 3.1 | P2 | **High** | D | Consent letter filed in `docs/consent/`; **review: `ecc:security-reviewer` (terms compliance) + `ecc:mle-reviewer`** | M |
 | 6.5 | Optional monthly refresh via Windows Task Scheduler | — | doc 02 §4 | P3 | Low | F | Task runs once and logs to `meta` | S |
 

@@ -91,7 +91,7 @@ Priority uses MoSCoW: **M**ust / **S**hould / **C**ould.
 | FR-16 | README opens with the headline question, 3+ findings, a hero screenshot and an architecture diagram. | M | Someone new can state one finding within 30 s |
 | FR-17 | The report can be seen without Power BI: page screenshots, a GIF or ≤2-min video walkthrough, and a PDF export. | M | All visible in the repo on GitHub |
 | FR-18 | Setup guide lets someone reproduce everything on a clean Windows PC. | M | Fresh-clone rebuild succeeds following only the README |
-| FR-19 | Optional live Power BI link ("Publish to web") using the UiTM account. It's still active but likely to expire in early 2027, so it's a short-lived extra; FR-21 is the durable link. | C | Link opens in a private browser window |
+| FR-19 | Optional live Power BI link ("Publish to web") using the UiTM account. It's still active but likely to expire in early 2027, so it's a short-lived extra; FR-21 is the durable link. **Dropped 2026-10-12 (Amirul).** | C | Link opens in a private browser window |
 | FR-20 | Project linked from your GitHub profile repo and LinkedIn Featured section. | S | Links are present |
 
 ### 3.2 Non-functional
