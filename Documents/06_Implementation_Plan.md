@@ -149,11 +149,12 @@ flowchart LR
 |---|---|---|---|
 | **Deep** | Opus 5.5 (`claude-opus-5-5`; Agent `model: "opus"`) | Main session for GUI and review-heavy work; subagents for code | **20**: 1.1, 1.3, 1.4, 1.5, 1.6, 1.9, 1.11, 2.1, 2.2, 2.6, 2.8, 3.1, 3.2, 3.4, 4.1, 4.3, 5.5, 5.7, 5.8, 6.4 |
 | **Standard** | Sonnet 5.5 (`claude-sonnet-5-5`; `"sonnet"`) | Subagents, or the session after `/model` | **18**: 0.1, 0.2, 0.3, 0.4, 1.2, 1.7, 1.10, 2.3, 2.4, 3.3, 3.5, 3.6, 4.2, 4.4, 5.1, 5.3, 6.1, 6.2 |
-| **Fast** | Haiku 4.5 (`claude-haiku-4-5-20251001`; `"haiku"`) | Subagents | **11**: 0.5, 0.6, 1.8, 2.5, 2.7, 5.2, 5.4, 5.6, 5.9, 6.3, 6.5 |
+| **Fast** | Haiku 5.5 (`claude-haiku-5-5`; `"haiku"`) from 2026-10-12; Haiku 4.5 (`claude-haiku-4-5-20251001`) for every Fast task run before that | Subagents | **11**: 0.5, 0.6, 1.8, 2.5, 2.7, 5.2, 5.4, 5.6, 5.9, 6.3 (dropped), 6.5 (dropped) |
 
 - **Ranking verified (task 0.6, 2026-09-30, via the `claude-api` skill's model table):**
   - Fable 5.1 (`claude-fable-5-1`, Agent `"fable"`) is Anthropic's most capable widely released model, at $10 / $50 per MTok.
   - Opus 5.5 is $4 / $20, Sonnet 5.5 $2 / $10, and Haiku 4.5 $1 / $5.
+  - **Update 2026-10-12:** the Fast tier now maps to Haiku 5.5. Its price was not re-checked, because no Fast task remains (6.3 and 6.5 were dropped).
   - **Decision:** Deep stays on Opus 5.5 (2.5× cheaper than Fable 5.1). Fable 5.1 is the **escalation rung above Deep**: a Deep task that fails verification twice moves to Fable 5.1.
 - **Independent review** is required for the 10 High-risk tasks: 1.1, 1.5, 1.11, 2.2, 2.8, 3.2, 3.4, 4.1, 5.8, 6.4. The reviewer is named in each Verify cell and is always a different agent from the implementer.
 - **Error controls in force:**
