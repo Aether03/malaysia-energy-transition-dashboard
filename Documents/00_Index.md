@@ -1,6 +1,16 @@
 # Energy Dashboard — Planning Index
 
-**Updated:** 2026-10-10 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** building. M0–M4 are done. **M5: steps 1–11 and 13 done; the Energy Commission's consent is in use (2026-10-10); step 12 (going public) waits on the GitHub Support purge. Resume point below.**
+**Updated:** 2026-10-19 · **Project root:** `C:\Users\user\Desktop\PetProject\Energy_Dashboard` · **Stage:** **closed 2026-10-19.** M0–M6 done; public at https://github.com/Aether03/malaysia-energy-transition-dashboard (`v1.0.0` report + walkthrough, `v1.1.0` web app).
+
+**PROJECT CLOSED 2026-10-19 (Amirul: "run the fallbacks for everything and complete the project").**
+- **Live:** repo public (fresh repository; the old one is `malaysia-energy-transition-dashboard-archive`, private and archived); `v1.0.0` (report, PNGs, PDF, a remade narrated walkthrough on the Release); `v1.1.0` (web app: https://malaysia-energy-transition-dashboard-eayus9fbdxbagczkpiktoy.streamlit.app/); profile README links the project.
+- **Reopen only if a reply arrives** (check Gmail when asked):
+  - **Energy Commission says yes** to the web version and data file → M6 plan step 9 (Regions and State reliability pages in the app; D5 `is_publishable = 1`; scanner exemption reviewed with Amirul). A no needs nothing: they stay images.
+  - **TNB/GSO consents** → doc 06 task 6.4 (GSO adapter, re-run the forecast on Peninsular data; High risk, reviewers named there).
+  - **GitHub Support replies** → nothing to do on this repository; the archive can be deleted if Amirul wants.
+- **Housekeeping left to Amirul:** delete `C:\src` (old-history bundle and clones; the archive repository keeps the old history); LinkedIn Featured; optional a11y passes (`docs/a11y.md`).
+- **Data refresh:** follow `docs/refresh.md`; the web app redeploys from `main` on push.
+
 
 **M6 task 6.2 (Streamlit web showcase), on branch `m6`, draft PR #8 (2026-10-12): steps 0-7 done; step 8 (deploy) waits on M5 step 12 (GitHub Support)** (plan `plans/M6_plan.md`, approved in the Plan Canvas 2026-10-10; Outcome section has each step).
 - **Step 3 done:** the 11 ports in `app/showcase/metrics.py` match `exports/expected.json` (09's month-row `*_diff` cells excluded, Amirul: they need `dw.forecast_run.metrics_json`, which isn't exported or shown). **Step 4 done:** Overview, Generation, Grid load, Forecast built on `app/showcase/ui.py`; 69 of 119 items mapped; dark-mode chart contrast left for step 6. **Step 5 done:** ASEAN (with the Country Deep Dive as a selector and T2 as hover), About, Data quality; all 119 report items mapped, coverage test green. **Step 6 done:** Python review 0 HIGH (4 MEDIUM + 2 LOW fixed: atomic export, grid-column refusal, exact parity, content licence test, missing-run guards, one formatter); accessibility W1–W3 fixed incl. dark mode, minors open in `docs/a11y.md`. **Step 7 done:** README "Try it online" (link at deploy), `DATA_LICENSES.md`, docs 02/03/05/06 as built; CI's second job runs the app tests on `app/requirements.txt` alone. **Next: step 8** (deploy, asks first) once M5 step 12 makes the repo public: merge `m6` → `main`, Amirul creates the app on share.streamlit.io, Claude checks the URL logged-out, 3+ numbers against Power BI, phone width; then 6 (reviews), 7 (docs + CI), 8 (deploy after M5 step 12), 9 (only if the Energy Commission agrees). Ask Amirul at each step boundary.

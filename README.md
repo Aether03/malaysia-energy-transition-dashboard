@@ -54,13 +54,13 @@ flowchart LR
 
 ## Try it online
 
-**Web showcase:** *link added at deployment* (Streamlit Community Cloud; the free tier sleeps when idle, so a first visit may have to wake it up). No install and no Power BI: Overview, Generation, Grid load, Forecast, ASEAN (with each country's deep dive), About and Data quality, with the report's titles, numbers and credits. Every chart has a text summary and a "Show data" table, and it follows your light or dark theme.
+**Web showcase:** [open the web version](https://malaysia-energy-transition-dashboard-eayus9fbdxbagczkpiktoy.streamlit.app/) (Streamlit Community Cloud; the free tier sleeps when idle, so a first visit may have to wake it up). No install and no Power BI: Overview, Generation, Grid load, Forecast, ASEAN (with each country's deep dive), About and Data quality, with the report's titles, numbers and credits. Every chart has a text summary and a "Show data" table, and it follows your light or dark theme.
 
 It reads the Parquet snapshots in [`exports/`](exports/), which `pipeline export` writes only for sources whose licence allows their data rows to be published. So Regions and State reliability are not in it: the Energy Commission's permission covers the charts, not the data behind them. Their images are in [`docs/img/`](docs/img/). The About page lists what is left out and why. To run it locally after [Setup](#setup): `.venv\Scripts\streamlit run app\streamlit_app.py`.
 
 ## How to explore
 
-**Without Power BI:** the page images in [`docs/img/`](docs/img/) and the [PDF export](docs/report.pdf) show all nine pages.
+**Without Power BI:** the page images in [`docs/img/`](docs/img/) and the [PDF export](docs/report.pdf) show all nine pages, and a [1:56 narrated walkthrough video](https://github.com/Aether03/malaysia-energy-transition-dashboard/releases/download/v1.0.0/walkthrough.mp4) (captioned; attached to the v1.0.0 release) tours them.
 
 | Page | What it shows |
 |---|---|

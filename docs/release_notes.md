@@ -4,7 +4,7 @@ The text of each GitHub Release, kept here so it is reviewed with the code. Data
 
 ## v1.1.0: web showcase
 
-**Try it online:** *link added at deployment* (Streamlit Community Cloud; a first visit may have to wake the app up).
+**Try it online:** [the web version](https://malaysia-energy-transition-dashboard-eayus9fbdxbagczkpiktoy.streamlit.app/) (Streamlit Community Cloud; a first visit may have to wake the app up).
 
 - **The report in a browser, with no Power BI:** Overview, Generation, Grid load, Forecast, ASEAN (each country's deep dive through a selector, and the peer comparison on hover), About and Data quality. Titles, KPI cards, hover text and footer credits follow the Power BI pages.
 - **Same numbers as the report:** the 11 open showcase queries are ported to pandas and tested equal to their SQL twins; every one of the report's 119 items on these pages has an app element (`app/coverage.json`).

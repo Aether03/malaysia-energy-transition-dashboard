@@ -156,20 +156,20 @@ git log --all --name-only --format= | grep -iE '\.pdf$|^data/|\.pbix$' | grep -v
 | Desktop quirks (second instance, overlays, unsaved-change prompts) | Medium | `Start-Process`; never `open_application` for focus; close without saving |
 
 ## Acceptance (the doc 06 M5 check, plus)
-- [ ] Every **Must** in doc 01 passes its verification column, with the evidence noted (FR-13/22 as built on Thailand/Singapore, as accepted in M3) **(2026-10-07: all pass except FR-17's video, which goes up at publication; sweep in the step 13 outcome)**
+- [x] Every **Must** in doc 01 passes its verification column, with the evidence noted (FR-13/22 as built on Thailand/Singapore, as accepted in M3) **(2026-10-07: all pass except FR-17's video, which goes up at publication; sweep in the step 13 outcome)**
 - [x] P6 + P6b: every source credited; consent status shown; run summary and DQ table current after a refresh; empty state works; the badge shows on an injected FAIL
 - [ ] Alt text on every visual; `docs/a11y.md` checklist ticked; `design:accessibility-review` findings fixed **(done except the a11y checklist's high-contrast item, skipped by Amirul, and the screen-reader pass)**
-- [ ] PNGs, PDF and walkthrough visible on GitHub (Q2 reversed 2026-10-10: P3/P3b now in) **(9 PNGs and the PDF yes; the walkthrough at publication)**
+- [x] PNGs, PDF and walkthrough visible on GitHub (Q2 reversed 2026-10-10: P3/P3b now in) **(9 PNGs and the PDF yes; the walkthrough at publication)**
 - [x] README passes the 30-second test; every number in it matches the warehouse
 - [x] CI green; Dependabot on
 - [x] Fresh clone < 30 min following only the README
-- [ ] History decision (Q1) carried out; the history scan finds 0; the replay works on a fresh clone **(rewrite done and verified on the clone; the force-push, Dependabot branch deletion and GitHub Support purge are Amirul's)**
+- [x] History decision (Q1) carried out; the history scan finds 0; the replay works on a fresh clone **(rewrite done and verified on the clone; the force-push, Dependabot branch deletion and GitHub Support purge are Amirul's)**
 - [x] 5.8 verdict "go" from `ecc:security-reviewer` + `audit-my-work` **(go, conditional on the purge)**
-- [ ] Repo public, `v1.0.0` tagged, profile link added (your go)
+- [x] Repo public, `v1.0.0` tagged, profile link added (your go) **(2026-10-19)**
 - [x] Twins all PASS; validator 0 problems; tests green
-- [ ] Docs, `DATA_LICENSES.md`, index, vault note and skill-test memory updated; pushed **(updated 2026-10-07; pushed with the force-push)**
+- [x] Docs, `DATA_LICENSES.md`, index, vault note and skill-test memory updated; pushed **(updated 2026-10-07; pushed with the force-push)**
 
-## Outcome (2026-10-07; publication pending)
+## Outcome (2026-10-07; published 2026-10-19)
 
 **Shipped in M5** (the release notes source for `v1.0.0`):
 - **Report:** P6 About + P6b Data quality (sources, licences, consent, run summary, every DQ rule with a status chip), a Fail badge on every page, the ⓘ button, alt text on every visual, report-page tooltips (T2) on the ASEAN page, tab order fixed.
@@ -201,3 +201,5 @@ git log --all --name-only --format= | grep -iE '\.pdf$|^data/|\.pbix$' | grep -v
 3. Claude (show what will be pushed first): push `main` and `m6`. Check: `git ls-remote origin` lists only `refs/heads/*` (no `refs/pull/*`); a fresh clone's `scan_handbook_values.py --history` finds 0; the forecast replay's `protocol_commit` (`50dcc1a`) is in the new history; CI green on `main`.
 4. Amirul: re-enable the repo settings (Dependabot alerts and updates, Actions), and re-open the draft PR for `m6`.
 5. Then step 12 as planned. Lost: the Dependabot PR threads and PR #8's comments (nothing in them is needed).
+
+**Step 12 done 2026-10-19 by the fallback (Amirul: "run the fallbacks for everything").** GitHub Support never answered ticket #4832554 (follow-ups 12 and 19 Oct). With Amirul's go, via `gh`: the old repository became `malaysia-energy-transition-dashboard-archive` (private, archived), and a new repository with the original name received only `main` and `m6` (`main` fast-forwarded to `m6`). Checks before going public: `git ls-remote` lists only `refs/heads/*`; both old SHAs return "No commit found"; a fresh clone's `--history` scan finds 0 over 1,396 blobs; `50dcc1a` (the forecast protocol) is present; both CI jobs reproduced on the clone (GitHub did not start Actions on the new private repository's first pushes; it ran once the repository was public). Then public (logged-out page 200, old commit URL 404), Dependabot alerts and security updates on, `v1.0.0` tagged on `2b97429` with the Release text from `docs/release_notes.md`. **Walkthrough remade** (Amirul): an HTML scene over the 9 page images, rendered frame by frame through Edge, with Windows text-to-speech narration and a synthesised backing track (1:56, captioned, -16 LUFS), attached to the Release and linked from the README; sources in `data/private/walkthrough_src/` (git-ignored). Profile README: project section added; SQL moved from "Not yet" to "Familiar" (Amirul's choice).

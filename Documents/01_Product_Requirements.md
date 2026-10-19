@@ -83,13 +83,13 @@ Priority uses MoSCoW: **M**ust / **S**hould / **C**ould.
 **Added after review: post-v1 web showcase**
 | ID | Requirement | Priority | How to verify |
 |---|---|---|---|
-| FR-21 | **Public web showcase** after the Power BI dashboard is complete. It's a lightweight interactive web version, recommended on Streamlit Community Cloud (you already host HA-PIT there), reading exported data snapshots instead of the local database. The link goes on your future portfolio website. | S (post-v1) | Public URL loads in a private window; numbers match the Power BI report |
+| FR-21 | **(Met 2026-10-19: [web version](https://malaysia-energy-transition-dashboard-eayus9fbdxbagczkpiktoy.streamlit.app/), 7 pages; Regions and State reliability stay images until the Energy Commission agrees.)** **Public web showcase** after the Power BI dashboard is complete. It's a lightweight interactive web version, recommended on Streamlit Community Cloud (you already host HA-PIT there), reading exported data snapshots instead of the local database. The link goes on your future portfolio website. | S (post-v1) | Public URL loads in a private window; numbers match the Power BI report |
 
 **Portfolio packaging (for the recruiter at a glance)**
 | ID | Requirement | Priority | How to verify |
 |---|---|---|---|
 | FR-16 | README opens with the headline question, 3+ findings, a hero screenshot and an architecture diagram. | M | Someone new can state one finding within 30 s |
-| FR-17 | The report can be seen without Power BI: page screenshots, a GIF or ≤2-min video walkthrough, and a PDF export. | M | All visible in the repo on GitHub |
+| FR-17 | The report can be seen without Power BI: page screenshots, a GIF or ≤2-min video walkthrough, and a PDF export. | M | All visible in the repo on GitHub **(met 2026-10-19: PNGs and PDF in `docs/`, the video on the v1.0.0 release)** |
 | FR-18 | Setup guide lets someone reproduce everything on a clean Windows PC. | M | Fresh-clone rebuild succeeds following only the README |
 | FR-19 | Optional live Power BI link ("Publish to web") using the UiTM account. It's still active but likely to expire in early 2027, so it's a short-lived extra; FR-21 is the durable link. **Dropped 2026-10-12 (Amirul).** | C | Link opens in a private browser window |
 | FR-20 | Project linked from your GitHub profile repo and LinkedIn Featured section. | S | Links are present |
